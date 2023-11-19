@@ -63,7 +63,7 @@ CREATE TABLE article (
     description VARCHAR(1000),
     designation VARCHAR(100),
     id_category INTEGER,
-    tva DOUBLE PRECISION,
+    tva DECIMAL(10, 2),
     id_unity int,
     status INTEGER,
     FOREIGN KEY(id_category) REFERENCES category(id_category),
@@ -170,10 +170,11 @@ CREATE TABLE supplier (
 );
 
 ALTER SEQUENCE seq_supplier RESTART WITH 1;
-INSERT INTO supplier (supplier_name, supplier_adresse, responsable_contact, mail, status) VALUES
+INSERT INTO supplier (supplier_name, supplier_address, responsable_contact, mail, status) VALUES
 ('Leader Price', 'Tanjombato', '+261 32 125 63', 'leaderPrice@example.com', 1),
 ('Jumbo Score', 'Mahamasina', '+261 34 238 14', 'jumboScore@example.com', 1),
-('Hazo Vato', 'Ambohidranandriana', '+261 20 120 32', 'hazoVato@example.com', 1);
+('Hazo Vato', 'Ambohidranandriana', '+261 20 120 32', 'hazoVato@example.com', 1),
+('Magasin U', 'Analakely', '+261 33 125 62', 'magasinU@example.com', 1);
 
 CREATE SEQUENCE seq_supplier_category_product;
 CREATE TABLE supplier_category_product (
@@ -191,7 +192,9 @@ INSERT INTO supplier_category_product (id_supplier, id_category) VALUES
 (2, 1),
 (2, 4),
 (2, 3),
-(3, 2);
+(3, 2),
+(4, 1),
+(4, 3);
 
 -- TABLE ET VIEW REQUIS POUR L'INSERTION DE PRIX PAR FOURNISSEUR
 CREATE SEQUENCE seq_supplier_article_price;
@@ -208,8 +211,21 @@ CREATE TABLE supplier_article_price (
 );
 
 ALTER SEQUENCE seq_supplier_article_price RESTART WITH 1;
+-- Prix pour l'article 1 stylos a encre
 INSERT INTO supplier_article_price (date, id_article, id_supplier, unit_price, chosen, status) VALUES 
+('2023-11-01', 1, 1, 800, false, 1),
+('2023-11-01', 1, 2, 1000, false, 1),
+('2023-11-01', 1, 4, 700, true, 1);
 
+-- Prix pour l'article 2 cahiers a spirale
+INSERT INTO supplier_article_price (date, id_article, id_supplier, unit_price, chosen, status) VALUES 
+('2023-11-10', 2, 1, 1200, false, 1),
+('2023-11-10', 2, 2, 900, false, 1),
+('2023-11-10', 2, 4, 1000, true, 1);
+
+-- Prix pour l'article 2 cahiers a spirale
+INSERT INTO supplier_article_price (date, id_article, id_supplier, unit_price, chosen, status) VALUES 
+('2023-11-10', 5, 3, 18000, true, 1);
 
 -- View pour avoir les article quantity encore valide 
 -- et le demande maitre est validé ie status = 2 et l'article est encore en phase demande ie status = 1
@@ -219,6 +235,132 @@ JOIN purchase_request p ON a.id_purchase_request = p.id_purchase_request
 WHERE p.status = 2 AND a.status = 1;
 
 -- View pour grouper les articles et leurs quantite pour avoir le besoin general par nature
-CREATE VIEW v_demande_article AS 
+CREATE VIEW v_article_request AS 
 SELECT id_article, SUM(quantity) FROM v_article_quantity_valid GROUP BY (id_article);
 
+-- View pour avoir les prix des fournisseurs qui sont encore valide et duree inférieur à 1 mois
+CREATE OR REPLACE VIEW v_supplier_article_price_valid AS
+SELECT * FROM supplier_article_price WHERE status = 1 AND date + 30 >= CURRENT_DATE;
+
+-- View pour avoir les fournisseurs choisi
+CREATE VIEW v_chosen_supplier AS
+SELECT s.* FROM 
+(SELECT id_supplier FROM v_supplier_article_price_valid WHERE chosen IS TRUE GROUP BY id_supplier) AS cs JOIN
+supplier s ON cs.id_supplier = s.id_supplier;
+
+-- Fonction pour avoir les articles et leurs quantite et unit_price dans la quelle le fournisseur est choisi
+CREATE OR REPLACE FUNCTION get_supplier_article_quantity(supplier INTEGER)
+RETURNS TABLE (
+    id_article INTEGER,
+    quantity DECIMAL(8, 2),
+    unit_price DECIMAL(10, 2)
+)  AS $$
+BEGIN
+RETURN QUERY
+    SELECT  
+        ar.id_article,
+        ar.sum,
+        sv2.unit_price
+    FROM 
+        (
+            SELECT 
+                ar.id_article,
+                ar.sum
+            FROM v_article_request ar 
+            WHERE ar.id_article IN
+            (   SELECT 
+                    sv.id_article 
+                FROM 
+                    v_supplier_article_price_valid sv
+                WHERE 
+                    sv.id_supplier = supplier
+                AND chosen IS TRUE
+            ) 
+        ) AS ar
+    JOIN 
+        v_supplier_article_price_valid sv2 
+    ON ar.id_article = sv2.id_article AND sv2.id_supplier = supplier;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Fonction pour avoir le proforma pour un fournisseur donnée
+CREATE OR REPLACE FUNCTION get_supplier_proforma(supplier INTEGER)
+RETURNS TABLE (
+    id_article INTEGER,
+    quantity DECIMAL(8, 2),
+    unit_price DECIMAL(10, 2),
+    tva DECIMAL(10, 2),
+    tva_amount DECIMAL(10, 2),
+    ht_amount DECIMAL(10, 2),
+    ttc_amount DECIMAL(10, 2)
+)  AS $$
+BEGIN
+RETURN QUERY
+    SELECT  
+        a.id_article,
+        aq.quantity,
+        aq.unit_price,
+        a.tva,
+        aq.quantity * (aq.unit_price * (a.tva / 100)),
+        (aq.quantity * aq.unit_price),
+        (aq.quantity * (aq.unit_price + (aq.unit_price * (a.tva / 100))))
+    FROM 
+        get_supplier_article_quantity(supplier) aq 
+    JOIN 
+        article a ON a.id_article = aq.id_article
+    ;
+END;
+$$ LANGUAGE plpgsql;
+
+-- TABLE POUR GERER LES BON DE COMMANDE
+CREATE SEQUENCE seq_payment_method;
+CREATE TABLE payment_method (
+    id_payment_method INTEGER PRIMARY KEY DEFAULT nextval('seq_payment_method'),
+    payment_method_name VARCHAR(50)
+);
+
+ALTER SEQUENCE seq_payment_method RESTART WITH 1;
+INSERT INTO payment_method (payment_method_name) VALUES
+('Virement bancaire'),
+('Cheque bancaire'),
+('CASH');
+
+
+CREATE SEQUENCE seq_purchase_order;
+CREATE TABLE purchase_order (
+    id_purchase_order INTEGER PRIMARY KEY DEFAULT nextval('seq_purchase_order'),
+    date DATE,
+    id_supplier INTEGER,
+    total_tva DECIMAL(10, 2),
+    total_ht DECIMAL(10, 2),
+    total_ttc DECIMAL(10, 2),
+    delivery_date DATE,
+    id_payment_method INTEGER,
+    status INTEGER,
+    FOREIGN KEY(id_supplier) REFERENCES supplier(id_supplier),
+    FOREIGN KEY(id_payment_method) REFERENCES payment_method(id_payment_method)
+);
+
+CREATE SEQUENCE seq_purchase_order_line_item;
+CREATE TABLE purchase_order_line_item (
+    id_purchase_order_line_item INTEGER PRIMARY KEY DEFAULT nextval('seq_purchase_order_line_item'),
+    id_purchase_order INTEGER,
+    id_article INTEGER,
+    quantity DECIMAL(10, 2),
+    unit_price DECIMAL(10, 2),
+    tva DECIMAL(10, 2),
+    tva_amount DECIMAL(10, 2),
+    ht_amount DECIMAL(10, 2),
+    ttc_amount DECIMAL(10, 2),
+    FOREIGN KEY(id_purchase_order) REFERENCES purchase_order(id_purchase_order),
+    FOREIGN KEY(id_article) REFERENCES article(id_article)
+);
+
+CREATE SEQUENCE seq_payment_condition;
+CREATE TABLE payment_condition (
+    id_payment_condition INTEGER PRIMARY KEY DEFAULT nextval('seq_payment_condition'),
+    id_purchase_order INTEGER,
+    percentage DECIMAL(10, 2),
+    payment_date DATE,
+    FOREIGN KEY(id_purchase_order) REFERENCES purchase_order(id_purchase_order)
+);
