@@ -78,33 +78,41 @@ INSERT INTO unity(name) VALUES
     ('Piece');
 
 -- Insertion des données de test dans la table 'category'
-ALTER SEQUENCE seq_category START WITH 11;
+ALTER SEQUENCE seq_category RESTART WITH 1;
 INSERT INTO category (code, designation, description, status) VALUES
-    ('CAT001', 'Electronique', 'Derniers gadgets et articles electroniques', 1),
-    ('CAT002', 'Vetements', 'Vetements a la mode pour toutes les saisons', 1),
-    ('CAT003', 'Maison et Jardin', 'Meubles, decoration et jardinage', 1),
-    ('CAT004', 'Livres', 'Best-sellers et litterature classique', 1),
-    ('CAT005', 'Sports', 'Equipements pour differents sports', 1),
-    ('CAT006', 'Beaute', 'Soins de la peau et produits de beaute', 1),
-    ('CAT007', 'Jouets', 'Jouets et jeux pour tous les ages', 1),
-    ('CAT008', 'Automobile', 'Accessoires et pieces pour voitures', 1),
-    ('CAT009', 'Appareils electromenagers', 'Appareils electromenagers et electroniques', 1),
-    ('CAT010', 'Alimentation', 'Produits alimentaires frais et emballes', 1);
+    ('CAT001', 'Fournitures de bureau', 'Les fournitures necessaire aux bureaux', 1),
+    ('CAT002', 'Matiere premiere', 'Matiere premiere pour la production', 1),
+    ('CAT003', 'Fournitures menagere', 'Fournitures pour le menage', 1),
+    ('CAT004', 'Automobile', 'Piece, Entretien, carburant des voitures', 1);
 
 
 
 -- Insertion des données de test dans la table 'article'
 ALTER SEQUENCE seq_article RESTART WITH 1;
+-- Fournitures de bureau
 INSERT INTO article (code, description, designation, id_category, tva, id_unity, status) VALUES
-    ('ART001', 'Ordinateur portable performant avec SSD', 'Ordinateur portable', 1, 20.0, 3, 1),
-    ('ART003', 'Table a manger en bois avec 6 chaises', 'Ensemble de table a manger', 3, 5.0, 3, 1),
-    ('ART004', 'Roman policier - Le Jardin Secret', 'Le Jardin Secret', 4, 0.0, 3, 1),
-    ('ART005', 'Ensemble de basketball et panier pour enfants', 'Ensemble de basketball pour enfants', 5, 5.0, 3, 1),
-    ('ART006', 'Kit de soins anti-age', 'Kit anti-age', 6, 20.0, 3, 1),
-    ('ART007', 'Poste de police LEGO City', 'Poste de police LEGO', 7, 5.0, 3, 1),
-    ('ART008', 'Housses de siege de voiture pour toutes les saisons', 'Housses toutes saisons', 8, 10.0, 3, 1),
-    ('ART009', 'Refrigerateur intelligent avec ecran tactile', 'Refrigerateur intelligent', 9, 20.0, 3, 1),
-    ('ART010', 'Lot de fruits et legumes biologiques', 'Produits biologiques', 10, 0.0, 3, 1);
+    ('ART001', 'Stylos a encre noire de qualite professionnelle', 'Stylos a encre', 1, 20.0, 3, 1),
+    ('ART002', 'Cahiers a spirale avec couverture rigide', 'Cahiers a spirale', 1, 20.0, 3, 1),
+    ('ART003', 'Classeurs de bureau pour l''organisation des documents', 'Classeurs de bureau', 1, 20.0, 3, 1);
+
+-- Matiere premiere
+INSERT INTO article (code, description, designation, id_category, tva, id_unity, status) VALUES
+    ('ART004', 'Bobine de fil d''acier inoxydable pour la production', 'Fil d''acier inoxydable', 2, 20.0, 3, 1),
+    ('ART005', 'Tissu en coton de haute qualite', 'Tissu en coton', 2, 20.0, 1, 1),
+    ('ART006', 'Blocs de bois pour la sculpture et la production', 'Blocs de bois', 2, 20.0, 1, 1);
+
+-- Fournitures menagere
+INSERT INTO article (code, description, designation, id_category, tva, id_unity, status) VALUES
+    ('ART007', 'Ensemble de couverts en acier inoxydable', 'Couverts en acier inoxydable', 3, 20.0, 3, 1),
+    ('ART008', 'Serviettes en papier de haute qualite', 'Serviettes en papier', 3, 20.0, 3, 1),
+    ('ART009', 'Produits de nettoyage ecologiques', 'Produits de nettoyage ecologiques', 3, 20.0, 3, 1);
+
+-- Automobile
+INSERT INTO article (code, description, designation, id_category, tva, id_unity, status) VALUES
+    ('ART010', 'Filtre a huile de rechange pour voitures', 'Filtre a huile', 4, 20.0, 3, 1),
+    ('ART011', 'Essuie-glace de remplacement haute performance', 'Essuie-glace', 4, 20.0, 3, 1),
+    ('ART012', 'Huile moteur synthetique de qualite superieure', 'Huile moteur synthetique', 4, 20.0, 2, 1);
+
 
 -- TABLE REQUIS POUR LE DEMANDE D'ACHAT
 
@@ -141,9 +149,76 @@ INSERT INTO purchase_request (sending_date, id_utilisateur, id_service, title, d
 ('2023-11-18', 1, 1, 'Besoin mensuel du departement', 'Comme pour chaque mois, nous avons besoins de ces bien.', 1),
 ('2023-11-18', 3, 3, 'Achat de matiere premiere', 'La production d''huile a augmente et nous avons besoins de plus d''arachide.', 1);
 
+ALTER SEQUENCE seq_article_quantity RESTART WITH 1;
 INSERT INTO article_quantity (id_purchase_request, id_article, quantity, id_purchase_order, amount, status) VALUES
-(1, 1, 2, NULL, 0, 1),
-(1, 5, 5, NULL, 0, 1),
-(2, 2, 1, NULL, 0, 1),
-(2, 9, 10, NULL, 0, 1),
-(2, 8, 2, NULL, 0, 1);
+(1, 1, 10, NULL, 0, 1),
+(1, 2, 10, NULL, 0, 1),
+(1, 8, 20, NULL, 0, 1),
+(2, 12, 2, NULL, 0, 1),
+(2, 5, 6, NULL, 0, 1),
+(2, 8, 8, NULL, 0, 1);
+
+-- TEMPORARY TABLE FOR SUPPLIER
+CREATE SEQUENCE seq_supplier;
+CREATE TABLE supplier (
+    id_supplier INTEGER PRIMARY KEY DEFAULT nextval('seq_supplier'),
+    supplier_name VARCHAR(50),
+    supplier_address VARCHAR(50),
+    responsable_contact VARCHAR(20),
+    mail VARCHAR(30),
+    status INTEGER
+);
+
+ALTER SEQUENCE seq_supplier RESTART WITH 1;
+INSERT INTO supplier (supplier_name, supplier_adresse, responsable_contact, mail, status) VALUES
+('Leader Price', 'Tanjombato', '+261 32 125 63', 'leaderPrice@example.com', 1),
+('Jumbo Score', 'Mahamasina', '+261 34 238 14', 'jumboScore@example.com', 1),
+('Hazo Vato', 'Ambohidranandriana', '+261 20 120 32', 'hazoVato@example.com', 1);
+
+CREATE SEQUENCE seq_supplier_category_product;
+CREATE TABLE supplier_category_product (
+    id_supplier_category_product INTEGER PRIMARY KEY DEFAULT nextval('seq_supplier_category_product'),
+    id_supplier INTEGER,
+    id_category INTEGER,
+    FOREIGN KEY(id_supplier) REFERENCES supplier(id_supplier),
+    FOREIGN KEY(id_category) REFERENCES category(id_category)
+);
+
+ALTER SEQUENCE seq_supplier_category_product RESTART WITH 1;
+INSERT INTO supplier_category_product (id_supplier, id_category) VALUES
+(1, 1),
+(1, 3),
+(2, 1),
+(2, 4),
+(2, 3),
+(3, 2);
+
+-- TABLE ET VIEW REQUIS POUR L'INSERTION DE PRIX PAR FOURNISSEUR
+CREATE SEQUENCE seq_supplier_article_price;
+CREATE TABLE supplier_article_price (
+    id_supplier_article_price INTEGER PRIMARY KEY DEFAULT nextval('seq_supplier_article_price'),
+    date DATE,
+    id_article INTEGER,
+    id_supplier INTEGER,
+    unit_price DECIMAL(10, 2),
+    chosen BOOLEAN DEFAULT false,
+    status INTEGER DEFAULT 1,
+    FOREIGN KEY(id_article) REFERENCES article(id_article),
+    FOREIGN KEY(id_supplier) REFERENCES supplier(id_supplier)
+);
+
+ALTER SEQUENCE seq_supplier_article_price RESTART WITH 1;
+INSERT INTO supplier_article_price (date, id_article, id_supplier, unit_price, chosen, status) VALUES 
+
+
+-- View pour avoir les article quantity encore valide 
+-- et le demande maitre est validé ie status = 2 et l'article est encore en phase demande ie status = 1
+CREATE VIEW v_article_quantity_valid AS
+SELECT a.* FROM article_quantity a 
+JOIN purchase_request p ON a.id_purchase_request = p.id_purchase_request
+WHERE p.status = 2 AND a.status = 1;
+
+-- View pour grouper les articles et leurs quantite pour avoir le besoin general par nature
+CREATE VIEW v_demande_article AS 
+SELECT id_article, SUM(quantity) FROM v_article_quantity_valid GROUP BY (id_article);
+
