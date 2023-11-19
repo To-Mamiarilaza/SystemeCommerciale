@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
+import model.base.Utilisateur;
 
 /**
  *
@@ -48,6 +49,11 @@ public class HomeServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
+            Utilisateur utilisateur = (Utilisateur) request.getSession().getAttribute("utilisateur");
+            if (utilisateur == null) {
+                response.sendRedirect("./login");
+            }
+            request.setAttribute("utilisateur", utilisateur);
             
             // All required assets
             List<String> css = new ArrayList<>();

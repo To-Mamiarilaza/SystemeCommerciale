@@ -1,3 +1,8 @@
+<%@ page contentType="text/html; charset=UTF-8" %>
+<%@page import="java.util.List" %>
+<% 
+    String error = (String) request.getAttribute("error");
+%>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -34,19 +39,20 @@
                             </div>
                             <h4>Bienvenue dans le systeme de gestion commerciale !</h4>
                             <h6 class="font-weight-light">Veillez vous connecter</h6>
-                            <form class="pt-3">
+                            <form action="./login" method="POST" class="pt-3">
                                 <div class="form-group">
-                                    <input type="email" class="form-control form-control-lg" id="exampleInputEmail1"
+                                    <input type="text" name="username" class="form-control form-control-lg" id="exampleInputEmail1"
                                         placeholder="Username">
                                 </div>
                                 <div class="form-group">
-                                    <input type="password" class="form-control form-control-lg"
+                                    <input type="password" name="password" class="form-control form-control-lg"
                                         id="exampleInputPassword1" placeholder="Password">
                                 </div>
-                                <h6 class="font-weight-light text-small text-danger">Verifier les informations que vous avez entrer !</h6>
+                                <% if(error != null) { %>
+                                    <h6 class="font-weight-light text-small text-danger"><%= error %></h6>
+                                <% } %>
                                 <div class="mt-3">
-                                    <a class="btn btn-block btn-gradient-primary btn-lg font-weight-medium auth-form-btn"
-                                        href="./home">SIGN IN</a>
+                                    <button type="submit" class="btn btn-block btn-gradient-primary btn-lg font-weight-medium auth-form-btn">SIGN IN</button>
                                 </div>
                                 <div class="my-2 d-flex justify-content-between align-items-center">
                                     <div class="form-check">

@@ -34,8 +34,15 @@ public class Utilisateur {
     @DBField(name = "admin")
     boolean isAdmin;
     
+    @DBField(name = "photo")
+    String photo;
+    
     @DBField(name = "status")
     int status;
+    
+    // Service checking
+    public static final int APPROVISIONNEMENT_SERVICE_ID = 4;
+    public static final int FINANCE_SERVICE_ID = 5;
     
     // Getter and Setter
 
@@ -79,6 +86,14 @@ public class Utilisateur {
         this.mail = mail;
     }
 
+    public String getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(String photo) {
+        this.photo = photo;
+    }
+    
     public boolean getIsAdmin() {
         return isAdmin;
     }
@@ -100,23 +115,43 @@ public class Utilisateur {
     public Utilisateur() {
     }
 
-    public Utilisateur(Service service, String username, String password, String mail, boolean isAdmin, int status) {
+    public Utilisateur(Service service, String username, String password, String mail, boolean isAdmin, String photo, int status) {
         this.service = service;
         this.username = username;
         this.password = password;
         this.mail = mail;
         this.isAdmin = isAdmin;
+        this.photo = photo;
         this.status = status;
     }
 
-    public Utilisateur(int idUtilisateur, Service service, String username, String password, String mail, boolean isAdmin, int status) {
+    public Utilisateur(int idUtilisateur, Service service, String username, String password, String mail, boolean isAdmin, String photo, int status) {
         this.idUtilisateur = idUtilisateur;
         this.service = service;
         this.username = username;
         this.password = password;
         this.mail = mail;
         this.isAdmin = isAdmin;
+        this.photo = photo;
         this.status = status;
+    }
+    
+    // Method
+    
+    // Checking user departement
+    public boolean inFinanceService() {
+        if (getService().getIdService() == FINANCE_SERVICE_ID) {
+            return true;
+        }
+        return false;
+    }
+    
+    
+    public boolean inAchatService() {
+        if (getService().getIdService() == APPROVISIONNEMENT_SERVICE_ID) {
+            return true;
+        }
+        return false;
     }
     
 }
