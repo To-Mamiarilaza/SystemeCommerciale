@@ -38,55 +38,6 @@
     </div>
 </div>
 
-<div class="row">
-    <div class="col-12 grid-margin">
-        <div class="card">
-            <div class="card-body">
-                <h4 class="card-title">Etat des derniers demandes</h4>
-                <div class="table-responsive">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th> Date </th>
-                                <th> Article </th>
-                                <th> Unite </th>
-                                <th> Quantite </th>
-                                <th> Etat </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>01-02-2023</td>
-                                <td> Stylo </td>
-                                <td>Unite</td>
-                                <td> 30 </td>
-                                <td> <label class="badge badge-gradient-warning">PROGRESS</label>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>01-02-2023</td>
-                                <td> Stylo </td>
-                                <td>Unite</td>
-                                <td> 12 </td>
-                                <td><label class="badge badge-gradient-info">Valide</label></td>
-                            </tr>
-                            <tr>
-                                <td>01-02-2023</td>
-                                <td> Stylo </td>
-                                <td>Unite</td>
-                                <td> 12 </td>
-                                <td><label class="badge badge-gradient-danger">Refuse</label></td>
-                            </tr>
-
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-
-</div>
-
 
 
 

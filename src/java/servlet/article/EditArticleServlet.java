@@ -18,6 +18,7 @@ import java.util.List;
 import model.article.Article;
 import model.article.Category;
 import model.article.Unity;
+import model.base.Utilisateur;
 
 /**
  *
@@ -65,6 +66,12 @@ public class EditArticleServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
           try {
+              Utilisateur utilisateur = (Utilisateur) request.getSession().getAttribute("utilisateur");
+            if (utilisateur == null) {
+                response.sendRedirect("./login");
+            }
+            request.setAttribute("utilisateur", utilisateur);
+            
             Article article = GenericDAO.findById(Article.class, Integer.valueOf(request.getParameter("idArticle")), null);
             List<Category> categorys = (List<Category>) GenericDAO.getAll(Category.class, null, null);
             List<Unity> unitys = (List<Unity>) GenericDAO.getAll(Unity.class, null, null);
@@ -104,6 +111,12 @@ public class EditArticleServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
+            Utilisateur utilisateur = (Utilisateur) request.getSession().getAttribute("utilisateur");
+            if (utilisateur == null) {
+                response.sendRedirect("./login");
+            }
+            request.setAttribute("utilisateur", utilisateur);
+            
             Article article = GenericDAO.findById(Article.class, Integer.valueOf(request.getParameter("idArticle")), null);
             article.setCategory(request.getParameter("category"));
             article.setCode(request.getParameter("code"));

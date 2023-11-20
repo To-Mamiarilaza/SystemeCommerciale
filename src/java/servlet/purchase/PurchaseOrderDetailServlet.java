@@ -14,6 +14,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 import model.base.Utilisateur;
+import model.purchase.PurchaseOrder;
+import service.proforma.PurchaseOrderService;
+import service.proforma.SupplierService;
 
 /**
  *
@@ -66,6 +69,11 @@ public class PurchaseOrderDetailServlet extends HttpServlet {
                 response.sendRedirect("./login");
             }
             request.setAttribute("utilisateur", utilisateur);
+            
+            int idPurchaseOrder = Integer.valueOf(request.getParameter("idPurchaseOrder"));
+            PurchaseOrder purchaseOrder = PurchaseOrderService.getPurchaseOrder(idPurchaseOrder);
+            SupplierService.loadSupplierOwnedCategory(purchaseOrder.getSupplier(), null);
+            request.setAttribute("purchaseOrder", purchaseOrder);
             
             // All required assets
             List<String> css = new ArrayList<>();

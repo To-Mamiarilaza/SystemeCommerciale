@@ -21,7 +21,7 @@
 </div>
 
 <div class="row">
-    <div class="col-8 grid-margin mx-auto">
+    <div class="col-9 grid-margin mx-auto">
         <div class="card">
             <div class="card-body">
                 <h4 class="card-title">Detail du proforma</h4>
@@ -104,7 +104,7 @@
                 <div class="mt-3">
                     <% if(utilisateur.inFinanceService()) { %>
                     <a href="./purchase-order-insertion?idSupplier=<%= proforma.getSupplier().getIdSupplier() %>"
-                        class="btn btn-gradient-primary me-5">Generer le bon de commande</a>
+                        class="btn btn-gradient-primary me-5">Crée le bon de commande</a>
                     <% } %>
                     <a  href="./article-price-insertion" class="btn btn-light">Cancel</a>
                 </div>

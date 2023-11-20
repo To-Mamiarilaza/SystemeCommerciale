@@ -17,6 +17,7 @@ import java.util.List;
 import model.article.Article;
 import model.article.Category;
 import model.article.Unity;
+import model.base.Utilisateur;
 
 /**
  *
@@ -48,6 +49,12 @@ public class AddNewArticleServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
+            Utilisateur utilisateur = (Utilisateur) request.getSession().getAttribute("utilisateur");
+            if (utilisateur == null) {
+                response.sendRedirect("./login");
+            }
+            request.setAttribute("utilisateur", utilisateur);
+            
             //Listes category
             List<Category> categorys = (List<Category>) GenericDAO.getAll(Category.class, null, null);
             request.setAttribute("categorys", categorys);

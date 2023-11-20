@@ -19,8 +19,10 @@ import model.article.Article;
 import model.base.Utilisateur;
 import model.purchase.ArticleRequest;
 import model.purchase.Proforma;
+import model.purchase.PurchaseOrder;
 import service.proforma.ArticlePriceService;
 import service.proforma.ProformaService;
+import service.proforma.PurchaseOrderService;
 
 /**
  *
@@ -79,6 +81,9 @@ public class PurchaseOrderListServlet extends HttpServlet {
             // All required information
             List<Proforma> proformas = ProformaService.getAllAvailableProforma(connection);
             request.setAttribute("proformas", proformas);
+            
+            List<PurchaseOrder> purchaseList = PurchaseOrderService.getAllPurchaseOrder(connection);
+            request.setAttribute("purchaseList", purchaseList);
             
             connection.close();
             

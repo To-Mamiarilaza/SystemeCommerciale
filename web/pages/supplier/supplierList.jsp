@@ -1,3 +1,8 @@
+<%@page import="java.util.List" %>
+<%@page import="model.supplier.Supplier" %>
+<%
+    List<Supplier> listSuppliers = (List<Supplier>) request.getAttribute("listSupplier");
+%>
 <div class="page-header">
     <h3 class="page-title">
         <span class="page-title-icon bg-gradient-primary text-white me-2">
@@ -18,11 +23,11 @@
             <div class="card-body">
                 <h4 class="card-title">Listes des fournisseurs</h4>
                 <div class="mt-4 d-flex align-items-center justify-content-between">
-                    <form action="" method="POST">
+                    <form action="./supplier-search" method="POST">
                         <div class="input-groups d-flex align-items-center">
-                            <input type="text" class="form-control" placeholder="Nom du fournisseur">
+                            <input type="text" class="form-control" placeholder="Nom du fournisseur" name="keyWords">
                             <div>
-                                <input type="button" class="mx-5 btn btn-gradient-primary" value="Chercher">
+                                <input type="submit" class="mx-5 btn btn-gradient-primary" value="Chercher">
                             </div>
                         </div>
                     </form>
@@ -34,7 +39,7 @@
                     <table class="table table-striped">
                         <thead>
                             <tr>
-                                <th> ID </th>
+                                <th> # </th>
                                 <th> Nom </th>
                                 <th> Adresse </th>
                                 <th> Contact </th>
@@ -44,36 +49,22 @@
                             </tr>
                         </thead>
                         <tbody>
+                            <% for (int i=0; i<listSuppliers.size();i++) { %>
                             <tr>
-                                <td><a href="" style="text-decoration: none;">#1</a></td>
-                                <td>Jumbo score</td>
-                                <td>Tanjombate</td>
-                                <td>+261 23 142 23</td>
-                                <td>jumboScore@gmail.com</td>
-                                <td>PPN, Goutes, Fournitures de bureau, ...</td>
-                                <td><a href="" class="text-warning action-icon"><i class="mdi mdi-settings"></i></a><a
-                                        href="" class="text-danger action-icon"><i class="mdi mdi-delete"></i></a></td>
+                                <td style="color: blue;"><%= listSuppliers.get(i).getIdSupplier() %></td>
+                                <td><%= listSuppliers.get(i).getSupplierName() %></td>
+                                <td><%= listSuppliers.get(i).getSupplierAddress() %></td>
+                                <td><%= listSuppliers.get(i).getResponsableContact() %></td>
+                                <td><%= listSuppliers.get(i).getMail() %></td>
+                                <td>
+                                    <% listSuppliers.get(i).setCategory();
+                                        out.print(listSuppliers.get(i).getOwnedCategoryList().get(0).getDesignation()+", ...");
+                                    %>
+                                </td>
+                                <td><a href="./supplier-modification?idSupplier=<%= listSuppliers.get(i).getIdSupplier() %>" class="text-warning action-icon"><i class="mdi mdi-settings"></i></a><a
+                                        href="./supplier-modification?idSupplier=<%= listSuppliers.get(i).getIdSupplier() %>&action=1" class="text-danger action-icon"><i class="mdi mdi-delete"></i></a></td>
                             </tr>
-                            <tr>
-                                <td><a href="" style="text-decoration: none;">#2</a></td>
-                                <td>Jumbo score</td>
-                                <td>Tanjombate</td>
-                                <td>+261 23 142 23</td>
-                                <td>jumboScore@gmail.com</td>
-                                <td>PPN, Goutes, Fournitures de bureau, ...</td>
-                                <td><a href="" class="text-warning action-icon"><i class="mdi mdi-settings"></i></a><a
-                                        href="" class="text-danger action-icon"><i class="mdi mdi-delete"></i></a></td>
-                            </tr>
-                            <tr>
-                                <td><a href="" style="text-decoration: none;">#3</a></td>
-                                <td>Jumbo score</td>
-                                <td>Tanjombate</td>
-                                <td>+261 23 142 23</td>
-                                <td>jumboScore@gmail.com</td>
-                                <td>PPN, Goutes, Fournitures de bureau, ...</td>
-                                <td><a href="" class="text-warning action-icon"><i class="mdi mdi-settings"></i></a><a
-                                        href="" class="text-danger action-icon"><i class="mdi mdi-delete"></i></a></td>
-                            </tr>
+                            <% } %>
                         </tbody>
                     </table>
                 </div>

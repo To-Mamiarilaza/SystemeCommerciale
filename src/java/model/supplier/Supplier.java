@@ -8,6 +8,7 @@ import generalisation.GenericDAO.GenericDAO;
 import generalisation.annotations.DBField;
 import generalisation.annotations.DBTable;
 import generalisation.utils.GenericUtil;
+import java.util.ArrayList;
 import java.util.List;
 import model.article.Category;
 
@@ -17,27 +18,35 @@ import model.article.Category;
  */
 @DBTable(name = "supplier", sequenceName = "seq_supplier")
 public class Supplier {
+
     // Field
     @DBField(name = "id_supplier", isPrimaryKey = true)
     int idSupplier;
-    
+
     @DBField(name = "supplier_name")
     String supplierName;
-    
+
     @DBField(name = "supplier_address")
     String supplierAddress;
-    
+
     @DBField(name = "responsable_contact")
     String responsableContact;
-    
+
     @DBField(name = "mail")
     String mail;
-    
+
     @DBField(name = "status")
     int status;
-    
-    List<Category> ownedCategoryList;
-    
+
+    List<Category> ownedCategoryList = new ArrayList<>();
+
+    public void setCategory() throws Exception {
+        List<SupplierCategoryProduct> supplierCategory = (List<SupplierCategoryProduct>) GenericDAO.directQuery(SupplierCategoryProduct.class, "select * from supplier_category_product where id_supplier = " + this.getIdSupplier(), null);
+        for (int i = 0; i < supplierCategory.size(); i++) {
+            Category cat = (Category)GenericDAO.findById(Category.class, supplierCategory.get(i).getCategory(), null);
+            this.getOwnedCategoryList().add(cat);
+        }
+    }
     // Getter and setter
 
     public int getIdSupplier() {
@@ -95,9 +104,8 @@ public class Supplier {
     public void setOwnedCategoryList(List<Category> ownedCategoryList) {
         this.ownedCategoryList = ownedCategoryList;
     }
-    
-    // Constructor
 
+    // Constructor
     public Supplier() {
     }
 

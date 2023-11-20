@@ -68,7 +68,7 @@
                                 <% if(request.getAttribute("unitys") != null) { 
                                     List<Unity> unitys = (List<Unity>)request.getAttribute("unitys");
                                 %>
-                                <select name="unity">
+                                <select name="unity" class="form-control form-control-sm">
                                     <% for(int i = 0; i < unitys.size(); i++) { %>
                                     <option value="<%=unitys.get(i).getIdUnity() %>"><%=unitys.get(i).getName() %></option>
                                     <% } %>
