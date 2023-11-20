@@ -52,6 +52,11 @@
 .add-button {
   color: #da8cff;
   font-size: 38px;
+  background: none;
+  outline: none;
+  border: none;
+  padding: 0;
+  margin: 0;
 }
 
 .article-detail .inside-div {
@@ -78,4 +83,13 @@
 
 .text-right {
   text-align: right;
+}
+
+.text-left {
+  text-align: left;
+}
+
+.condition-list {
+  max-height: 100px;
+  overflow-y: auto;
 }/*# sourceMappingURL=supplier.css.map */

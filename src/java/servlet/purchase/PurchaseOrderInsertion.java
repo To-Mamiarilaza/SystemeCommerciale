@@ -4,8 +4,7 @@
  */
 package servlet.purchase;
 
-import com.google.gson.Gson;
-import generalisation.GenericDAO.GenericDAO;
+import connection.DBConnection;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -13,23 +12,21 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
-import java.time.LocalDate;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
-import model.article.Article;
-import model.base.Service;
 import model.base.Utilisateur;
-import model.purchase.ArticleQuantity;
-import model.purchase.PurchaseRequest;
-import model.base.Utilisateur;
+import model.purchase.PaymentMethod;
+import model.purchase.Proforma;
+import service.proforma.ProformaService;
+import service.proforma.SupplierService;
 
 /**
  *
  * @author To Mamiarilaza
  */
-@WebServlet(name = "PurchaseRequestInsertionServlet", urlPatterns = {"/purchase-request-insertion"})
-public class PurchaseRequestInsertion extends HttpServlet {
+@WebServlet(name = "PurchaseOrderInsertion", urlPatterns = {"/purchase-order-insertion"})
+public class PurchaseOrderInsertion extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -40,6 +37,22 @@ public class PurchaseRequestInsertion extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        response.setContentType("text/html;charset=UTF-8");
+        try (PrintWriter out = response.getWriter()) {
+            /* TODO output your page here. You may use following sample code. */
+            out.println("<!DOCTYPE html>");
+            out.println("<html>");
+            out.println("<head>");
+            out.println("<title>Servlet PurchaseOrderInsertion</title>");            
+            out.println("</head>");
+            out.println("<body>");
+            out.println("<h1>Servlet PurchaseOrderInsertion at " + request.getContextPath() + "</h1>");
+            out.println("</body>");
+            out.println("</html>");
+        }
+    }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
@@ -54,34 +67,37 @@ public class PurchaseRequestInsertion extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
-            //Initialiser l'objet session du demande achat
-            HttpSession session = request.getSession();
-            PurchaseRequest pr = new PurchaseRequest();
-            session.setAttribute("purchaseRequest", pr);
-            
-            //Initialiser la liste des articles
-            List<Article> articles = (List<Article>) GenericDAO.getAll(Article.class, null, null);
-            request.setAttribute("articles", articles);
-
             Utilisateur utilisateur = (Utilisateur) request.getSession().getAttribute("utilisateur");
             if (utilisateur == null) {
                 response.sendRedirect("./login");
             }
             request.setAttribute("utilisateur", utilisateur);
             
+            // All required information
+            Connection connection = DBConnection.getConnection();
+            
+            String idSupplier = request.getParameter("idSupplier");
+            Proforma proforma = ProformaService.getProforma(idSupplier, connection);
+            SupplierService.loadSupplierOwnedCategory(proforma.getSupplier(), connection);
+            request.setAttribute("proforma", proforma);
+            
+            List<PaymentMethod> paymentMethods = ProformaService.getAllPaymentMehod(connection);
+            request.setAttribute("paymentMethods", paymentMethods);
+            
+            connection.close();
+            
             // All required assets
             List<String> css = new ArrayList<>();
             css.add("assets/css/supplier/supplier.css");
             
             List<String> js = new ArrayList<>();
-            js.add("assets/js/purchase/purchase-insertion.js");
             
             request.setAttribute("css", css);
             request.setAttribute("js", js);
             
             // Page definition
-            request.setAttribute("title", "Insertion demande achat");
-            request.setAttribute("contentPage", "./pages/request/purchaseRequestInsertion.jsp");
+            request.setAttribute("title", "Nouvelle bon de commande");
+            request.setAttribute("contentPage", "./pages/request/purchaseOrderInsertion.jsp");
             
             request.getRequestDispatcher("./template.jsp").forward(request, response);
         } catch (Exception e) {
@@ -100,29 +116,7 @@ public class PurchaseRequestInsertion extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        PrintWriter out = response.getWriter();
-        try {
-            String title = request.getParameter("title");
-            String description = request.getParameter("description");
-            
-            HttpSession session = request.getSession();
-            PurchaseRequest pr = (PurchaseRequest) session.getAttribute("purchaseRequest");
-            
-            pr.setTitle(title);
-            pr.setDescription(description);
-            pr.setSendingDate(LocalDate.now());
-            Service service = GenericDAO.findById(Service.class, 1, null);
-            Utilisateur user = GenericDAO.findById(Utilisateur.class, 1, null);
-            pr.setService(service);
-            pr.setUtilisateur(user);
-            pr.setStatus(1);
-            pr.save(pr);
-            session.removeAttribute("purchaseRequest");
-        } catch (Exception e) {
-            request.setAttribute("error", e.getMessage());
-            e.printStackTrace();
-        }
-        response.sendRedirect("./purchase-request-list");
+        processRequest(request, response);
     }
 
     /**

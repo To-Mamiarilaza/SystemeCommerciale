@@ -11,6 +11,8 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import model.base.Utilisateur;
+import service.auth.AuthentificationService;
 
 /**
  *
@@ -46,7 +48,6 @@ public class LoginServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
         request.getRequestDispatcher("./pages/auth/login.jsp").forward(request, response);
     }
 
@@ -61,7 +62,19 @@ public class LoginServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+        try {
+            String username = request.getParameter("username");
+            String password = request.getParameter("password");
+            
+            Utilisateur utilisateur = AuthentificationService.checkLogin(username, password);
+            request.getSession().setAttribute("utilisateur", utilisateur);
+            
+            response.sendRedirect("./home");
+        } catch (Exception e) {
+            String error = e.getMessage();
+            request.setAttribute("error", error);
+            request.getRequestDispatcher("./pages/auth/login.jsp").forward(request, response);
+        }
     }
 
     /**

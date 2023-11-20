@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import model.base.Service;
 import model.purchase.PurchaseRequest;
+import model.base.Utilisateur;
 
 /**
  *
@@ -60,6 +61,11 @@ public class PurchaseRequestListServlet extends HttpServlet {
             List<Service> services = (List<Service>) GenericDAO.getAll(Service.class, null, null);
             request.setAttribute("services", services);
             
+            Utilisateur utilisateur = (Utilisateur) request.getSession().getAttribute("utilisateur");
+            if (utilisateur == null) {
+                response.sendRedirect("./login");
+            }
+            request.setAttribute("utilisateur", utilisateur);
             
             // All required assets
             List<String> css = new ArrayList<>();
