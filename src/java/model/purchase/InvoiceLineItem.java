@@ -6,6 +6,7 @@ package model.purchase;
 
 import generalisation.annotations.DBField;
 import model.article.Article;
+import service.util.DisplayUtil;
 
 /**
  *
@@ -58,6 +59,10 @@ public class InvoiceLineItem {
     public double getUnitPrice() {
         return unitPrice;
     }
+    
+    public String getUnitPriceString() {
+        return DisplayUtil.formatMoney(getUnitPrice(), "AR");
+    }
 
     public void setUnitPrice(double unitPrice) {
         this.unitPrice = unitPrice;
@@ -74,6 +79,10 @@ public class InvoiceLineItem {
     public double getTVAAmount() {
         return TVAAmount;
     }
+    
+    public String getTVAAmountString() {
+        return DisplayUtil.formatMoney(getTVAAmount(), "AR");
+    }
 
     public void setTVAAmount(double TVAAmount) {
         this.TVAAmount = TVAAmount;
@@ -81,6 +90,10 @@ public class InvoiceLineItem {
 
     public double getHTAmount() {
         return HTAmount;
+    }
+    
+    public String getHTAmountString() {
+        return DisplayUtil.formatMoney(getHTAmount(), "AR");
     }
 
     public void setHTAmount(double HTAmount) {
@@ -90,6 +103,11 @@ public class InvoiceLineItem {
     public double getTTCAmount() {
         return TTCAmount;
     }
+    
+    public String getTTCAmountString() {
+        return DisplayUtil.formatMoney(getTTCAmount(), "AR");
+    }
+    
 
     public void setTTCAmount(double TTCAmount) {
         this.TTCAmount = TTCAmount;

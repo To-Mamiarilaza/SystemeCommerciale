@@ -20,8 +20,8 @@
             <div class="card-body">
                 <h4 class="card-title">BON DE COMMANDE</h4>
                 <h4 class="card-description text-small mb-2">Numero : <span
-                        class="text-black">BOC0001</span></h4>
-                <h4 class="card-description text-small">10-10-2023</h4>
+                        class="text-black">BOC____</span></h4>
+                <h4 class="card-description text-small"><%= proforma.getDate() %></h4>
                 <div class="row mt-3">
                     <div class="col-md-7">
                         <dl class="row">

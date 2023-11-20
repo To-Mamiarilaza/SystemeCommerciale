@@ -4,16 +4,21 @@
  */
 package servlet.purchase;
 
+import connection.DBConnection;
 import java.io.IOException;
-import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 import model.base.Utilisateur;
+import model.purchase.Proforma;
+import model.supplier.Supplier;
+import service.proforma.ProformaService;
+import service.proforma.SupplierService;
 
 /**
  *
@@ -50,6 +55,16 @@ public class ProformaDetailServlet extends HttpServlet {
                 response.sendRedirect("./login");
             }
             request.setAttribute("utilisateur", utilisateur);
+            
+            // All required information
+            Connection connection = DBConnection.getConnection();
+            
+            String idSupplier = request.getParameter("idSupplier");
+            Proforma proforma = ProformaService.getProforma(idSupplier, connection);
+            SupplierService.loadSupplierOwnedCategory(proforma.getSupplier(), connection);
+            request.setAttribute("proforma", proforma);
+            
+            connection.close();
             
             // All required assets
             List<String> css = new ArrayList<>();

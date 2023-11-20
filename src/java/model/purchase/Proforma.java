@@ -7,6 +7,7 @@ package model.purchase;
 import java.time.LocalDate;
 import java.util.List;
 import model.supplier.Supplier;
+import service.util.DisplayUtil;
 
 /**
  *
@@ -42,6 +43,10 @@ public class Proforma {
     public double getTotalTVA() {
         return totalTVA;
     }
+    
+    public String getTotalTVAString() {
+        return DisplayUtil.formatMoney(getTotalTVA(), "AR");
+    }
 
     public void setTotalTVA(double totalTVA) {
         this.totalTVA = totalTVA;
@@ -50,6 +55,10 @@ public class Proforma {
     public double getTotalHT() {
         return totalHT;
     }
+    
+    public String getTotalHTString() {
+        return DisplayUtil.formatMoney(getTotalHT(), "AR");
+    }
 
     public void setTotalHT(double totalHT) {
         this.totalHT = totalHT;
@@ -57,6 +66,14 @@ public class Proforma {
 
     public double getTotalTTC() {
         return totalTTC;
+    }
+    
+    public String getTotalTTCString() {
+        return DisplayUtil.formatMoney(getTotalTTC(), "AR");
+    }
+    
+    public String getTotalTTCToLetter() {
+        return DisplayUtil.toLetter((int) getTotalTTC()).toUpperCase();
     }
 
     public void setTotalTTC(double totalTTC) {
@@ -72,6 +89,9 @@ public class Proforma {
     }
     
     // Constructor
+
+    public Proforma() {
+    }
 
     public Proforma(LocalDate date, Supplier supplier, double totalTVA, double totalHT, double totalTTC, List<InvoiceLineItem> invoiceLineItems) {
         this.date = date;

@@ -11,6 +11,7 @@ import generalisation.utils.GenericUtil;
 import java.time.LocalDate;
 import model.article.Article;
 import model.supplier.Supplier;
+import service.util.DisplayUtil;
 
 /**
  *
@@ -77,13 +78,25 @@ public class SupplierArticlePrice {
     public double getUnitPrice() {
         return unitPrice;
     }
+    
+    public String getUnitPriceString() {
+        return DisplayUtil.formatMoney(getUnitPrice(), "AR");
+    }
 
     public void setUnitPrice(double unitPrice) {
         this.unitPrice = unitPrice;
     }
 
-    public boolean isChosen() {
+    public boolean getChosen() {
         return chosen;
+    }
+    
+    public String getChosenCheckedStatus() {
+        if (getChosen()) {
+            return "checked";
+        } else {
+            return "";
+        }
     }
 
     public void setChosen(boolean chosen) {
@@ -121,10 +134,4 @@ public class SupplierArticlePrice {
         this.chosen = chosen;
         this.status = status;
     }
-    
-    // Main
-    public static void main(String[] args) throws Exception {
-        GenericUtil.detailList(GenericDAO.getAll(SupplierArticlePrice.class, null, null));
-    }
-    
 }

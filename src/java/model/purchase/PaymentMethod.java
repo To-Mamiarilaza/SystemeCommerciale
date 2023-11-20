@@ -17,27 +17,27 @@ import generalisation.utils.GenericUtil;
 public class PaymentMethod {
     // Field
     @DBField(name = "id_payment_method")
-    int id_payment_method;
+    int idPaymentMethod;
     
     @DBField(name = "payment_method_name")
-    String payment_method_name;
+    String paymentMethodName;
     
     // Getter and Setter
 
-    public int getId_payment_method() {
-        return id_payment_method;
+    public int getIdPaymentMethod() {
+        return idPaymentMethod;
     }
 
-    public void setId_payment_method(int id_payment_method) {
-        this.id_payment_method = id_payment_method;
+    public void setIdPaymentMethod(int idPaymentMethod) {
+        this.idPaymentMethod = idPaymentMethod;
     }
 
-    public String getPayment_method_name() {
-        return payment_method_name;
+    public String getPaymentMethodName() {
+        return paymentMethodName;
     }
 
-    public void setPayment_method_name(String payment_method_name) {
-        this.payment_method_name = payment_method_name;
+    public void setPaymentMethodName(String paymentMethodName) {
+        this.paymentMethodName = paymentMethodName;
     }
     
     // Constructor
@@ -45,12 +45,13 @@ public class PaymentMethod {
     public PaymentMethod() {
     }
 
-    public PaymentMethod(String payment_method_name) {
-        this.payment_method_name = payment_method_name;
+    public PaymentMethod(int idPaymentMethod, String paymentMethodName) {
+        this.idPaymentMethod = idPaymentMethod;
+        this.paymentMethodName = paymentMethodName;
     }
 
-    public PaymentMethod(int id_payment_method, String payment_method_name) {
-        this.id_payment_method = id_payment_method;
-        this.payment_method_name = payment_method_name;
+    public PaymentMethod(String paymentMethodName) {
+        this.paymentMethodName = paymentMethodName;
     }
+    
 }

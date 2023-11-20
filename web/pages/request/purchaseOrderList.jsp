@@ -1,3 +1,8 @@
+<%@ page contentType="text/html; charset=UTF-8" %>
+<%@page import="model.purchase.*, model.article.*, model.base.*, model.supplier.Supplier, java.util.List" %>
+<% 
+    List<Proforma> proformas = (List<Proforma>) request.getAttribute("proformas");
+%>
 
 <div class="page-header">
     <h3 class="page-title">
@@ -107,24 +112,14 @@
 
                             </thead>
                             <tbody>
+                                <% for(Proforma proforma : proformas) { %>
                                 <tr>
                                     <td><i class="mdi mdi-arrow-right-bold"></i></td>
-                                    <td>Leader price</td>
-                                    <td class="text-warning">25 000 AR</td>
-                                    <td><a href="./proforma-detail" class="no-style-link">Voir plus</a></td>
+                                    <td><%= proforma.getSupplier().getSupplierName() %></td>
+                                    <td class="text-warning text-right"><%= proforma.getTotalTTCString() %></td>
+                                    <td><a href="./proforma-detail?idSupplier=<%= proforma.getSupplier().getIdSupplier() %>" class="no-style-link">Voir plus</a></td>
                                 </tr>
-                                <tr>
-                                    <td><i class="mdi mdi-arrow-right-bold"></i></td>
-                                    <td>Jumbo score</td>
-                                    <td class="text-warning">30 000 AR</td>
-                                    <td><a href="./proforma-detail" class="no-style-link">Voir plus</a></td>
-                                </tr>
-                                <tr>
-                                    <td><i class="mdi mdi-arrow-right-bold"></i></td>
-                                    <td>Jumbo score</td>
-                                    <td class="text-warning">30 000 AR</td>
-                                    <td><a href="./proforma-detail" class="no-style-link">Voir plus</a></td>
-                                </tr>
+                                <% } %>
                             </tbody>
                         </table>
                     </div>
