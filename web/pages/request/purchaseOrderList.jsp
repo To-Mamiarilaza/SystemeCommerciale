@@ -2,6 +2,7 @@
 <%@page import="model.purchase.*, model.article.*, model.base.*, model.supplier.Supplier, java.util.List" %>
 <% 
     List<Proforma> proformas = (List<Proforma>) request.getAttribute("proformas");
+    List<PurchaseOrder> purchaseList = (List<PurchaseOrder>) request.getAttribute("purchaseList");
 %>
 
 <div class="page-header">
@@ -33,7 +34,7 @@
                             </div>
                             <div>
                                 <input type="submit" class="mx-2 mt-3 btn btn-gradient-primary"
-                                    value="Chercher">
+                                       value="Chercher">
                             </div>
                         </div>
                     </form>
@@ -46,65 +47,35 @@
                                     <th> ID </th>
                                     <th> Date </th>
                                     <th> Fournisseur </th>
-                                    <th> Contact </th>
                                     <th> Livraison </th>
                                     <th> Montant </th>
+                                    <th> Etat </th>
                                     <th></th>
                                 </tr>
                             </thead>
                             <tbody>
+                                <% for(PurchaseOrder purchase : purchaseList) { %>
                                 <tr>
-                                    <td>BOC0001</td>
-                                    <td>01-01-2023</td>
-                                    <td>Leader Price</td>
-                                    <td>+261 34 12 532 12</td>
+                                    <td><%= purchase.getIdPurchaseOrder() %></td>
+                                    <td><%= purchase.getDate() %></td>
+                                    <td><%= purchase.getSupplier().getSupplierName() %></td>
                                     <td>
-                                        12-01-2023
+                                        <%= purchase.getDeliveryDate() %>
                                     </td>
                                     <td>
-                                        2 000 000 AR
+                                        <%= purchase.getTotalTTCString() %>
                                     </td>
+                                    <td><label class="badge badge-gradient-<%= purchase.getStatusClass() %>"><%= purchase.getStatusLabel() %></label></td>
                                     <td>
-                                        <a href="./purchase-order-detail"><i
+                                        <a href="./purchase-order-detail?idPurchaseOrder=<%= purchase.getIdPurchaseOrder() %>"><i
                                                 class="mdi mdi-clipboard-text action-icon"></i></a>
                                     </td>
                                 </tr>
-                                <tr>
-                                    <td>BOC0001</td>
-                                    <td>01-01-2023</td>
-                                    <td>Leader Price</td>
-                                    <td>+261 34 12 532 12</td>
-                                    <td>
-                                        12-01-2023
-                                    </td>
-                                    <td>
-                                        2 000 000 AR
-                                    </td>
-                                    <td>
-                                        <a href="./purchase-order-detail"><i
-                                                class="mdi mdi-clipboard-text action-icon"></i></a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>BOC0001</td>
-                                    <td>01-01-2023</td>
-                                    <td>Leader Price</td>
-                                    <td>+261 34 12 532 12</td>
-                                    <td>
-                                        12-01-2023
-                                    </td>
-                                    <td>
-                                        2 000 000 AR
-                                    </td>
-                                    <td>
-                                        <a href="./purchase-order-detail"><i
-                                                class="mdi mdi-clipboard-text action-icon"></i></a>
-                                    </td>
-                                </tr>
+                                <% } %>
                             </tbody>
                         </table>
                     </div>
-                    <div class="mt-3 col-md-4 px-5">
+                    <div class="mt-3 col-md-4 px-3">
                         <h4>Listes des proformas disponible</h4>
                         <hr>
                         <table class="table table-no-border">

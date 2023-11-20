@@ -101,7 +101,7 @@
         <div class="card">
             <div class="card-body">
                 <h4 class="card-title">BON DE COMMANDE</h4>
-                <h4 class="card-description text-small mb-2">Numero : <span class="text-black">BOC</span></h4>
+                <h4 class="card-description text-small mb-2">Numero : </h4>
                 <h4 class="card-description text-small"><%= proforma.getDate() %></h4>
                 <div class="row mt-3">
                     <div class="col-md-7">
@@ -129,7 +129,7 @@
                                 <div class="col-sm-6 px-0">
                                     <div class="form-group">
                                         <label for="">Date de livraison</label>
-                                        <input type="number"
+                                        <input type="number" id="deliveryDate"
                                             class="mt-1 form-control form-control-sm"
                                             placeholder="jour apres">
                                     </div>
@@ -137,7 +137,7 @@
                                 <div class="col-sm-6">
                                     <div class="form-group">
                                         <label for="">Mode de payement</label>
-                                        <select name="" class="mt-1 form-control form-control-sm"
+                                        <select name="" id="paymentMethod" class="mt-1 form-control form-control-sm"
                                             id="">
                                             <% for(PaymentMethod paymentMethod : paymentMethods) { %>
                                             <option value="<%= paymentMethod.getIdPaymentMethod() %>"><%= paymentMethod.getPaymentMethodName() %></option>
@@ -166,21 +166,21 @@
                                 <div class="col-sm-4 px-0">
                                     <div class="form-group mb-0">
                                         <label for="">Part en %</label>
-                                        <input type="number"
+                                        <input type="number" id="part"
                                             class="mt-1 form-control form-control-sm"
-                                            placeholder="30">
+                                            placeholder="30" min="0">
                                     </div>
                                 </div>
                                 <div class="offset-sm-1 col-sm-4 px-0">
                                     <div class="form-group mb-0">
                                         <label for="">Jour apres</label>
-                                        <input type="number"
+                                        <input type="number" id="nbJour"
                                             class="mt-1 form-control form-control-sm"
-                                            placeholder="10">
+                                            placeholder="10" min="0">
                                     </div>
                                 </div>
                                 <div class="col-sm-3">
-                                    <input type="button" class="btn btn-gradient-danger"
+                                    <input type="button" onclick="addNewPaymentMethod()" class="btn btn-gradient-danger"
                                         value="Ajouter">
                                 </div>
                             </div>
@@ -188,15 +188,8 @@
                         <div class="mt-3">
                             <table class="table table-no-border">
                                 <thead></thead>
-                                <tbody>
-                                    <tr>
-                                        <td><i class="mdi mdi-arrow-right-bold"></i></td>
-                                        <td class="px-0">30 %</td>
-                                        <td class="px-0"><strong><span class="me-3">10</span>
-                                                jour</strong></td>
-                                        <td class="px-0"><a href="" class="text-danger"><i
-                                                    class="mdi mdi-close"></i></a></td>
-                                    </tr>
+                                <tbody id="paymentMethodList">
+                                    
                                 </tbody>
                             </table>
                         </div>
@@ -245,8 +238,8 @@
                     <p><strong>Arrete le present bon de commande a la somme de :</strong> <br> <span><%= proforma.getTotalTTCToLetter() %> ARIARY</span></p>
                 </div>
                 <div class="mt-3">
-                    <a href=""
-                        class="btn btn-gradient-primary me-5">Confirmer le bon de commande</a>
+                    <a type="button" onclick="savePurchaseOrder(<%= proforma.getSupplier().getIdSupplier() %>)"
+                        class="btn btn-gradient-primary me-5">Valider</a>
                     <a href="./proforma-detail" class="btn btn-light">Cancel</a>
                 </div>
             </div>

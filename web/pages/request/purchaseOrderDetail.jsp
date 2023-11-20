@@ -1,3 +1,10 @@
+<%@ page contentType="text/html; charset=UTF-8" %>
+<%@page import="model.purchase.*, model.article.*, model.base.*, model.supplier.Supplier, java.util.List" %>
+<% 
+    Utilisateur utilisateur = (Utilisateur) request.getAttribute("utilisateur");
+    PurchaseOrder purchaseOrder = (PurchaseOrder) request.getAttribute("purchaseOrder");
+%>
+
 <div class="page-header">
     <h3 class="page-title">
         <span class="page-title-icon bg-gradient-primary text-white me-2">
@@ -20,38 +27,38 @@
             <div class="card-body">
                 <h4 class="card-title">BON DE COMMANDE</h4>
                 <h4 class="card-description text-small mb-2">Numero : <span
-                        class="text-black">BOC____</span></h4>
-                <h4 class="card-description text-small"><%= proforma.getDate() %></h4>
+                        class="text-black"><%= purchaseOrder.getIdPurchaseOrder() %></span></h4>
+                <h4 class="card-description text-small">Aujourd'hui</h4>
                 <div class="row mt-3">
                     <div class="col-md-7">
                         <dl class="row">
                             <dt class="col-sm-6 px-0">Nom du fournisseur</dt>
                             <dd class="col-sm-6 px-0">
-                                Leader Price
+                                <%= purchaseOrder.getSupplier().getSupplierName() %>
                             </dd>
 
                             <dt class="col-sm-6 px-0">Contact du responsable</dt>
                             <dd class="col-sm-6 px-0">
-                                +261 235 123 212
+                                <%= purchaseOrder.getSupplier().getResponsableContact() %>
                             </dd>
 
                             <dt class="col-sm-6 px-0">Mail</dt>
                             <dd class="col-sm-6 px-0">
-                                fournisseur@example.com
+                                <%= purchaseOrder.getSupplier().getMail() %>
                             </dd>
 
                             <dt class="col-sm-6 px-0">Adresse</dt>
                             <dd class="col-sm-6 px-0">
-                                Tanjombato
+                                <%= purchaseOrder.getSupplier().getSupplierAddress() %>
                             </dd>
 
                             <dt class="col-sm-6 px-0 mt-4">Date de livraison</dt>
                             <dd class="col-sm-6 px-0 mt-4">
-                                <strong>10-10-2023</strong>
+                                <strong><%= purchaseOrder.getDeliveryDate() %></strong>
                             </dd>
                             <dt class="col-sm-6 px-0">Mode de paiement</dt>
                             <dd class="col-sm-6 px-0">
-                                Cheque bancaire
+                                <%= purchaseOrder.getPaymentMethod().getPaymentMethodName() %>
                             </dd>
                         </dl>
                     </div>
@@ -60,9 +67,9 @@
                         <p class="quantity-detail mt-0 text-info"><strong>Categories de produits
                                 vendues</strong></p>
                         <ul>
-                            <li>Produits premier necessite</li>
-                            <li>Produits agricole</li>
-                            <li>Produits hygienique</li>
+                            <% for(Category category : purchaseOrder.getSupplier().getOwnedCategoryList()) { %>
+                            <li><%= category.getDesignation() %></li>
+                                <% } %>
                         </ul>
                     </div>
 
@@ -72,16 +79,13 @@
                             <table class="table table-no-border">
                                 <thead></thead>
                                 <tbody>
+                                    <% for(PaymentCondition paymentCondition : purchaseOrder.getPaymentConditions()) { %>
                                     <tr class="py-1">
                                         <td><i class="mdi text-info mdi-arrow-right-bold"></i></td>
-                                        <td class="px-0">30 %</td>
-                                        <td class="px-0"><strong><span class="me-3">15-10-2023</span></strong></td>
+                                        <td class="px-0"><%= paymentCondition.getPercentage() %> %</td>
+                                        <td class="px-0"><strong><span class="me-3"><%= paymentCondition.getPaymentDate() %></span></strong></td>
                                     </tr>
-                                    <tr class="py-1">
-                                        <td><i class="mdi text-info mdi-arrow-right-bold"></i></td>
-                                        <td class="px-0">70 %</td>
-                                        <td class="px-0"><strong><span class="me-3">15-10-2023</span></strong></td>
-                                    </tr>
+                                    <% } %>
                                 </tbody>
                             </table>
                         </div>
@@ -101,42 +105,17 @@
                         </tr>
                     </thead>
                     <tbody>
+                        <% for(InvoiceLineItem lineItem : purchaseOrder.getLineItems()) { %>
                         <tr>
-                            <td>Stylo</td>
-                            <td>200 AR</td>
-                            <td>30</td>
-                            <td>20 %</td>
-                            <td class="text-right">4200 AR</td>
-                            <td class="text-right">4000 AR</td>
-                            <td class="text-right">4200 AR</td>
-                            <td class="text-right"><a href="" data-bs-toggle="modal"
-                                    data-bs-target="#exampleModal"><i
-                                        class="mdi mdi-settings action-icon"></i></a></td>
+                            <td><%= lineItem.getArticle().getDesignation() %></td>
+                            <td><%= lineItem.getUnitPriceString() %></td>
+                            <td><%= lineItem.getQuantity() %></td>
+                            <td><%= lineItem.getTva() %> %</td>
+                            <td class="text-right"><%= lineItem.getTVAAmountString() %></td>
+                            <td class="text-right"><%= lineItem.getHTAmountString() %></td>
+                            <td class="text-right"><%= lineItem.getTTCAmountString() %></td>
                         </tr>
-                        <tr>
-                            <td>Stylo</td>
-                            <td>200 AR</td>
-                            <td>30</td>
-                            <td>20 %</td>
-                            <td class="text-right">4200 AR</td>
-                            <td class="text-right">4000 AR</td>
-                            <td class="text-right">4200 AR</td>
-                            <td class="text-right"><a href="" data-bs-toggle="modal"
-                                    data-bs-target="#exampleModal"><i
-                                        class="mdi mdi-settings action-icon"></i></a></td>
-                        </tr>
-                        <tr>
-                            <td>Stylo</td>
-                            <td>200 AR</td>
-                            <td>30</td>
-                            <td>20 %</td>
-                            <td class="text-right">4200 AR</td>
-                            <td class="text-right">4000 AR</td>
-                            <td class="text-right">4200 AR</td>
-                            <td class="text-right"><a href="" data-bs-toggle="modal"
-                                    data-bs-target="#exampleModal"><i
-                                        class="mdi mdi-settings action-icon"></i></a></td>
-                        </tr>
+                        <% } %>
 
                         <!-- TOTAL ROW -->
 
@@ -145,19 +124,23 @@
                             <td></td>
                             <td></td>
                             <td class="text-right">TOTAL</td>
-                            <td class="text-right text-success">250 000 AR</td>
-                            <td class="text-right text-success">4 000 000 AR</td>
-                            <td class="text-right text-success">4 000 000 AR</td>
+                            <td class="text-right text-success"><%= purchaseOrder.getTotalTVAString() %></td>
+                            <td class="text-right text-success"><%= purchaseOrder.getTotalHTString() %></td>
+                            <td class="text-right text-success"><%= purchaseOrder.getTotalTTCString() %></td>
                             <td></td>
                         </tr>
                     </tbody>
                 </table>
                 <div class="mt-4">
-                    <p><strong>Arrete le present proforma a la somme de :</strong> <br> <span>Trois
-                            cent deux mille neux cent ARIARY</span></p>
+                    <p><strong>Arrete le present proforma a la somme de :</strong> <br> <span><%= purchaseOrder.getTotalTTCLetter() %> ARIARY</span></p>
                 </div>
                 <div class="mt-3">
-                    <a href="../../proforma-detail" class="btn btn-light">Cancel</a>
+                    <% if(purchaseOrder.getStatus() == 1 && utilisateur.getIsAdmin() == true) { %>
+                    <a href="./purchase-order-validation?idPurchaseOrder=<%= purchaseOrder.getIdPurchaseOrder() %>&status=2" class="btn btn-gradient-danger px-5 me-2">Valide</a>
+                    <a href="./purchase-order-validation?idPurchaseOrder=<%= purchaseOrder.getIdPurchaseOrder() %>&status=0" class="btn btn-gradient-success px-5 me-2">Refuse</a>
+                    <br>
+                    <% } %>
+                    <a href="./purchase-order-list" class="btn btn-light mt-3">Cancel</a>
                 </div>
             </div>
         </div>

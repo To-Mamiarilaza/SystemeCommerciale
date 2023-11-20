@@ -5,6 +5,8 @@
 package servlet.purchase;
 
 import connection.DBConnection;
+import generalisation.GenericDAO.GenericDAO;
+import generalisation.utils.GenericUtil;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -13,11 +15,14 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.sql.Connection;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import model.base.Utilisateur;
 import model.purchase.PaymentMethod;
 import model.purchase.Proforma;
+import model.purchase.PurchaseOrder;
+import model.supplier.Supplier;
 import service.proforma.ProformaService;
 import service.proforma.SupplierService;
 
@@ -73,6 +78,9 @@ public class PurchaseOrderInsertion extends HttpServlet {
             }
             request.setAttribute("utilisateur", utilisateur);
             
+            PurchaseOrder purchaseOrder = new PurchaseOrder();
+            request.getSession().setAttribute("purchaseOrder", purchaseOrder);
+            
             // All required information
             Connection connection = DBConnection.getConnection();
             
@@ -91,6 +99,8 @@ public class PurchaseOrderInsertion extends HttpServlet {
             css.add("assets/css/supplier/supplier.css");
             
             List<String> js = new ArrayList<>();
+            js.add("./assets/js/purchase/payment-method.js");
+            js.add("./assets/js/purchase/purchase-order-save.js");
             
             request.setAttribute("css", css);
             request.setAttribute("js", js);
@@ -116,7 +126,41 @@ public class PurchaseOrderInsertion extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        PrintWriter out = response.getWriter();
+        try {
+            int nbJourDelivery = Integer.valueOf(request.getParameter("nbJourDelivery"));
+            int idSupplier = Integer.valueOf(request.getParameter("idSupplier"));
+            int idPaymentMethod = Integer.valueOf(request.getParameter("idPaymentMethod"));
+            
+            Connection connection = DBConnection.getConnection();
+            
+            Supplier supplier = GenericDAO.findById(Supplier.class, idSupplier, connection);
+            PaymentMethod paymentMethod = GenericDAO.findById(PaymentMethod.class, idPaymentMethod, connection);
+            LocalDate deliveryDate = LocalDate.now().plusDays(nbJourDelivery);
+            
+            Proforma proforma = ProformaService.getProforma(supplier, connection);
+            
+            PurchaseOrder purchaseOrder = (PurchaseOrder) request.getSession().getAttribute("purchaseOrder");
+            purchaseOrder.setDate(LocalDate.now());
+            purchaseOrder.setSupplier(supplier);
+            purchaseOrder.setPaymentMethod(paymentMethod);
+            purchaseOrder.setDeliveryDate(deliveryDate);
+            purchaseOrder.setTotalTVA(proforma.getTotalTVA());
+            purchaseOrder.setTotalHT(proforma.getTotalHT());
+            purchaseOrder.setTotalTTC(proforma.getTotalTTC());
+            purchaseOrder.setStatus(1);     // En attente de validation
+            purchaseOrder.setLineItems(proforma.getInvoiceLineItems());
+            
+            ProformaService.savePurchaseOrder(purchaseOrder, connection);
+            
+            connection.commit();
+            connection.close();
+            
+            out.print("{\"success\": \"success\"}");
+        } catch (Exception e) {
+            e.printStackTrace();
+            out.print("{\"error\": \"" + e.getMessage() + "\"}");
+        }
     }
 
     /**

@@ -2,10 +2,8 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package servlet.article;
+package servlet.purchase;
 
-import generalisation.GenericDAO.GenericDAO;
-import jakarta.servlet.RequestDispatcher;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -13,15 +11,14 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import model.article.Article;
-import model.base.Utilisateur;
+import model.purchase.PurchaseOrder;
 
 /**
  *
- * @author chalman
+ * @author To Mamiarilaza
  */
-@WebServlet(name = "DeleteArticleServlet", urlPatterns = {"/DeleteArticle"})
-public class DeleteArticleServlet extends HttpServlet {
+@WebServlet(name = "PaymentConditionServlet", urlPatterns = {"/payment-condition"})
+public class PaymentConditionServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -40,10 +37,10 @@ public class DeleteArticleServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet DeleteArticleServlet</title>");            
+            out.println("<title>Servlet PaymentConditionServlet</title>");            
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet DeleteArticleServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet PaymentConditionServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -61,23 +58,7 @@ public class DeleteArticleServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        try {
-            Utilisateur utilisateur = (Utilisateur) request.getSession().getAttribute("utilisateur");
-            if (utilisateur == null) {
-                response.sendRedirect("./login");
-            }
-            request.setAttribute("utilisateur", utilisateur);
-            
-            String idArticle = request.getParameter("idArticle");
-            Article article = GenericDAO.findById(Article.class, Integer.valueOf(idArticle), null);
-            article.setStatus(0);
-            GenericDAO.updateById(article, Integer.valueOf(idArticle), null);
-        } catch(Exception e) {
-            request.setAttribute("error", e.getMessage());
-            e.printStackTrace();
-        }
-        RequestDispatcher dispat = request.getRequestDispatcher("./all-article");
-        dispat.forward(request, response);
+        System.out.println("OK, on arrive");
     }
 
     /**
@@ -91,7 +72,25 @@ public class DeleteArticleServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        PrintWriter out = response.getWriter();
+        try {
+            PurchaseOrder purchaseOrder = (PurchaseOrder) request.getSession().getAttribute("purchaseOrder");
+            
+            String part = request.getParameter("part");
+            String nbJour = request.getParameter("nbJour");
+            String action = request.getParameter("action");
+            
+            if (action.equals("add")) {
+                purchaseOrder.addPaymentCondition(part, nbJour);
+            } else {
+                purchaseOrder.removePaymentCondition(part, nbJour);
+            }
+            
+            out.print("{\"success\": \"success\"}");
+        } catch (Exception e) {
+            e.printStackTrace();
+            out.print("{\"error\": \"" + e.getMessage() + "\"}");
+        }
     }
 
     /**

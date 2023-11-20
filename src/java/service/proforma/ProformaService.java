@@ -9,13 +9,18 @@ import generalisation.GenericDAO.GenericDAO;
 import java.sql.Connection;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import model.article.Article;
 import model.purchase.ArticleQuantity;
 import model.purchase.ArticleRequest;
 import model.purchase.InvoiceLineItem;
+import model.purchase.PaymentCondition;
 import model.purchase.PaymentMethod;
 import model.purchase.Proforma;
+import model.purchase.PurchaseOrder;
+import model.purchase.PurchaseOrderLineItem;
 import model.purchase.SupplierArticlePrice;
 import model.supplier.Supplier;
 
@@ -25,6 +30,42 @@ import model.supplier.Supplier;
  */
 public class ProformaService {
     // A class who provide all required method for proforma managing
+    
+    // save a purchase order to the database
+    public static void savePurchaseOrder(PurchaseOrder purchaseOrder, Connection connection) throws Exception {
+        // Save the main purchaseOrder
+        GenericDAO.save(purchaseOrder, connection);
+        
+        // Insert all payment condition
+        for (PaymentCondition paymentCondition : purchaseOrder.getPaymentConditions()) {
+            paymentCondition.setIdPurchaseOrder(purchaseOrder.getIdPurchaseOrder());
+            GenericDAO.save(paymentCondition, connection);
+        }
+        
+        // Save all line
+        for (InvoiceLineItem lineItem : purchaseOrder.getLineItems()) {
+            PurchaseOrderLineItem poLineItem = new PurchaseOrderLineItem(purchaseOrder.getIdPurchaseOrder(), lineItem);
+            GenericDAO.save(poLineItem, connection);
+            
+            
+            
+            // Update all concerned article quantity line to 2
+            List<ArticleQuantity> articleQuantityList = getRequestQuantityDetail(poLineItem.getArticle(), connection);
+            for (ArticleQuantity articleQuantity : articleQuantityList) {
+                articleQuantity.setStatus(2);   // Article quantity deja traité
+                double articleAmount = (lineItem.getUnitPrice() * articleQuantity.getQuantity()) * (1 + (articleQuantity.getArticle().getTva() / 100));
+                articleQuantity.setAmount(articleAmount);
+                articleQuantity.setIdPurchaseOrder(purchaseOrder.getIdPurchaseOrder());
+                GenericDAO.updateById(articleQuantity, articleQuantity.getIdArticleQuantity(), connection);
+            }
+            
+            // Unchosen supplier 
+            String query = "UPDATE supplier_article_price SET chosen = false WHERE id_article = " + poLineItem.getArticle().getIdArticle();
+            GenericDAO.directUpdate(query, connection);
+            
+        }
+        
+    }
     
     // get all payment method
     public static List<PaymentMethod> getAllPaymentMehod(Connection connection) throws Exception {

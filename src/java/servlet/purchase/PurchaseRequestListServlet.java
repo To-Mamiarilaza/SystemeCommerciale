@@ -48,11 +48,18 @@ public class PurchaseRequestListServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
-           if(request.getAttribute("purchaseRequestsFilter") != null) {
+            Utilisateur utilisateur = (Utilisateur) request.getSession().getAttribute("utilisateur");
+            if (utilisateur == null) {
+                response.sendRedirect("./login");
+            }
+            request.setAttribute("utilisateur", utilisateur);
+            
+            if(request.getAttribute("purchaseRequestsFilter") != null) {
                 request.setAttribute("purchaseRequests", request.getAttribute("purchaseRequestsFilter"));
             } else {
                 //List des demandes
-                List<PurchaseRequest> purchaseRequests = (List<PurchaseRequest>) GenericDAO.getAll(PurchaseRequest.class, null, null);
+                String whereClause = "WHERE id_service = " + utilisateur.getService().getIdService();
+                List<PurchaseRequest> purchaseRequests = (List<PurchaseRequest>) GenericDAO.getAll(PurchaseRequest.class, whereClause, null);
                 request.setAttribute("purchaseRequests", purchaseRequests);
             }
             
@@ -61,11 +68,6 @@ public class PurchaseRequestListServlet extends HttpServlet {
             List<Service> services = (List<Service>) GenericDAO.getAll(Service.class, null, null);
             request.setAttribute("services", services);
             
-            Utilisateur utilisateur = (Utilisateur) request.getSession().getAttribute("utilisateur");
-            if (utilisateur == null) {
-                response.sendRedirect("./login");
-            }
-            request.setAttribute("utilisateur", utilisateur);
             
             // All required assets
             List<String> css = new ArrayList<>();

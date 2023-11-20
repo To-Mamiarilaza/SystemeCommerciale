@@ -16,13 +16,13 @@ import generalisation.utils.GenericUtil;
 @DBTable(name = "payment_method", sequenceName = "seq_payment_method")
 public class PaymentMethod {
     // Field
-    @DBField(name = "id_payment_method")
+    @DBField(name = "id_payment_method", isPrimaryKey = true)
     int idPaymentMethod;
     
     @DBField(name = "payment_method_name")
     String paymentMethodName;
     
-    // Getter and Setter
+    // Getter and setter
 
     public int getIdPaymentMethod() {
         return idPaymentMethod;
@@ -45,13 +45,12 @@ public class PaymentMethod {
     public PaymentMethod() {
     }
 
+    public PaymentMethod(String paymentMethodName) {
+        this.paymentMethodName = paymentMethodName;
+    }
+
     public PaymentMethod(int idPaymentMethod, String paymentMethodName) {
         this.idPaymentMethod = idPaymentMethod;
         this.paymentMethodName = paymentMethodName;
     }
-
-    public PaymentMethod(String paymentMethodName) {
-        this.paymentMethodName = paymentMethodName;
-    }
-    
 }

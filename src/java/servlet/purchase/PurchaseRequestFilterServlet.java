@@ -14,6 +14,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
+import model.base.Utilisateur;
 import model.purchase.PurchaseRequest;
 
 /**
@@ -76,12 +77,17 @@ public class PurchaseRequestFilterServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
+            Utilisateur utilisateur = (Utilisateur) request.getSession().getAttribute("utilisateur");
+            if (utilisateur == null) {
+                response.sendRedirect("./login");
+            }
+            request.setAttribute("utilisateur", utilisateur);
+            
             //Recevoir les requetes
-            String service = request.getParameter("service");
             String status = request.getParameter("status");
             
             //Trouver la liste de demande correspondant aux requetes
-            String sql = "SELECT * FROM purchase_request WHERE id_service="+service+" AND status="+status;
+            String sql = "SELECT * FROM purchase_request WHERE id_service="+ utilisateur.getService().getIdService() +" AND status="+status;
             List<PurchaseRequest> purchaseRequests = (List<PurchaseRequest>) GenericDAO.directQuery(PurchaseRequest.class, sql, null);
             request.setAttribute("purchaseRequestsFilter", purchaseRequests);
         } catch(Exception e) {

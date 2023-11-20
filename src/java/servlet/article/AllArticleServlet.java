@@ -15,6 +15,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 import model.article.Article;
+import model.base.Utilisateur;
 
 /**
  *
@@ -46,6 +47,12 @@ public class AllArticleServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
+            Utilisateur utilisateur = (Utilisateur) request.getSession().getAttribute("utilisateur");
+            if (utilisateur == null) {
+                response.sendRedirect("./login");
+            }
+            request.setAttribute("utilisateur", utilisateur);
+            
             //all article
              List<Article> articles = (List<Article>) GenericDAO.directQuery(Article.class, "SELECT * FROM article WHERE status = 1 ORDER BY id_article DESC", null);
             //List<Article> articles = GenericDAO.getAll(Article.class, null, null);

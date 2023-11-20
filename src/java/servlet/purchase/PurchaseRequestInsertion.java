@@ -103,6 +103,12 @@ public class PurchaseRequestInsertion extends HttpServlet {
             throws ServletException, IOException {
         PrintWriter out = response.getWriter();
         try {
+            Utilisateur utilisateur = (Utilisateur) request.getSession().getAttribute("utilisateur");
+            if (utilisateur == null) {
+                response.sendRedirect("./login");
+            }
+            request.setAttribute("utilisateur", utilisateur);
+            
             String title = request.getParameter("title");
             String description = request.getParameter("description");
             
@@ -112,10 +118,8 @@ public class PurchaseRequestInsertion extends HttpServlet {
             pr.setTitle(title);
             pr.setDescription(description);
             pr.setSendingDate(LocalDate.now());
-            Service service = GenericDAO.findById(Service.class, 1, null);
-            Utilisateur user = GenericDAO.findById(Utilisateur.class, 1, null);
-            pr.setService(service);
-            pr.setUtilisateur(user);
+            pr.setService(utilisateur.getService());
+            pr.setUtilisateur(utilisateur);
             pr.setStatus(1);
             pr.save(pr);
             session.removeAttribute("purchaseRequest");

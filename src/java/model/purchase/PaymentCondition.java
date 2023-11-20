@@ -20,6 +20,9 @@ public class PaymentCondition {
     @DBField(name = "id_payment_condition", isPrimaryKey = true)
     int idPaymentCondition;
     
+    @DBField(name = "id_purchase_order")
+    int idPurchaseOrder;
+    
     @DBField(name = "percentage")
     double percentage;
     
@@ -44,6 +47,14 @@ public class PaymentCondition {
         this.percentage = percentage;
     }
 
+    public int getIdPurchaseOrder() {
+        return idPurchaseOrder;
+    }
+
+    public void setIdPurchaseOrder(int idPurchaseOrder) {
+        this.idPurchaseOrder = idPurchaseOrder;
+    }
+    
     public LocalDate getPaymentDate() {
         return paymentDate;
     }
@@ -62,8 +73,15 @@ public class PaymentCondition {
         this.paymentDate = paymentDate;
     }
     
-    public PaymentCondition(int idPaymentCondition, double percentage, LocalDate paymentDate) {
+    public PaymentCondition(int idPurchaseOrder, double percentage, LocalDate paymentDate) {
+        this.idPurchaseOrder = idPurchaseOrder;
+        this.percentage = percentage;
+        this.paymentDate = paymentDate;
+    }
+
+    public PaymentCondition(int idPaymentCondition, int idPurchaseOrder, double percentage, LocalDate paymentDate) {
         this.idPaymentCondition = idPaymentCondition;
+        this.idPurchaseOrder = idPurchaseOrder;
         this.percentage = percentage;
         this.paymentDate = paymentDate;
     }
