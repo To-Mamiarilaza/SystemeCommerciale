@@ -4,7 +4,6 @@
  */
 package servlet.purchase;
 
-import connection.DBConnection;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -12,22 +11,14 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.sql.Connection;
-import java.util.ArrayList;
-import java.util.List;
-import model.article.Article;
-import model.base.Utilisateur;
-import model.purchase.ArticleRequest;
-import model.purchase.Proforma;
 import service.proforma.ArticlePriceService;
-import service.proforma.ProformaService;
 
 /**
  *
  * @author To Mamiarilaza
  */
-@WebServlet(name = "PurchaseOrderListServlet", urlPatterns = {"/purchase-order-list"})
-public class PurchaseOrderListServlet extends HttpServlet {
+@WebServlet(name = "SupplierArticlePriceManagementServlet", urlPatterns = {"/article-price-managing"})
+public class SupplierArticlePriceManagementServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -46,10 +37,10 @@ public class PurchaseOrderListServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet PurchaseOrderListServlet</title>");            
+            out.println("<title>Servlet SupplierArticlePriceManagementServlet</title>");            
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet PurchaseOrderListServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet SupplierArticlePriceManagementServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -68,34 +59,10 @@ public class PurchaseOrderListServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
-            Utilisateur utilisateur = (Utilisateur) request.getSession().getAttribute("utilisateur");
-            if (utilisateur == null) {
-                response.sendRedirect("./login");
-            }
-            request.setAttribute("utilisateur", utilisateur);
+            String idSupplierPriceArticle = request.getParameter("idSupplierPrice");
+            ArticlePriceService.deleteArticlePrice(idSupplierPriceArticle);
             
-            Connection connection = DBConnection.getConnection();
-            
-            // All required information
-            List<Proforma> proformas = ProformaService.getAllAvailableProforma(connection);
-            request.setAttribute("proformas", proformas);
-            
-            connection.close();
-            
-            // All required assets
-            List<String> css = new ArrayList<>();
-            css.add("assets/css/supplier/supplier.css");
-            
-            List<String> js = new ArrayList<>();
-            
-            request.setAttribute("css", css);
-            request.setAttribute("js", js);
-            
-            // Page definition
-            request.setAttribute("title", "Liste des bon de commande");
-            request.setAttribute("contentPage", "./pages/request/purchaseOrderList.jsp");
-            
-            request.getRequestDispatcher("./template.jsp").forward(request, response);
+            response.sendRedirect("./article-price-insertion");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -112,6 +79,17 @@ public class PurchaseOrderListServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        try {
+            String idArticle = request.getParameter("idArticle");
+            String idSupplier = request.getParameter("idSupplier");
+            String price = request.getParameter("price");
+            
+            ArticlePriceService.insertArticlePrice(idSupplier, idArticle, price);
+            
+            response.sendRedirect("./article-price-insertion");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**

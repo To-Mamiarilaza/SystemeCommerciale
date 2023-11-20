@@ -4,7 +4,6 @@
  */
 package servlet.purchase;
 
-import connection.DBConnection;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -12,22 +11,14 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.sql.Connection;
-import java.util.ArrayList;
-import java.util.List;
-import model.article.Article;
-import model.base.Utilisateur;
-import model.purchase.ArticleRequest;
-import model.purchase.Proforma;
 import service.proforma.ArticlePriceService;
-import service.proforma.ProformaService;
 
 /**
  *
  * @author To Mamiarilaza
  */
-@WebServlet(name = "PurchaseOrderListServlet", urlPatterns = {"/purchase-order-list"})
-public class PurchaseOrderListServlet extends HttpServlet {
+@WebServlet(name = "SupplierChoiceServlet", urlPatterns = {"/supplier-choice"})
+public class SupplierChoiceServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -46,10 +37,10 @@ public class PurchaseOrderListServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet PurchaseOrderListServlet</title>");            
+            out.println("<title>Servlet SupplierChoiceServlet</title>");            
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet PurchaseOrderListServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet SupplierChoiceServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -62,40 +53,19 @@ public class PurchaseOrderListServlet extends HttpServlet {
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @throws IOException if an I/O error oc   curs
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
-            Utilisateur utilisateur = (Utilisateur) request.getSession().getAttribute("utilisateur");
-            if (utilisateur == null) {
-                response.sendRedirect("./login");
-            }
-            request.setAttribute("utilisateur", utilisateur);
+            String idSupplierArticlePrice = request.getParameter("idSupplierArticlePrice");
+            String type = request.getParameter("checked");
             
-            Connection connection = DBConnection.getConnection();
+            boolean etat = type.equals("1") ? true : false;
+            ArticlePriceService.chooseSupplierForArticle(idSupplierArticlePrice, etat);
             
-            // All required information
-            List<Proforma> proformas = ProformaService.getAllAvailableProforma(connection);
-            request.setAttribute("proformas", proformas);
-            
-            connection.close();
-            
-            // All required assets
-            List<String> css = new ArrayList<>();
-            css.add("assets/css/supplier/supplier.css");
-            
-            List<String> js = new ArrayList<>();
-            
-            request.setAttribute("css", css);
-            request.setAttribute("js", js);
-            
-            // Page definition
-            request.setAttribute("title", "Liste des bon de commande");
-            request.setAttribute("contentPage", "./pages/request/purchaseOrderList.jsp");
-            
-            request.getRequestDispatcher("./template.jsp").forward(request, response);
+            response.sendRedirect("./article-price-insertion");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -112,6 +82,7 @@ public class PurchaseOrderListServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        processRequest(request, response);
     }
 
     /**
