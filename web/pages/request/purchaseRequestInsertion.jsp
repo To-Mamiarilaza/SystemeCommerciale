@@ -1,3 +1,5 @@
+<%@page import="java.util.List"%>
+<%@page import="model.article.Article"%>
 
 <div class="page-header">
     <h3 class="page-title">
@@ -21,7 +23,7 @@
             <div class="card-body">
                 <h4 class="card-title">Envoyer demande achat</h4>
                 <div class="mt-4">
-                    <form action="" method="POST">
+                    <form action="./purchase-request-insertion" method="POST">
                         <div class="form-group">
                             <label for="exampleInputUsername1">Titre du demande</label>
                             <input type="text" name="title" class="form-control" id="exampleInputUsername1"
@@ -34,47 +36,39 @@
                         <div class="row align-items-end">
                             <div class="form-group col-md-5">
                                 <label for="article">Article</label>
-                                <select name="article" class="form-control form-control-sm input-height mt-2" id="">
-                                    <option value="">Cache bouche</option>
-                                    <option value="">Ordinateur</option>
+                                <% if(request.getAttribute("articles") != null) { 
+                                    List<Article> articles = (List<Article>)request.getAttribute("articles"); %>
+                                <select name="article" class="form-control form-control-sm input-height mt-2" id="articleInput">
+                                    <% for(int i = 0; i < articles.size(); i++) { %>
+                                    <option value="<%=articles.get(i).getIdArticle() %>"><%=articles.get(i).getDesignation() %></option>
+                                    <% } %>
                                 </select>
+                                <% } %>
                             </div>
                             <div class="form-group col-md-3">
                                 <label for="article">Quantite</label>
-                                <input type="number" class="form-control mt-2" value="10"  name="quantite">
+                                <input type="number" class="form-control mt-2" value="10"  name="quantite" id="quantiteInput">
                             </div>
                             <div class="form-group col-md-3">
                                 <label for=""></label>
-                                <input type="button" class="btn btn-gradient-primary" value="Ajouter">
+                                <input type="button" onclick="addNewArticle()" class="btn btn-gradient-primary" value="Ajouter">
                             </div>
                         </div>
                         <div class="row mb-3">
                             <div class="col-md-8">
-                                <table class="table">
-                                    <thead>
-                                        <tr>
-                                        </tr>
-                                    </thead>
+                                <table class="table" id="articleList">
                                     <tbody>
-                                        <tr>
-                                            <td>ART0001</td>
-                                            <td>Cache bouche</td>
-                                            <td>20</td>
-                                            <td>Unite</td>
-                                            <td><a href="" class="action-icon text-danger"><i class="mdi mdi-delete"></i></a></td>
-                                        </tr>
-                                        <tr>
-                                            <td>ART0001</td>
-                                            <td>Cache bouche</td>
-                                            <td>20</td>
-                                            <td>Litre</td>
-                                            <td><a href="" class="action-icon text-danger"><i class="mdi mdi-delete"></i></a></td>
-                                        </tr>
+                                       
                                     </tbody>
+                                    <div class="loader">
+                                        <div class="dot"></div>
+                                        <div class="dot"></div>
+                                        <div class="dot"></div>
+                                    </div>
                                 </table>
                             </div>
                         </div>
-                        <p class="text-error"><i class="mdi mdi-information-outline"></i> Veillez remplir toutes les champs</p>
+                            <p class="text-error" id="addArticleError"></p>
                         <div class="mt-3">
                             <button type="submit"
                                 class="btn btn-gradient-primary px-5 me-2">Valider</button>
