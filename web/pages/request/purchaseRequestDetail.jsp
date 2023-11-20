@@ -27,7 +27,7 @@
                 <% if(request.getAttribute("purchaseRequest") != null) { 
                     PurchaseRequest purchaseRequest = (PurchaseRequest)request.getAttribute("purchaseRequest");
                 %>
-                <h6>Demande N° : REQ0001</h6>
+                <h6>Demande N° : Req00<%=purchaseRequest.getIdPurchaseRequest() %></h6>
                 <div class="mt-4">
                     <form action="./PurchaseRequestEdit" method="POST">
                         <div class="form-group">

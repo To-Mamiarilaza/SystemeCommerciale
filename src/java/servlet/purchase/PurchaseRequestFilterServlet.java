@@ -5,6 +5,7 @@
 package servlet.purchase;
 
 import generalisation.GenericDAO.GenericDAO;
+import jakarta.servlet.RequestDispatcher;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -12,17 +13,15 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
 import java.util.List;
-import model.base.Service;
 import model.purchase.PurchaseRequest;
 
 /**
  *
- * @author To Mamiarilaza
+ * @author chalman
  */
-@WebServlet(name = "PurchaseRequestListServlet", urlPatterns = {"/purchase-request-list"})
-public class PurchaseRequestListServlet extends HttpServlet {
+@WebServlet(name = "PurchaseRequestFilterServlet", urlPatterns = {"/PurchaseRequestFilter"})
+public class PurchaseRequestFilterServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -33,6 +32,22 @@ public class PurchaseRequestListServlet extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        response.setContentType("text/html;charset=UTF-8");
+        try (PrintWriter out = response.getWriter()) {
+            /* TODO output your page here. You may use following sample code. */
+            out.println("<!DOCTYPE html>");
+            out.println("<html>");
+            out.println("<head>");
+            out.println("<title>Servlet PurchaseRequestFilterServlet</title>");            
+            out.println("</head>");
+            out.println("<body>");
+            out.println("<h1>Servlet PurchaseRequestFilterServlet at " + request.getContextPath() + "</h1>");
+            out.println("</body>");
+            out.println("</html>");
+        }
+    }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
@@ -46,38 +61,7 @@ public class PurchaseRequestListServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        try {
-           if(request.getAttribute("purchaseRequestsFilter") != null) {
-                request.setAttribute("purchaseRequests", request.getAttribute("purchaseRequestsFilter"));
-            } else {
-                //List des demandes
-                List<PurchaseRequest> purchaseRequests = (List<PurchaseRequest>) GenericDAO.getAll(PurchaseRequest.class, null, null);
-                request.setAttribute("purchaseRequests", purchaseRequests);
-            }
-            
-            
-            //Liste des services
-            List<Service> services = (List<Service>) GenericDAO.getAll(Service.class, null, null);
-            request.setAttribute("services", services);
-            
-            
-            // All required assets
-            List<String> css = new ArrayList<>();
-            css.add("assets/css/supplier/supplier.css");
-            
-            List<String> js = new ArrayList<>();
-            
-            request.setAttribute("css", css);
-            request.setAttribute("js", js);
-            
-            // Page definition
-            request.setAttribute("title", "Listes des demandes");
-            request.setAttribute("contentPage", "./pages/request/purchaseRequestList.jsp");
-            
-            request.getRequestDispatcher("./template.jsp").forward(request, response);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+       
     }
 
     /**
@@ -91,7 +75,21 @@ public class PurchaseRequestListServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        doGet(request, response);
+        try {
+            //Recevoir les requetes
+            String service = request.getParameter("service");
+            String status = request.getParameter("status");
+            
+            //Trouver la liste de demande correspondant aux requetes
+            String sql = "SELECT * FROM purchase_request WHERE id_service="+service+" AND status="+status;
+            List<PurchaseRequest> purchaseRequests = (List<PurchaseRequest>) GenericDAO.directQuery(PurchaseRequest.class, sql, null);
+            request.setAttribute("purchaseRequestsFilter", purchaseRequests);
+        } catch(Exception e) {
+            request.setAttribute("error", e.getMessage());
+            e.printStackTrace();
+        }
+        RequestDispatcher dispat = request.getRequestDispatcher("./purchase-request-list");
+        dispat.forward(request, response);
     }
 
     /**

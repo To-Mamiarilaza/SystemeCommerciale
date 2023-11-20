@@ -1,5 +1,6 @@
 <%@page import="java.util.List"%>
 <%@page import="model.purchase.PurchaseRequest"%>
+<%@page import="model.base.Service"%>
 
 <div class="page-header">
     <h3 class="page-title">
@@ -22,23 +23,27 @@
             <div class="card-body">
                 <h4 class="card-title">Listes des demandes d'achat</h4>
                 <div class="mt-4 d-flex align-items-center justify-content-between">
-                    <form action="" method="POST">
+                    <form action="./PurchaseRequestFilter" method="POST">
                         <div class="input-groups d-flex align-items-center">
                             <div class="form-group me-4">
                                 <label for="">Service</label>
-                                <select name="" id=""
+                                <select name="service" id=""
                                     class="form-control form-control-sm px-5 mt-2">
-                                    <option value="">Informatique</option>
-                                    <option value="">Direction</option>
+                                    <% if(request.getAttribute("services") != null) { 
+                                    List<Service> services = (List<Service>)request.getAttribute("services");
+                                    for(int  i = 0; i < services.size(); i++) {
+                                    %>
+                                    <option value="<%=services.get(i).getIdService() %>"><%=services.get(i).getService() %></option>
+                                    <% } } %>
                                 </select>
                             </div>
                             <div class="form-group me-4">
                                 <label for="">Etat du demande</label>
-                                <select name="" id=""
+                                <select name="status" id=""
                                     class="form-control form-control-sm px-5 mt-2">
-                                    <option value="">Non traite</option>
-                                    <option value="">Valide</option>
-                                    <option value="">Refuse</option>
+                                    <option value="1">Non traite</option>
+                                    <option value="2">Valide</option>
+                                    <option value="0">Refuse</option>
                                 </select>
                             </div>
                             <div>
@@ -70,7 +75,7 @@
                             for(int i = 0; i < purchaseRequests.size(); i++) {
                             %>
                             <tr>
-                                <td><%=purchaseRequests.get(i).getIdPurchaseRequest() %></td>
+                                <td>Req00<%=purchaseRequests.get(i).getIdPurchaseRequest() %></td>
                                 <td><%=purchaseRequests.get(i).getSendingDate() %></td>
                                 <td><%=purchaseRequests.get(i).getService().getService() %></td>
                                 <td><%=purchaseRequests.get(i).getTitle() %></td>
