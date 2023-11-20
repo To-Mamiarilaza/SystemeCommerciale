@@ -75,7 +75,7 @@
                             for(int i = 0; i < purchaseRequests.size(); i++) {
                             %>
                             <tr>
-                                <td>Req00<%=purchaseRequests.get(i).getIdPurchaseRequest() %></td>
+                                <td><%=purchaseRequests.get(i).getIdPurchaseRequest() %></td>
                                 <td><%=purchaseRequests.get(i).getSendingDate() %></td>
                                 <td><%=purchaseRequests.get(i).getService().getService() %></td>
                                 <td><%=purchaseRequests.get(i).getTitle() %></td>

@@ -42,7 +42,7 @@ public class PurchaseRequestEditServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet PurchaseRequestEditServlet</title>");            
+            out.println("<title>Servlet PurchaseRequestEditServlet</title>");
             out.println("</head>");
             out.println("<body>");
             out.println("<h1>Servlet PurchaseRequestEditServlet at " + request.getContextPath() + "</h1>");
@@ -78,23 +78,29 @@ public class PurchaseRequestEditServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
+            Utilisateur utilisateur = (Utilisateur) request.getSession().getAttribute("utilisateur");
+            if (utilisateur == null) {
+                response.sendRedirect("./login");
+            }
+            request.setAttribute("utilisateur", utilisateur);
+            
             String title = request.getParameter("title");
             String description = request.getParameter("description");
-            
+
             HttpSession session = request.getSession();
             PurchaseRequest pr = (PurchaseRequest) session.getAttribute("purchaseRequest");
-            
+
             pr.setTitle(title);
             pr.setDescription(description);
             pr.setSendingDate(LocalDate.now());
-            Service service = GenericDAO.findById(Service.class, 1, null);
-            Utilisateur user = GenericDAO.findById(Utilisateur.class, 1, null);
+            Service service = utilisateur.getService();
+            Utilisateur user = utilisateur;
             pr.setService(service);
             pr.setUtilisateur(user);
             pr.setStatus(1);
             pr.editRequest();
             session.removeAttribute("purchaseRequest");
-        } catch(Exception e) {
+        } catch (Exception e) {
             request.setAttribute("error", e.getMessage());
             e.printStackTrace();
         }

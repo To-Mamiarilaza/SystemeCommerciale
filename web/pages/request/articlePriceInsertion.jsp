@@ -5,6 +5,27 @@
     List<Proforma> proformas = (List<Proforma>) request.getAttribute("proformas");
     List<Article> articles = (List<Article>) request.getAttribute("articles");
 %>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Validation choix fournisseur</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Voulez vous vraiment choisir cette fournisseur ? <br> <span class="text-small text-danger"> Vous devez aumoins en ajouter trois ! </span> </p>
+                <a href="./article-price-insertion" class="btn btn-secondary">Annuler</a>
+                <a href="" id="validationDestination" class="btn btn-primary">Choisir</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <div class="page-header">
     <h3 class="page-title">
         <span class="page-title-icon bg-gradient-primary text-white me-2">
@@ -70,7 +91,7 @@
                                 <h6 class="mt-4 second-color">Prix par fournisseurs</h6>
                                 <div class="fournisseurs-list mt-3" action="">
                                     <% for(SupplierArticlePrice supplierPrice : articleRequest.getSupplierArticlePrices()) { %>
-                                    <div class="form-group mb-2">
+                                    <div class="fournisseur-line form-group mb-2">
                                         <div
                                             class="d-flex align-items-center justify-content-between">
                                             <div class="form-check my-0">

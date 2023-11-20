@@ -1,6 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@page import="model.purchase.*, model.article.*, model.base.*, model.supplier.Supplier, java.util.List" %>
 <% 
+    Utilisateur utilisateur = (Utilisateur) request.getAttribute("utilisateur");
     PurchaseOrder purchaseOrder = (PurchaseOrder) request.getAttribute("purchaseOrder");
 %>
 
@@ -68,7 +69,7 @@
                         <ul>
                             <% for(Category category : purchaseOrder.getSupplier().getOwnedCategoryList()) { %>
                             <li><%= category.getDesignation() %></li>
-                            <% } %>
+                                <% } %>
                         </ul>
                     </div>
 
@@ -115,7 +116,7 @@
                             <td class="text-right"><%= lineItem.getTTCAmountString() %></td>
                         </tr>
                         <% } %>
-                        
+
                         <!-- TOTAL ROW -->
 
                         <tr>
@@ -134,7 +135,12 @@
                     <p><strong>Arrete le present proforma a la somme de :</strong> <br> <span><%= purchaseOrder.getTotalTTCLetter() %> ARIARY</span></p>
                 </div>
                 <div class="mt-3">
-                    <a href="../../proforma-detail" class="btn btn-light">Cancel</a>
+                    <% if(purchaseOrder.getStatus() == 1 && utilisateur.getIsAdmin() == true) { %>
+                    <a href="./purchase-order-validation?idPurchaseOrder=<%= purchaseOrder.getIdPurchaseOrder() %>&status=2" class="btn btn-gradient-danger px-5 me-2">Valide</a>
+                    <a href="./purchase-order-validation?idPurchaseOrder=<%= purchaseOrder.getIdPurchaseOrder() %>&status=0" class="btn btn-gradient-success px-5 me-2">Refuse</a>
+                    <br>
+                    <% } %>
+                    <a href="./purchase-order-list" class="btn btn-light mt-3">Cancel</a>
                 </div>
             </div>
         </div>

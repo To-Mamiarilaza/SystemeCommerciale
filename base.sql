@@ -364,3 +364,11 @@ CREATE TABLE payment_condition (
     payment_date DATE,
     FOREIGN KEY(id_purchase_order) REFERENCES purchase_order(id_purchase_order)
 );
+
+-- REINITIALISATION DE DONNEES BON DE COMMANDE
+DELETE FROM purchase_order_line_item;
+DELETE FROM payment_condition;
+DELETE FROM purchase_order;
+
+DELETE FROM article_quantity;
+DELETE FROM purchase_request;

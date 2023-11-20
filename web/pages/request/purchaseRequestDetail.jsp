@@ -29,7 +29,7 @@
                     PurchaseRequest purchaseRequest = (PurchaseRequest)request.getAttribute("purchaseRequest");
                     Utilisateur user = (Utilisateur)request.getAttribute("user");
                 %>
-                <h6>Demande NÂ° : Req00<%=purchaseRequest.getIdPurchaseRequest() %></h6>
+                <h6>Demande n° : <%=purchaseRequest.getIdPurchaseRequest() %></h6>
                 <div class="mt-4">
                     <form action="./PurchaseRequestEdit" method="POST">
                         <div class="form-group">
@@ -41,6 +41,7 @@
                             <label for="exampleInputPassword1">Description</label>
                             <textarea name="description" class="form-control" id="" cols="30" rows="10"><%=purchaseRequest.getDescription() %></textarea>
                         </div>
+                        <% if(purchaseRequest.getStatus() == 1) { %>
                         <div class="row align-items-end">
                             <div class="form-group col-md-5">
                                 <label for="article">Article</label>
@@ -58,13 +59,12 @@
                                 <label for="article">Quantite</label>
                                 <input type="number" class="form-control mt-2" value="10"  name="quantity" id="quantiteInput">
                             </div>
-                            <% if(purchaseRequest.getStatus() == 1 && user.getIsAdmin() == true) { %>
                             <div class="form-group col-md-3">
                                 <label for=""></label>
                                 <input type="button" onclick="addNewArticle()" class="btn btn-gradient-primary" value="Ajouter">
                             </div>
-                            <% } %>
                         </div>
+                        <% } %>
                         <div class="row mb-3">
                             <div class="col-md-8">
                                 <table class="table" id="articleList">
@@ -78,11 +78,9 @@
                                             <td><%=articleQuantity.get(i).getArticle().getDesignation() %></td>
                                             <td><%=articleQuantity.get(i).getQuantity() %></td>
                                             <td><%=articleQuantity.get(i).getArticle().getUnity().getName() %></td>
-                                            <% if(purchaseRequest.getStatus() == 1 && user.getIsAdmin() == true) { %> 
                                             <td>
                                                 <button type="button" onclick="deleteRequest(this)"><i class="mdi mdi-delete"></i></button> 
                                             </td>
-                                            <% } %>
                                         </tr>
                                         <% } } %>
                                     </tbody>
@@ -91,15 +89,11 @@
                         </div>
                         <% if(request.getAttribute("error") != null) { %>
                         <p class="text-error"><i class="mdi mdi-information-outline"></i><%=request.getAttribute("error") %></p>
-                        <% } 
-                        if(purchaseRequest.getStatus() == 1 && user.getIsAdmin() == true) {
-                        %>
+                        <% } %>
                         <div class="mt-3">
                             <button type="submit"
                                     class="btn btn-gradient-primary px-5 me-2">Modifier demande</button>
-                            <a  href="./purchase-request-list" class="btn btn-light">Cancel</a>
                         </div>
-                        <% } %>
                         <div class="mt-3">
                             <% if(purchaseRequest.getStatus() == 1 && user.getIsAdmin() == true) { %>
                             <a href="./PurchaseRequestAction?idHelp=1" class="btn btn-gradient-danger px-5 me-2">Valide</a>

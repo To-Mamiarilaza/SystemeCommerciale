@@ -18,7 +18,31 @@ import model.purchase.PurchaseOrder;
  * @author To Mamiarilaza
  */
 public class PurchaseOrderService {
+    
+    // change purchase order status
+    public static void changePurchaseOrderStatus(int idPurchaseOrder, int status, Connection connection) throws Exception {
+        PurchaseOrder purchaseOrder = GenericDAO.findById(PurchaseOrder.class, idPurchaseOrder, connection);
+        purchaseOrder.setStatus(status);
+        
+        GenericDAO.updateById(purchaseOrder, purchaseOrder.getIdPurchaseOrder(), connection);
+    }
 
+    public static void validatePurchaseOrder(int idPurchaseOrder) throws Exception {
+        Connection connection = DBConnection.getConnection();
+        changePurchaseOrderStatus(idPurchaseOrder, 2, connection);
+        
+        connection.commit();
+        connection.close();
+    }
+    
+    public static void refusePurchaseOrder(int idPurchaseOrder) throws Exception {
+        Connection connection = DBConnection.getConnection();
+        changePurchaseOrderStatus(idPurchaseOrder, 0, connection);
+        
+        connection.commit();
+        connection.close();
+    }
+    
     // get all purchase valid
     public static List<PurchaseOrder> getAllPurchaseOrder(Connection connection) throws Exception {
         List<PurchaseOrder> purchaseOrders = (List<PurchaseOrder>) GenericDAO.getAll(PurchaseOrder.class, null, null);
@@ -57,17 +81,6 @@ public class PurchaseOrderService {
     }
 
     public static void main(String[] args) throws Exception {
-        List<PurchaseOrder> list = getAllPurchaseOrder(null);
-        for (PurchaseOrder purchaseOrder : list) {
-            System.out.println("---------->");
-            GenericUtil.detailObjet(purchaseOrder);
-
-            System.out.println("- payment method : ");
-            GenericUtil.detailList(purchaseOrder.getPaymentConditions());
-
-            System.out.println("- Line item");
-            GenericUtil.detailList(purchaseOrder.getLineItems());
-
-        }
+        refusePurchaseOrder(24);
     }
 }
