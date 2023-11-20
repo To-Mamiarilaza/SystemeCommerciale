@@ -1,3 +1,5 @@
+<%@page import="java.util.List"%>
+<%@page import="model.purchase.PurchaseRequest"%>
 
 <div class="page-header">
     <h3 class="page-title">
@@ -63,42 +65,23 @@
                             </tr>
                         </thead>
                         <tbody>
+                            <% if(request.getAttribute("purchaseRequests") != null) { 
+                            List<PurchaseRequest> purchaseRequests = (List<PurchaseRequest>)request.getAttribute("purchaseRequests");
+                            for(int i = 0; i < purchaseRequests.size(); i++) {
+                            %>
                             <tr>
-                                <td>REQ0001</td>
-                                <td>01-01-2023</td>
-                                <td>Informatique</td>
-                                <td>Besoin mensuel du departement</td>
+                                <td><%=purchaseRequests.get(i).getIdPurchaseRequest() %></td>
+                                <td><%=purchaseRequests.get(i).getSendingDate() %></td>
+                                <td><%=purchaseRequests.get(i).getService().getService() %></td>
+                                <td><%=purchaseRequests.get(i).getTitle() %></td>
                                 <td>
-                                    <label class="badge badge-gradient-warning label-width">Non traite</label>
+                                    <label class="badge <%=purchaseRequests.get(i).getBadgeStatus() %> label-width"><%=purchaseRequests.get(i).getStatusString() %></label>
                                 </td>
                                 <td>
-                                    <a href="./purchase-request-detail"><i class="mdi mdi-clipboard-text action-icon"></i></a>
+                                    <a href="./purchase-request-detail?idPurchaseRequest=<%=purchaseRequests.get(i).getIdPurchaseRequest() %>"><i class="mdi mdi-clipboard-text action-icon"></i></a>
                                 </td>
                             </tr>
-                            <tr>
-                                <td>REQ0001</td>
-                                <td>01-01-2023</td>
-                                <td>Informatique</td>
-                                <td>Besoin mensuel du departement</td>
-                                <td>
-                                    <label class="badge badge-gradient-success label-width">Valide</label>
-                                </td>
-                                <td>
-                                    <a href="./purchase-request-detail"><i class="mdi mdi-clipboard-text action-icon"></i></a>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>REQ0001</td>
-                                <td>01-01-2023</td>
-                                <td>Informatique</td>
-                                <td>Besoin mensuel du departement</td>
-                                <td>
-                                    <label class="badge badge-gradient-danger label-width">Refuse</label>
-                                </td>
-                                <td>
-                                    <a href="./purchase-request-detail"><i class="mdi mdi-clipboard-text action-icon"></i></a>
-                                </td>
-                            </tr>
+                            <% } } %>
                         </tbody>
                     </table>
                 </div>

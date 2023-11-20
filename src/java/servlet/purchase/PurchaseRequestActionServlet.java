@@ -13,18 +13,14 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import java.util.ArrayList;
-import java.util.List;
-import model.article.Article;
-import model.purchase.ArticleQuantity;
 import model.purchase.PurchaseRequest;
 
 /**
  *
- * @author To Mamiarilaza
+ * @author chalman
  */
-@WebServlet(name = "PurchaseRequestDetailServlet", urlPatterns = {"/purchase-request-detail"})
-public class PurchaseRequestDetailServlet extends HttpServlet {
+@WebServlet(name = "PurchaseRequestActionServlet", urlPatterns = {"/PurchaseRequestAction"})
+public class PurchaseRequestActionServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -35,6 +31,22 @@ public class PurchaseRequestDetailServlet extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        response.setContentType("text/html;charset=UTF-8");
+        try (PrintWriter out = response.getWriter()) {
+            /* TODO output your page here. You may use following sample code. */
+            out.println("<!DOCTYPE html>");
+            out.println("<html>");
+            out.println("<head>");
+            out.println("<title>Servlet PurchaseRequestActionServlet</title>");            
+            out.println("</head>");
+            out.println("<body>");
+            out.println("<h1>Servlet PurchaseRequestActionServlet at " + request.getContextPath() + "</h1>");
+            out.println("</body>");
+            out.println("</html>");
+        }
+    }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
@@ -49,44 +61,25 @@ public class PurchaseRequestDetailServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
-            //Recuperer la demande correspondant au id recu
-            String idPurchaseRequest = request.getParameter("idPurchaseRequest");
-            
-            //Demande recuperer
-            PurchaseRequest purchaseRequest = GenericDAO.findById(PurchaseRequest.class, Integer.valueOf(idPurchaseRequest), null);
-            request.setAttribute("purchaseRequest", purchaseRequest);
-            
-            //Liste des articles quantites
-            List<ArticleQuantity> articleQuantitys = (List<ArticleQuantity>) GenericDAO.directQuery(ArticleQuantity.class, "SELECT * FROM article_quantity WHERE id_purchase_request="+idPurchaseRequest+" AND status =1", null);
-            request.setAttribute("articlesQuantity", articleQuantitys);
-             
-            //Liste des articles
-            List<Article> articles = (List<Article>) GenericDAO.directQuery(Article.class, "SELECT * FROM article WHERE status = 1 ORDER BY id_article DESC", null);
-            request.setAttribute("articles", articles);
-            
-            //Lancer la demande detailler en session
+            String idHelp = request.getParameter("idHelp");
             HttpSession session = request.getSession();
-            purchaseRequest.setArticleQuantityList(articleQuantitys);
-            session.setAttribute("purchaseRequest", purchaseRequest);
-
-            // All required assets
-            List<String> css = new ArrayList<>();
-            css.add("assets/css/supplier/supplier.css");
+            PurchaseRequest purchaseRequest = (PurchaseRequest)session.getAttribute("purchaseRequest");
+            System.out.println("help : "+idHelp);
+            System.out.println("objet :"+purchaseRequest);
             
-            List<String> js = new ArrayList<>();
-            js.add("assets/js/purchase/purchase-insertion.js");
-            
-            request.setAttribute("css", css);
-            request.setAttribute("js", js);
-            
-            // Page definition
-            request.setAttribute("title", "Detail d'une demande");
-            request.setAttribute("contentPage", "./pages/request/purchaseRequestDetail.jsp");
-            
-            request.getRequestDispatcher("./template.jsp").forward(request, response);
-        } catch (Exception e) {
+            if(Integer.valueOf(idHelp) == 0) {  //refuse
+                purchaseRequest.setStatus(0);
+                GenericDAO.updateById(purchaseRequest, purchaseRequest.getIdPurchaseRequest(), null);
+            }
+            else {  //Valide
+                purchaseRequest.setStatus(2);
+                GenericDAO.updateById(purchaseRequest, purchaseRequest.getIdPurchaseRequest(), null);
+            }
+        } catch(Exception e) {
+            request.setAttribute("error", e.getMessage());
             e.printStackTrace();
         }
+        response.sendRedirect("./purchase-request-list");
     }
 
     /**
@@ -100,6 +93,7 @@ public class PurchaseRequestDetailServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+   
     }
 
     /**

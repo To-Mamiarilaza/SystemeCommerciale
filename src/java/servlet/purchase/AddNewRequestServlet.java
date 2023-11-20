@@ -5,7 +5,6 @@
 package servlet.purchase;
 
 import com.google.gson.Gson;
-import generalisation.GenericDAO.GenericDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -14,21 +13,15 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import model.article.Article;
-import model.base.Service;
-import model.base.Utilisateur;
 import model.purchase.ArticleQuantity;
 import model.purchase.PurchaseRequest;
 
 /**
  *
- * @author To Mamiarilaza
+ * @author chalman
  */
-@WebServlet(name = "PurchaseRequestInsertionServlet", urlPatterns = {"/purchase-request-insertion"})
-public class PurchaseRequestInsertion extends HttpServlet {
+@WebServlet(name = "AddNewRequestServlet", urlPatterns = {"/AddNewRequest"})
+public class AddNewRequestServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -39,6 +32,22 @@ public class PurchaseRequestInsertion extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        response.setContentType("text/html;charset=UTF-8");
+        try (PrintWriter out = response.getWriter()) {
+            /* TODO output your page here. You may use following sample code. */
+            out.println("<!DOCTYPE html>");
+            out.println("<html>");
+            out.println("<head>");
+            out.println("<title>Servlet AddNewRequestServlet</title>");            
+            out.println("</head>");
+            out.println("<body>");
+            out.println("<h1>Servlet AddNewRequestServlet at " + request.getContextPath() + "</h1>");
+            out.println("</body>");
+            out.println("</html>");
+        }
+    }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
@@ -52,34 +61,9 @@ public class PurchaseRequestInsertion extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        try {
-            //Initialiser l'objet session du demande achat
-            HttpSession session = request.getSession();
-            PurchaseRequest pr = new PurchaseRequest();
-            session.setAttribute("purchaseRequest", pr);
-            
-            //Initialiser la liste des articles
-            List<Article> articles = (List<Article>) GenericDAO.getAll(Article.class, null, null);
-            request.setAttribute("articles", articles);
-            
-            // All required assets
-            List<String> css = new ArrayList<>();
-            css.add("assets/css/supplier/supplier.css");
-            
-            List<String> js = new ArrayList<>();
-            js.add("assets/js/purchase/purchase-insertion.js");
-            
-            request.setAttribute("css", css);
-            request.setAttribute("js", js);
-            
-            // Page definition
-            request.setAttribute("title", "Insertion demande achat");
-            request.setAttribute("contentPage", "./pages/request/purchaseRequestInsertion.jsp");
-            
-            request.getRequestDispatcher("./template.jsp").forward(request, response);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        //doPost(request, response);
+        PrintWriter out = response.getWriter();
+        out.print("Mandeha");
     }
 
     /**
@@ -93,29 +77,28 @@ public class PurchaseRequestInsertion extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        response.setContentType("text/plain;charset=UTF-8");
+          
         PrintWriter out = response.getWriter();
         try {
-            String title = request.getParameter("title");
-            String description = request.getParameter("description");
+            String article = request.getParameter("article");
+            String quantity = request.getParameter("quantity");
+            System.out.println("Article : "+quantity);
+            System.out.println("Quantite : "+quantity);
             
             HttpSession session = request.getSession();
             PurchaseRequest pr = (PurchaseRequest) session.getAttribute("purchaseRequest");
+            ArticleQuantity articleQuantity = pr.addArticleQuantity(article, quantity);
             
-            pr.setTitle(title);
-            pr.setDescription(description);
-            pr.setSendingDate(LocalDate.now());
-            Service service = GenericDAO.findById(Service.class, 1, null);
-            Utilisateur user = GenericDAO.findById(Utilisateur.class, 1, null);
-            pr.setService(service);
-            pr.setUtilisateur(user);
-            pr.setStatus(1);
-            pr.save(pr);
-            session.removeAttribute("purchaseRequest");
+            if(articleQuantity.getIsExist() == false) {
+                out.print("{\"code\":\""+articleQuantity.getArticle().getCode()+"\", \"article\":\""+articleQuantity.getArticle().getDesignation()+"\", \"quantity\":\""+articleQuantity.getQuantity()+"\", \"unity\":\""+articleQuantity.getArticle().getUnity().getName()+"\", \"exist\": false}");
+            } else {
+                out.print("{\"code\":\""+articleQuantity.getArticle().getCode()+"\", \"article\":\""+articleQuantity.getArticle().getDesignation()+"\", \"quantity\":\""+articleQuantity.getQuantity()+"\", \"unity\":\""+articleQuantity.getArticle().getUnity().getName()+"\", \"exist\": true}");
+            }
         } catch (Exception e) {
-            request.setAttribute("error", e.getMessage());
             e.printStackTrace();
+            out.println("{\"error\": \"" + e.getMessage() + "\"}");
         }
-        response.sendRedirect("./purchase-request-list");
     }
 
     /**

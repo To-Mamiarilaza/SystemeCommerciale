@@ -38,6 +38,8 @@ public class ArticleQuantity {
     @DBField(name = "status")
     int status;
     
+    boolean isExist;
+    
     // Getter and Setter
 
     public int getIdArticleQuantity() {
@@ -94,6 +96,14 @@ public class ArticleQuantity {
 
     public void setStatus(int status) {
         this.status = status;
+    }
+
+    public boolean getIsExist() {
+        return isExist;
+    }
+
+    public void setIsExist(boolean isExist) {
+        this.isExist = isExist;
     }
     
     // Constructor

@@ -12,16 +12,18 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.List;
+import jakarta.servlet.http.HttpSession;
+import java.time.LocalDate;
+import model.base.Service;
+import model.base.Utilisateur;
 import model.purchase.PurchaseRequest;
 
 /**
  *
- * @author To Mamiarilaza
+ * @author chalman
  */
-@WebServlet(name = "PurchaseRequestListServlet", urlPatterns = {"/purchase-request-list"})
-public class PurchaseRequestListServlet extends HttpServlet {
+@WebServlet(name = "PurchaseRequestEditServlet", urlPatterns = {"/PurchaseRequestEdit"})
+public class PurchaseRequestEditServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -32,6 +34,22 @@ public class PurchaseRequestListServlet extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        response.setContentType("text/html;charset=UTF-8");
+        try (PrintWriter out = response.getWriter()) {
+            /* TODO output your page here. You may use following sample code. */
+            out.println("<!DOCTYPE html>");
+            out.println("<html>");
+            out.println("<head>");
+            out.println("<title>Servlet PurchaseRequestEditServlet</title>");            
+            out.println("</head>");
+            out.println("<body>");
+            out.println("<h1>Servlet PurchaseRequestEditServlet at " + request.getContextPath() + "</h1>");
+            out.println("</body>");
+            out.println("</html>");
+        }
+    }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
@@ -45,28 +63,7 @@ public class PurchaseRequestListServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        try {
-            //List des demandes
-            List<PurchaseRequest> purchaseRequests = (List<PurchaseRequest>) GenericDAO.getAll(PurchaseRequest.class, null, null);
-            request.setAttribute("purchaseRequests", purchaseRequests);
-            
-            // All required assets
-            List<String> css = new ArrayList<>();
-            css.add("assets/css/supplier/supplier.css");
-            
-            List<String> js = new ArrayList<>();
-            
-            request.setAttribute("css", css);
-            request.setAttribute("js", js);
-            
-            // Page definition
-            request.setAttribute("title", "Listes des demandes");
-            request.setAttribute("contentPage", "./pages/request/purchaseRequestList.jsp");
-            
-            request.getRequestDispatcher("./template.jsp").forward(request, response);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        processRequest(request, response);
     }
 
     /**
@@ -80,6 +77,28 @@ public class PurchaseRequestListServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        try {
+            String title = request.getParameter("title");
+            String description = request.getParameter("description");
+            
+            HttpSession session = request.getSession();
+            PurchaseRequest pr = (PurchaseRequest) session.getAttribute("purchaseRequest");
+            
+            pr.setTitle(title);
+            pr.setDescription(description);
+            pr.setSendingDate(LocalDate.now());
+            Service service = GenericDAO.findById(Service.class, 1, null);
+            Utilisateur user = GenericDAO.findById(Utilisateur.class, 1, null);
+            pr.setService(service);
+            pr.setUtilisateur(user);
+            pr.setStatus(1);
+            pr.editRequest();
+            session.removeAttribute("purchaseRequest");
+        } catch(Exception e) {
+            request.setAttribute("error", e.getMessage());
+            e.printStackTrace();
+        }
+        response.sendRedirect("./purchase-request-list");
     }
 
     /**
