@@ -2,6 +2,7 @@
 <%@page import="model.purchase.PurchaseRequest"%>
 <%@page import="model.purchase.ArticleQuantity"%>
 <%@page import="model.article.Article"%>
+<%@page import="model.base.Utilisateur"%>
 
 <div class="page-header">
     <h3 class="page-title">
@@ -24,8 +25,9 @@
         <div class="card">
             <div class="card-body">
                 <h4 class="card-title">Detail demande achat</h4>
-                <% if(request.getAttribute("purchaseRequest") != null) { 
+                <% if(request.getAttribute("purchaseRequest") != null && request.getAttribute("user") != null) { 
                     PurchaseRequest purchaseRequest = (PurchaseRequest)request.getAttribute("purchaseRequest");
+                    Utilisateur user = (Utilisateur)request.getAttribute("user");
                 %>
                 <h6>Demande N° : Req00<%=purchaseRequest.getIdPurchaseRequest() %></h6>
                 <div class="mt-4">
@@ -56,7 +58,7 @@
                                 <label for="article">Quantite</label>
                                 <input type="number" class="form-control mt-2" value="10"  name="quantity" id="quantiteInput">
                             </div>
-                            <% if(purchaseRequest.getStatus() == 1) { %>
+                            <% if(purchaseRequest.getStatus() == 1 && user.getIsAdmin() == true) { %>
                             <div class="form-group col-md-3">
                                 <label for=""></label>
                                 <input type="button" onclick="addNewArticle()" class="btn btn-gradient-primary" value="Ajouter">
@@ -76,7 +78,7 @@
                                             <td><%=articleQuantity.get(i).getArticle().getDesignation() %></td>
                                             <td><%=articleQuantity.get(i).getQuantity() %></td>
                                             <td><%=articleQuantity.get(i).getArticle().getUnity().getName() %></td>
-                                            <% if(purchaseRequest.getStatus() == 1) { %> 
+                                            <% if(purchaseRequest.getStatus() == 1 && user.getIsAdmin() == true) { %> 
                                             <td>
                                                 <button type="button" onclick="deleteRequest(this)"><i class="mdi mdi-delete"></i></button> 
                                             </td>
@@ -90,7 +92,7 @@
                         <% if(request.getAttribute("error") != null) { %>
                         <p class="text-error"><i class="mdi mdi-information-outline"></i><%=request.getAttribute("error") %></p>
                         <% } 
-                        if(purchaseRequest.getStatus() == 1) {
+                        if(purchaseRequest.getStatus() == 1 && user.getIsAdmin() == true) {
                         %>
                         <div class="mt-3">
                             <button type="submit"
@@ -99,7 +101,7 @@
                         </div>
                         <% } %>
                         <div class="mt-3">
-                            <% if(purchaseRequest.getStatus() == 1) { %>
+                            <% if(purchaseRequest.getStatus() == 1 && user.getIsAdmin() == true) { %>
                             <a href="./PurchaseRequestAction?idHelp=1" class="btn btn-gradient-danger px-5 me-2">Valide</a>
                             <a href="./PurchaseRequestAction?idHelp=0" class="btn btn-gradient-success px-5 me-2">Refuse</a>
                             <br>

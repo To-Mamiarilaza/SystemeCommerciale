@@ -54,6 +54,7 @@ public class PurchaseRequestDetailServlet extends HttpServlet {
             String idPurchaseRequest = request.getParameter("idPurchaseRequest");
 
             Utilisateur utilisateur = (Utilisateur) request.getSession().getAttribute("utilisateur");
+            request.setAttribute("user", utilisateur);
             if (utilisateur == null) {
                 response.sendRedirect("./login");
             }

@@ -60,6 +60,11 @@
                                     <tbody>
                                        
                                     </tbody>
+                                    <div class="loader">
+                                        <div class="dot"></div>
+                                        <div class="dot"></div>
+                                        <div class="dot"></div>
+                                    </div>
                                 </table>
                             </div>
                         </div>
