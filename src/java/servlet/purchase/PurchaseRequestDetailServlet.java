@@ -4,6 +4,7 @@
  */
 package servlet.purchase;
 
+import generalisation.GenericDAO.GenericDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -11,8 +12,12 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.List
+import model.article.Article;
+import model.purchase.ArticleQuantity;
+import model.purchase.PurchaseRequest;
 import model.base.Utilisateur;
 
 /**
@@ -45,17 +50,38 @@ public class PurchaseRequestDetailServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
+            //Recuperer la demande correspondant au id recu
+            String idPurchaseRequest = request.getParameter("idPurchaseRequest");
+
             Utilisateur utilisateur = (Utilisateur) request.getSession().getAttribute("utilisateur");
             if (utilisateur == null) {
                 response.sendRedirect("./login");
             }
             request.setAttribute("utilisateur", utilisateur);
             
+            //Demande recuperer
+            PurchaseRequest purchaseRequest = GenericDAO.findById(PurchaseRequest.class, Integer.valueOf(idPurchaseRequest), null);
+            request.setAttribute("purchaseRequest", purchaseRequest);
+            
+            //Liste des articles quantites
+            List<ArticleQuantity> articleQuantitys = (List<ArticleQuantity>) GenericDAO.directQuery(ArticleQuantity.class, "SELECT * FROM article_quantity WHERE id_purchase_request="+idPurchaseRequest+" AND status =1", null);
+            request.setAttribute("articlesQuantity", articleQuantitys);
+             
+            //Liste des articles
+            List<Article> articles = (List<Article>) GenericDAO.directQuery(Article.class, "SELECT * FROM article WHERE status = 1 ORDER BY id_article DESC", null);
+            request.setAttribute("articles", articles);
+            
+            //Lancer la demande detailler en session
+            HttpSession session = request.getSession();
+            purchaseRequest.setArticleQuantityList(articleQuantitys);
+            session.setAttribute("purchaseRequest", purchaseRequest);
+
             // All required assets
             List<String> css = new ArrayList<>();
             css.add("assets/css/supplier/supplier.css");
             
             List<String> js = new ArrayList<>();
+            js.add("assets/js/purchase/purchase-insertion.js");
             
             request.setAttribute("css", css);
             request.setAttribute("js", js);

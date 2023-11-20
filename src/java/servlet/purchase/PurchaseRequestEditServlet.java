@@ -4,7 +4,6 @@
  */
 package servlet.purchase;
 
-import com.google.gson.Gson;
 import generalisation.GenericDAO.GenericDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -15,21 +14,16 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import model.article.Article;
 import model.base.Service;
 import model.base.Utilisateur;
-import model.purchase.ArticleQuantity;
 import model.purchase.PurchaseRequest;
-import model.base.Utilisateur;
 
 /**
  *
- * @author To Mamiarilaza
+ * @author chalman
  */
-@WebServlet(name = "PurchaseRequestInsertionServlet", urlPatterns = {"/purchase-request-insertion"})
-public class PurchaseRequestInsertion extends HttpServlet {
+@WebServlet(name = "PurchaseRequestEditServlet", urlPatterns = {"/PurchaseRequestEdit"})
+public class PurchaseRequestEditServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -40,6 +34,22 @@ public class PurchaseRequestInsertion extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        response.setContentType("text/html;charset=UTF-8");
+        try (PrintWriter out = response.getWriter()) {
+            /* TODO output your page here. You may use following sample code. */
+            out.println("<!DOCTYPE html>");
+            out.println("<html>");
+            out.println("<head>");
+            out.println("<title>Servlet PurchaseRequestEditServlet</title>");            
+            out.println("</head>");
+            out.println("<body>");
+            out.println("<h1>Servlet PurchaseRequestEditServlet at " + request.getContextPath() + "</h1>");
+            out.println("</body>");
+            out.println("</html>");
+        }
+    }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
@@ -53,40 +63,7 @@ public class PurchaseRequestInsertion extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        try {
-            //Initialiser l'objet session du demande achat
-            HttpSession session = request.getSession();
-            PurchaseRequest pr = new PurchaseRequest();
-            session.setAttribute("purchaseRequest", pr);
-            
-            //Initialiser la liste des articles
-            List<Article> articles = (List<Article>) GenericDAO.getAll(Article.class, null, null);
-            request.setAttribute("articles", articles);
-
-            Utilisateur utilisateur = (Utilisateur) request.getSession().getAttribute("utilisateur");
-            if (utilisateur == null) {
-                response.sendRedirect("./login");
-            }
-            request.setAttribute("utilisateur", utilisateur);
-            
-            // All required assets
-            List<String> css = new ArrayList<>();
-            css.add("assets/css/supplier/supplier.css");
-            
-            List<String> js = new ArrayList<>();
-            js.add("assets/js/purchase/purchase-insertion.js");
-            
-            request.setAttribute("css", css);
-            request.setAttribute("js", js);
-            
-            // Page definition
-            request.setAttribute("title", "Insertion demande achat");
-            request.setAttribute("contentPage", "./pages/request/purchaseRequestInsertion.jsp");
-            
-            request.getRequestDispatcher("./template.jsp").forward(request, response);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        processRequest(request, response);
     }
 
     /**
@@ -100,7 +77,6 @@ public class PurchaseRequestInsertion extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        PrintWriter out = response.getWriter();
         try {
             String title = request.getParameter("title");
             String description = request.getParameter("description");
@@ -116,9 +92,9 @@ public class PurchaseRequestInsertion extends HttpServlet {
             pr.setService(service);
             pr.setUtilisateur(user);
             pr.setStatus(1);
-            pr.save(pr);
+            pr.editRequest();
             session.removeAttribute("purchaseRequest");
-        } catch (Exception e) {
+        } catch(Exception e) {
             request.setAttribute("error", e.getMessage());
             e.printStackTrace();
         }
