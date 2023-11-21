@@ -193,6 +193,7 @@
                                     <li class="nav-item"> <a class="nav-link" href="./purchase-request-list">Demandes d'achat</a></li>
                                     <% if(utilisateur.inAchatService()) { %>
                                     <li class="nav-item"> <a class="nav-link" href="./article-price-insertion">Proformas</a></li>
+                                    <li class="nav-item"> <a class="nav-link" href="./purchase-statistics">Statistiques d'achat</a></li>
                                     <% } %>
                                     <% if(utilisateur.inFinanceService()) { %>
                                     <li class="nav-item"> <a class="nav-link" href="./purchase-order-list">Bon de commande</a></li>
