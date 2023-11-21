@@ -72,7 +72,7 @@ public class PurchaseRequestInsertion extends HttpServlet {
             // All required assets
             List<String> css = new ArrayList<>();
             css.add("assets/css/supplier/supplier.css");
-            css.add("aassets/css/ajax/styleAjax.css");
+            css.add("assets/css/ajax/styleAjax.css");
             
             List<String> js = new ArrayList<>();
             js.add("assets/js/purchase/purchase-insertion.js");

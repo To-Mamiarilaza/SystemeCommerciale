@@ -87,6 +87,10 @@
                                         <% } } %>
                                     </tbody>
                                 </table>
+                                <div id="loading">
+                                    <img src="./assets/images/Loading_icon.gif" alt="Chargement en cours..." width="100px" height="50px">
+                                    <p>Chargement en cours...</p>
+                                </div>
                             </div>
                         </div>
                         <% if(request.getAttribute("error") != null) { %>

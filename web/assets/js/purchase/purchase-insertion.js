@@ -63,6 +63,16 @@ function addNewArticle() {
     var articleValue = $('#articleInput').val();
     var quantiteValue = $('#quantiteInput').val();
     
+    // Afficher l'animation de chargement
+    $('#loading').show();
+    
+    // Définir un délai pour masquer l'animation après, par exemple, 5000 millisecondes (5 secondes)
+    loadingTimeout = setTimeout(function () {
+        $('#loading').hide();
+        alert('Le chargement a pris trop de temps. Veuillez réessayer.');
+    }, 5000);
+
+    
     // envoyer une ajax vers le controller
     $.ajax({
         type: 'POST',
@@ -73,6 +83,12 @@ function addNewArticle() {
         },
         dataType: 'text',
         success: function (response) {
+                // Annuler le délai de masquage de l'animation car la requête a réussi
+                clearTimeout(loadingTimeout);
+
+                // Masquer l'animation de chargement une fois la requête réussie
+                $('#loading').hide();
+                
               var responseJson = JSON.parse(response);
               if(responseJson.error != null) {
                   console.log(responseJson.error);
@@ -91,6 +107,12 @@ function addNewArticle() {
               }
         },
         error: function (response) {
+            // Annuler le délai de masquage de l'animation car la requête a réussi
+            clearTimeout(loadingTimeout);
+
+            // Masquer l'animation de chargement une fois la requête réussie
+            $('#loading').hide();
+                
             console.log("ERREUR , voici la reponse");
             console.log("TEXT : " + response);
             var jsonResponse = JSON.parse(response);
@@ -103,7 +125,7 @@ function addNewArticle() {
 function updateTableListArticle(code, quantity) {
     // Obtenez la référence de l'élément table par son ID
     var articleList = document.getElementById('articleList');
-
+    
     // Vérifiez si l'élément avec l'ID spécifié existe
     if (articleList) {
         // Obtenez toutes les lignes de la table (éléments tr)
@@ -128,8 +150,16 @@ function updateTableListArticle(code, quantity) {
 function deleteRequest(bouton) {
     var article = bouton.closest('.article');
     var id = article.id;
-    console.log(id);
-    // Ensuite supprimé du session
+    
+    // Afficher l'animation de chargement
+    $('#loading').show();
+    
+    // Définir un délai pour masquer l'animation après, par exemple, 5000 millisecondes (5 secondes)
+    loadingTimeout = setTimeout(function () {
+        $('#loading').hide();
+        alert('Le chargement a pris trop de temps. Veuillez réessayer.');
+    }, 5000);
+    
     $.ajax({
         type: 'GET',
         url: 'http://localhost:8080/SystemeCommerciale/DeleteRequest',
@@ -137,9 +167,20 @@ function deleteRequest(bouton) {
             code: id
         },
         success: function (reponse) {
+            // Annuler le délai de masquage de l'animation car la requête a réussi
+            clearTimeout(loadingTimeout);
+
+            // Masquer l'animation de chargement une fois la requête réussie
+            $('#loading').hide();
+                
             article.remove();
         },
         error: function () {
+            // Annuler le délai de masquage de l'animation car la requête a réussi
+            clearTimeout(loadingTimeout);
+
+            // Masquer l'animation de chargement une fois la requête réussie
+            $('#loading').hide();
             alert("Une erreur est survenue lors du suppression !");
         }
     });
