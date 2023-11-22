@@ -11,13 +11,13 @@
 
 <!-- Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
-    aria-hidden="true">
+     aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">Gestion des quantites par articles</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"
-                    aria-label="Close"></button>
+                        aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <dl class="row mx-2">
@@ -71,7 +71,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary"
-                    data-bs-dismiss="modal">Close</button>
+                        data-bs-dismiss="modal">Close</button>
                 <button type="button" class="btn btn-primary">Save changes</button>
             </div>
         </div>
@@ -130,15 +130,15 @@
                                     <div class="form-group">
                                         <label for="">Date de livraison</label>
                                         <input type="number" id="deliveryDate"
-                                            class="mt-1 form-control form-control-sm"
-                                            placeholder="jour apres">
+                                               class="mt-1 form-control form-control-sm"
+                                               placeholder="jour apres">
                                     </div>
                                 </div>
                                 <div class="col-sm-6">
                                     <div class="form-group">
                                         <label for="">Mode de payement</label>
                                         <select name="" id="paymentMethod" class="mt-1 form-control form-control-sm"
-                                            id="">
+                                                id="">
                                             <% for(PaymentMethod paymentMethod : paymentMethods) { %>
                                             <option value="<%= paymentMethod.getIdPaymentMethod() %>"><%= paymentMethod.getPaymentMethodName() %></option>
                                             <% } %>
@@ -155,11 +155,11 @@
                         <ul>
                             <% for(Category category : proforma.getSupplier().getOwnedCategoryList()) { %>
                             <li><%= category.getDesignation() %></li>
-                            <% } %>
+                                <% } %>
                         </ul>
                     </div>
 
-                    <div class="payment-condition mx-3 px-0 col-md-6">
+                    <div class="payment-condition mx-3 px-0 col-md-7">
                         <h4 class="mx-0">Condition de payement</h4>
                         <div class="px-4 mt-4">
                             <div class="row align-items-end">
@@ -167,21 +167,21 @@
                                     <div class="form-group mb-0">
                                         <label for="">Part en %</label>
                                         <input type="number" id="part"
-                                            class="mt-1 form-control form-control-sm"
-                                            placeholder="30" min="0">
+                                               class="mt-1 form-control form-control-sm"
+                                               placeholder="30" min="0">
                                     </div>
                                 </div>
                                 <div class="offset-sm-1 col-sm-4 px-0">
                                     <div class="form-group mb-0">
                                         <label for="">Jour apres</label>
                                         <input type="number" id="nbJour"
-                                            class="mt-1 form-control form-control-sm"
-                                            placeholder="10" min="0">
+                                               class="mt-1 form-control form-control-sm"
+                                               placeholder="10" min="0">
                                     </div>
                                 </div>
                                 <div class="col-sm-3">
                                     <input type="button" onclick="addNewPaymentMethod()" class="btn btn-gradient-danger"
-                                        value="Ajouter">
+                                           value="Ajouter">
                                 </div>
                             </div>
                         </div>
@@ -189,13 +189,16 @@
                             <table class="table table-no-border">
                                 <thead></thead>
                                 <tbody id="paymentMethodList">
-                                    
+
                                 </tbody>
                             </table>
                         </div>
                     </div>
+                    <div class="error-display mt-2">
+                        <p class="text-error text-danger" id="errorDisplay"></p>
+                    </div>
                 </div>
-                <table class="table mt-5">
+                <table class="table mt-3">
                     <thead>
                         <tr class="table-primary">
                             <th>Designation</th>
@@ -239,7 +242,7 @@
                 </div>
                 <div class="mt-3">
                     <a type="button" onclick="savePurchaseOrder(<%= proforma.getSupplier().getIdSupplier() %>)"
-                        class="btn btn-gradient-primary me-5">Valider</a>
+                       class="btn btn-gradient-primary me-5">Valider</a>
                     <a href="./proforma-detail" class="btn btn-light">Cancel</a>
                 </div>
             </div>

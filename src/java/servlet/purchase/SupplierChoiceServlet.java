@@ -60,12 +60,19 @@ public class SupplierChoiceServlet extends HttpServlet {
             throws ServletException, IOException {
         try {
             String idSupplierArticlePrice = request.getParameter("idSupplierArticlePrice");
+            String idArticle = request.getParameter("idArticle");
             String type = request.getParameter("checked");
+            
+            if (idArticle == null) {
+                idArticle = "";
+            }
+            
+            System.out.println("IDSupplier : " + idSupplierArticlePrice + " - Article : " + idArticle + " - type : " + type);
             
             boolean etat = type.equals("1") ? true : false;
             ArticlePriceService.chooseSupplierForArticle(idSupplierArticlePrice, etat);
             
-            response.sendRedirect("./article-price-insertion");
+            response.sendRedirect("./article-price-insertion?idArticle="+idArticle);
         } catch (Exception e) {
             e.printStackTrace();
         }

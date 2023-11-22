@@ -117,16 +117,17 @@ public class PdfPurchaseOrderServlet extends HttpServlet {
                     //Categories de produits vendues
                     contentStream.setNonStrokingColor(135, 206, 250); // Bleu clair
                     contentStream.setFont(PDType1Font.HELVETICA_BOLD, 10);
-                    outil.writeText(contentStream, 400, dynamicY, "categories de produits vendues");
-                    contentStream.drawLine(400, dynamicY - 10, 550, dynamicY-10);
+                    outil.writeText(contentStream, 400, dynamicY, "CATEGORIES DE PRODUITS");
+                    contentStream.setLineWidth(1f);
+                    contentStream.setStrokingColor(135, 206, 250);
+                    contentStream.drawLine(400, dynamicY - 8, 540, dynamicY - 8);
+                    dynamicY -= lineHeight;
                     
-                    System.out.println("Size : "+purchaseOrder.getSupplier().getOwnedCategoryList().size());
-                          contentStream.setNonStrokingColor(0, 0, 0); // Gris clair
+                    contentStream.setNonStrokingColor(0, 0, 0); // Gris clair
                     contentStream.setFont(PDType1Font.HELVETICA, 10);
                     int ye = dynamicY;
                     for(int i = 0; i < purchaseOrder.getSupplier().getOwnedCategoryList().size(); i++) {
                         outil.writeText(contentStream, 400, ye -= lineHeight, "- "+purchaseOrder.getSupplier().getOwnedCategoryList().get(i).getDesignation());
-                        contentStream.drawLine(400, dynamicY - 10, 550, dynamicY-10);
                     }
                     
                     //Information du fournisseur
@@ -178,9 +179,9 @@ public class PdfPurchaseOrderServlet extends HttpServlet {
                     for(int i = 0; i < purchaseOrder.getPaymentConditions().size(); i++) {
                     contentStream.setNonStrokingColor(0, 0, 0); // Noir
                     contentStream.setFont(PDType1Font.HELVETICA, 10);
-                    outil.writeText(contentStream, 30, dynamicY, "->");
-                    outil.writeText(contentStream, 80, dynamicY, purchaseOrder.getPaymentConditions().get(i).getPercentage()+"%");
-                    outil.writeText(contentStream, 150, dynamicY, purchaseOrder.getPaymentConditions().get(i).getPaymentDate().toString());
+                    outil.writeText(contentStream, 30, dynamicY, "-");
+                    outil.writeText(contentStream, 70, dynamicY, purchaseOrder.getPaymentConditions().get(i).getPercentage()+"%");
+                    outil.writeText(contentStream, 140, dynamicY, purchaseOrder.getPaymentConditions().get(i).getPaymentDate().toString());
                     dynamicY -= lineHeight;
                     }
                     dynamicY -= lineHeight;
@@ -192,7 +193,7 @@ public class PdfPurchaseOrderServlet extends HttpServlet {
                     float x = 20;
                     float y = dynamicY - 20;
                     float width = 550;
-                    float height = 50;
+                    float height = 40;
 
                     // Dessiner et colorer le rectangle
                     contentStream.fillRect(x, y, width, height);
@@ -213,14 +214,14 @@ public class PdfPurchaseOrderServlet extends HttpServlet {
                     dynamicY -= lineHeight;
                     
                     for(int i = 0; i < purchaseOrder.getLineItems().size(); i++) {
-                    contentStream.setFont(PDType1Font.HELVETICA, 10);
+                    contentStream.setFont(PDType1Font.HELVETICA, 9);
                     outil.writeText(contentStream, 30, dynamicY, purchaseOrder.getLineItems().get(i).getArticle().getDesignation());
                     outil.writeText(contentStream, 140, dynamicY, purchaseOrder.getLineItems().get(i).getUnitPrice()+" AR");
                     outil.writeText(contentStream, 220, dynamicY, purchaseOrder.getLineItems().get(i).getQuantity()+"");
                     outil.writeText(contentStream, 280, dynamicY, purchaseOrder.getLineItems().get(i).getTva()+" %");
-                    outil.writeText(contentStream, 350, dynamicY, purchaseOrder.getLineItems().get(i).getTVAAmount()+" AR");
-                    outil.writeText(contentStream, 440, dynamicY, purchaseOrder.getLineItems().get(i).getHTAmount()+" AR");
-                    outil.writeText(contentStream, 520, dynamicY, purchaseOrder.getLineItems().get(i).getTTCAmount()+" AR");
+                    outil.writeText(contentStream, 335, dynamicY, purchaseOrder.getLineItems().get(i).getTVAAmount()+" AR");
+                    outil.writeText(contentStream, 430, dynamicY, purchaseOrder.getLineItems().get(i).getHTAmount()+" AR");
+                    outil.writeText(contentStream, 510, dynamicY, purchaseOrder.getLineItems().get(i).getTTCAmount()+" AR");
                     //contentStream.setNonStrokingColor(192, 192, 192); // Gris clair
                     contentStream.drawLine(20, dynamicY - 20, 570, dynamicY-20);
                     dynamicY -= lineHeight;
@@ -229,9 +230,9 @@ public class PdfPurchaseOrderServlet extends HttpServlet {
                     
                     outil.writeText(contentStream, 280, dynamicY, "TOTAL");
                     contentStream.setNonStrokingColor(0, 80, 0); // Vert sombre
-                    outil.writeText(contentStream, 350, dynamicY, purchaseOrder.getTotalTVAString()+"");
-                    outil.writeText(contentStream, 440, dynamicY, purchaseOrder.getTotalHTString()+"");
-                    outil.writeText(contentStream, 520, dynamicY, purchaseOrder.getTotalTTCString()+"");
+                    outil.writeText(contentStream, 335, dynamicY, purchaseOrder.getTotalTVAString()+"");
+                    outil.writeText(contentStream, 425, dynamicY, purchaseOrder.getTotalHTString()+"");
+                    outil.writeText(contentStream, 505, dynamicY, purchaseOrder.getTotalTTCString()+"");
                     contentStream.drawLine(20, dynamicY - 20, 570, dynamicY-20);
                     dynamicY -= lineHeight;
                     dynamicY -= lineHeight;

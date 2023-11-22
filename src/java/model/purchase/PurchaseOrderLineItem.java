@@ -26,6 +26,9 @@ public class PurchaseOrderLineItem {
     @DBField(name = "id_article", isForeignKey = true)
     Article article;
     
+    @DBField(name = "quantity")
+    double quantity;
+    
     @DBField(name = "unit_price")
     double unitPrice;
     
@@ -33,13 +36,13 @@ public class PurchaseOrderLineItem {
     double tva;
     
     @DBField(name = "tva_amount")
-    double tva_amount;
+    double tvaAmount;
     
     @DBField(name = "ht_amount")
-    double ht_amount;
+    double htAmount;
     
     @DBField(name = "ttc_amount")
-    double ttc_amount;
+    double ttcAmount;
     
     // Getter and setter
 
@@ -67,6 +70,14 @@ public class PurchaseOrderLineItem {
         this.article = article;
     }
 
+    public double getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(double quantity) {
+        this.quantity = quantity;
+    }
+
     public double getUnitPrice() {
         return unitPrice;
     }
@@ -83,67 +94,67 @@ public class PurchaseOrderLineItem {
         this.tva = tva;
     }
 
-    public double getTva_amount() {
-        return tva_amount;
+    public double getTvaAmount() {
+        return tvaAmount;
     }
 
-    public void setTva_amount(double tva_amount) {
-        this.tva_amount = tva_amount;
+    public void setTvaAmount(double tvaAmount) {
+        this.tvaAmount = tvaAmount;
     }
 
-    public double getHt_amount() {
-        return ht_amount;
+    public double getHtAmount() {
+        return htAmount;
     }
 
-    public void setHt_amount(double ht_amount) {
-        this.ht_amount = ht_amount;
+    public void setHtAmount(double htAmount) {
+        this.htAmount = htAmount;
     }
 
-    public double getTtc_amount() {
-        return ttc_amount;
+    public double getTtcAmount() {
+        return ttcAmount;
     }
 
-    public void setTtc_amount(double ttc_amount) {
-        this.ttc_amount = ttc_amount;
+    public void setTtcAmount(double ttcAmount) {
+        this.ttcAmount = ttcAmount;
     }
     
-    // Constructor
+    // Constructeur
 
     public PurchaseOrderLineItem() {
     }
     
-    public PurchaseOrderLineItem(int idPurchaseOrder, Article article, double unitPrice, double tva, double tva_amount, double ht_amount, double ttc_amount) {
+    public PurchaseOrderLineItem(int idPurchaseOrder, Article article, double quantity, double unitPrice, double tva, double tvaAmount, double htAmount, double ttcAmount) {
         this.idPurchaseOrder = idPurchaseOrder;
         this.article = article;
+        this.quantity = quantity;
         this.unitPrice = unitPrice;
         this.tva = tva;
-        this.tva_amount = tva_amount;
-        this.ht_amount = ht_amount;
-        this.ttc_amount = ttc_amount;
+        this.tvaAmount = tvaAmount;
+        this.htAmount = htAmount;
+        this.ttcAmount = ttcAmount;
     }
     
-    public PurchaseOrderLineItem(int idPurchaseOrderLineItem, int idPurchaseOrder, Article article, double unitPrice, double tva, double tva_amount, double ht_amount, double ttc_amount) {
+    public PurchaseOrderLineItem(int idPurchaseOrderLineItem, int idPurchaseOrder, Article article, double quantity, double unitPrice, double tva, double tvaAmount, double htAmount, double ttcAmount) {
         this.idPurchaseOrderLineItem = idPurchaseOrderLineItem;
         this.idPurchaseOrder = idPurchaseOrder;
         this.article = article;
+        this.quantity = quantity;
         this.unitPrice = unitPrice;
         this.tva = tva;
-        this.tva_amount = tva_amount;
-        this.ht_amount = ht_amount;
-        this.ttc_amount = ttc_amount;
+        this.tvaAmount = tvaAmount;
+        this.htAmount = htAmount;
+        this.ttcAmount = ttcAmount;
     }
     
-    public PurchaseOrderLineItem(int idPurchaseOrder, InvoiceLineItem invoiceLineItem) {
+    public PurchaseOrderLineItem(int idPurchaseOrder, InvoiceLineItem lineItem) {
         this.idPurchaseOrder = idPurchaseOrder;
-        this.article = invoiceLineItem.getArticle();
-        this.unitPrice = invoiceLineItem.getUnitPrice();
-        this.tva = invoiceLineItem.getTva();
-        this.tva_amount = invoiceLineItem.getTVAAmount();
-        this.ht_amount = invoiceLineItem.getHTAmount();
-        this.ttc_amount = invoiceLineItem.getTTCAmount();
+        this.article = lineItem.getArticle();
+        this.quantity = lineItem.getQuantity();
+        this.unitPrice = lineItem.getUnitPrice();
+        this.tva = lineItem.getTva();
+        this.tvaAmount = lineItem.getTVAAmount();
+        this.htAmount = lineItem.getHTAmount();
+        this.ttcAmount = lineItem.getTTCAmount();
     }
     
-    public static void main(String[] args) throws Exception {
-        GenericUtil.detailList(GenericDAO.getAll(PurchaseOrderLineItem.class, null, null));
-    }
 }

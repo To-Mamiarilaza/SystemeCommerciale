@@ -21,11 +21,14 @@ function savePurchaseOrder(idSupplier) {
         dataType: 'json',
         success: function (response) {
             if (response.error != null) {
+                console.log(response.error);
+                $('#errorDisplay').text(response.error);
             } else {
                 window.location.href = "http://localhost:8080/SystemeCommerciale/purchase-order-list";
             }
         },
-        error: function (jqXHR) {
+        error: function (response, jqXHR) {
+            console.log(response);
             alert("Une erreur est survenue lors de l\'envoie : " + jqXHR.status);
         }
     });

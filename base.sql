@@ -366,6 +366,8 @@ CREATE TABLE payment_condition (
 );
 
 -- REINITIALISATION DE DONNEES BON DE COMMANDE
+DELETE FROM 
+
 DELETE FROM purchase_order_line_item;
 DELETE FROM payment_condition;
 DELETE FROM purchase_order;
