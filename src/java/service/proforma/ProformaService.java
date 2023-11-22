@@ -174,7 +174,7 @@ public class ProformaService {
     
     // get all supplier price of the article
     public static List<SupplierArticlePrice> getAllSupplierArticlePrice(Article article, Connection connection) throws Exception {
-        String query = "SELECT * FROM v_supplier_article_price_valid WHERE id_article = " + article.getIdArticle() + "ORDER BY unit_price ASC";
+        String query = "SELECT * FROM v_supplier_article_price_valid WHERE id_article = " + article.getIdArticle() + " ORDER BY unit_price ASC";
         List<SupplierArticlePrice> supplilerArticlePrices = (List<SupplierArticlePrice>) GenericDAO.directQuery(SupplierArticlePrice.class, query, connection);
         return supplilerArticlePrices;
     }
