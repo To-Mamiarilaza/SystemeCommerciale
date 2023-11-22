@@ -23,6 +23,8 @@ import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import service.proforma.PurchaseOrderService;
+import service.proforma.SupplierService;
 import util.pdf.PDFRealisationUtil;
 
 /**
@@ -71,9 +73,9 @@ public class PdfPurchaseOrderServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
-            String idPurchaseOrder = request.getParameter("idPurchaseOrder");
-            PurchaseOrder purchaseOrder = GenericDAO.findById(PurchaseOrder.class, Integer.valueOf(idPurchaseOrder), null);
-            
+             int idPurchaseOrder = Integer.valueOf(request.getParameter("idPurchaseOrder"));
+            PurchaseOrder purchaseOrder = PurchaseOrderService.getPurchaseOrder(idPurchaseOrder);
+            SupplierService.loadSupplierOwnedCategory(purchaseOrder.getSupplier(), null);
             // Bien remplir ces données et tout doit aller automatiquement
             String title = "BON DE COMMANDE";
             String numero = String.valueOf(purchaseOrder.getIdPurchaseOrder());
@@ -118,9 +120,16 @@ public class PdfPurchaseOrderServlet extends HttpServlet {
                     outil.writeText(contentStream, 400, dynamicY, "categories de produits vendues");
                     contentStream.drawLine(400, dynamicY - 10, 550, dynamicY-10);
                     
+                    System.out.println("Size : "+purchaseOrder.getSupplier().getOwnedCategoryList().size());
+                          contentStream.setNonStrokingColor(0, 0, 0); // Gris clair
+                    contentStream.setFont(PDType1Font.HELVETICA, 10);
+                    int ye = dynamicY;
+                    for(int i = 0; i < purchaseOrder.getSupplier().getOwnedCategoryList().size(); i++) {
+                        outil.writeText(contentStream, 400, ye -= lineHeight, "- "+purchaseOrder.getSupplier().getOwnedCategoryList().get(i).getDesignation());
+                        contentStream.drawLine(400, dynamicY - 10, 550, dynamicY-10);
+                    }
                     
                     //Information du fournisseur
-                    contentStream.setNonStrokingColor(0, 0, 0); // Noir
                     contentStream.setFont(PDType1Font.HELVETICA_BOLD, 10);
                     outil.writeText(contentStream, 30, dynamicY, "Nom du fournisseur");
                     contentStream.setFont(PDType1Font.HELVETICA, 10);
@@ -203,8 +212,7 @@ public class PdfPurchaseOrderServlet extends HttpServlet {
                     dynamicY -= lineHeight;
                     dynamicY -= lineHeight;
                     
-                    System.out.println("Line number : "+purchaseOrder.getLineItems());
-                    /*for(int i = 0; i < purchaseOrder.getLineItems().size(); i++) {
+                    for(int i = 0; i < purchaseOrder.getLineItems().size(); i++) {
                     contentStream.setFont(PDType1Font.HELVETICA, 10);
                     outil.writeText(contentStream, 30, dynamicY, purchaseOrder.getLineItems().get(i).getArticle().getDesignation());
                     outil.writeText(contentStream, 140, dynamicY, purchaseOrder.getLineItems().get(i).getUnitPrice()+" AR");
@@ -218,7 +226,7 @@ public class PdfPurchaseOrderServlet extends HttpServlet {
                     dynamicY -= lineHeight;
                     dynamicY -= lineHeight;
                     }
-                    */
+                    
                     outil.writeText(contentStream, 280, dynamicY, "TOTAL");
                     contentStream.setNonStrokingColor(0, 80, 0); // Vert sombre
                     outil.writeText(contentStream, 350, dynamicY, purchaseOrder.getTotalTVAString()+"");
