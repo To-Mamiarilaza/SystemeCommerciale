@@ -15,9 +15,8 @@ function selectBestSupplier(checkbox, idSupplierArticlePrice, idArticle) {
         $('#validationDestination').attr('href', "./supplier-choice?idSupplierArticlePrice="+ idSupplierArticlePrice + "&checked=1&idArticle=" + idArticle);
         modal.modal('show');
     } else if (checkbox.checked) {
-        console.log("==> " + "./supplier-choice?idSupplierArticlePrice="+ idSupplierArticlePrice + "&checked=1&idArticle=" + idArticle);
-        //window.location.href = "./supplier-choice?idSupplierArticlePrice="+ idSupplierArticlePrice + "&checked=1&idArticle=" + idArticle;
+        window.location.href = "./supplier-choice?idSupplierArticlePrice="+ idSupplierArticlePrice + "&checked=1&idArticle=" + idArticle;
     } else {
-        //window.location.href = "./supplier-choice?idSupplierArticlePrice="+ idSupplierArticlePrice + "&checked=0&idArticle=" + idArticle;
+        window.location.href = "./supplier-choice?idSupplierArticlePrice="+ idSupplierArticlePrice + "&checked=0&idArticle=" + idArticle;
     }
 }

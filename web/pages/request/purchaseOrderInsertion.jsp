@@ -243,7 +243,7 @@
                 <div class="mt-3">
                     <a type="button" onclick="savePurchaseOrder(<%= proforma.getSupplier().getIdSupplier() %>)"
                        class="btn btn-gradient-primary me-5">Valider</a>
-                    <a href="./proforma-detail" class="btn btn-light">Cancel</a>
+                    <a href="./proforma-detail?idSupplier=<%= proforma.getSupplier().getIdSupplier() %>" class="btn btn-light">Cancel</a>
                 </div>
             </div>
         </div>
