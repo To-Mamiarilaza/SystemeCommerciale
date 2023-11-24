@@ -58,12 +58,14 @@
                             <div class="col-md-8">
                                 <table class="table" id="articleList">
                                     <tbody>
+                                       
                                     </tbody>
+                                    <div class="loader">
+                                        <div class="dot"></div>
+                                        <div class="dot"></div>
+                                        <div class="dot"></div>
+                                    </div>
                                 </table>
-                                <div id="loading">
-                                    <img src="./assets/images/Loading_icon.gif" alt="Chargement en cours..." width="100px" height="50px">
-                                    <p>Chargement en cours...</p>
-                                </div>
                             </div>
                         </div>
                             <p class="text-error" id="addArticleError"></p>

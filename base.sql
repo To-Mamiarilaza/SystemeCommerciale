@@ -366,11 +366,26 @@ CREATE TABLE payment_condition (
 );
 
 -- REINITIALISATION DE DONNEES BON DE COMMANDE
-DELETE FROM 
-
 DELETE FROM purchase_order_line_item;
 DELETE FROM payment_condition;
-DELETE FROM purchase_order;
+DELETE FROM purchase_order; 
 
 DELETE FROM article_quantity;
 DELETE FROM purchase_request;
+
+
+-- vue pour avoir les depense
+create or replace view v_depense_mensuel as 
+SELECT
+    EXTRACT(MONTH FROM sending_date) AS mois,
+    EXTRACT(YEAR FROM sending_date) AS annee,
+    SUM(amount) AS montant_mensuel
+FROM
+    v_purchase_article_request
+WHERE
+    EXTRACT(YEAR FROM sending_date) = '2023' -- annee 2023
+AND status = 2
+GROUP BY
+    EXTRACT(MONTH FROM sending_date), EXTRACT(YEAR FROM sending_date)
+ORDER BY
+    annee, mois;

@@ -79,28 +79,21 @@
                                             <td><%=articleQuantity.get(i).getQuantity() %></td>
                                             <td><%=articleQuantity.get(i).getArticle().getUnity().getName() %></td>
                                             <td>
-                                                <% if(purchaseRequest.getStatus() == 1) { %>
                                                 <button type="button" onclick="deleteRequest(this)"><i class="mdi mdi-delete"></i></button> 
-                                                <% } %>
                                             </td>
                                         </tr>
                                         <% } } %>
                                     </tbody>
                                 </table>
-                                <div id="loading">
-                                    <img src="./assets/images/Loading_icon.gif" alt="Chargement en cours..." width="100px" height="50px">
-                                    <p>Chargement en cours...</p>
-                                </div>
                             </div>
                         </div>
                         <% if(request.getAttribute("error") != null) { %>
                         <p class="text-error"><i class="mdi mdi-information-outline"></i><%=request.getAttribute("error") %></p>
-                        <% } if(purchaseRequest.getStatus() == 1) { %>
+                        <% } %>
                         <div class="mt-3">
                             <button type="submit"
                                     class="btn btn-gradient-primary px-5 me-2">Modifier demande</button>
                         </div>
-                        <% } %>
                         <div class="mt-3">
                             <% if(purchaseRequest.getStatus() == 1 && user.getIsAdmin() == true) { %>
                             <a href="./PurchaseRequestAction?idHelp=1" class="btn btn-gradient-danger px-5 me-2">Valide</a>

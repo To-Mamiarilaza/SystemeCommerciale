@@ -4,7 +4,6 @@
     List<ArticleRequest> articleRequests = (List<ArticleRequest>) request.getAttribute("articleRequests");
     List<Proforma> proformas = (List<Proforma>) request.getAttribute("proformas");
     List<Article> articles = (List<Article>) request.getAttribute("articles");
-    String idArticle = (String) request.getAttribute("idArticle");
 %>
 
 <!-- Modal -->
@@ -48,7 +47,7 @@
             <div class="card-body">
                 <h4 class="card-title">Listes des demandes d'achat</h4>
                 <div class="mt-4 d-flex align-items-center justify-content-between">
-                    <form action="./article-price-insertion" method="GET">
+                    <form action="./article-price-insertion" method="POST">
                         <div class="input-groups d-flex align-items-center">
                             <div class="form-group me-4">
                                 <label for="">Filtre par article</label>
@@ -97,7 +96,7 @@
                                             class="d-flex align-items-center justify-content-between">
                                             <div class="form-check my-0">
                                                 <label class="form-check-label mb-0">
-                                                    <input type="checkbox" onchange="selectBestSupplier(this, <%= supplierPrice.getIdSupplierArticlePrice() %>, <%= idArticle %>)" class="form-check-input" value="<%= supplierPrice.getSupplier().getIdSupplier() %>" <%= supplierPrice.getChosenCheckedStatus() %>>
+                                                    <input type="checkbox" onchange="selectBestSupplier(this, <%= supplierPrice.getIdSupplierArticlePrice() %>)" class="form-check-input" value="<%= supplierPrice.getSupplier().getIdSupplier() %>" <%= supplierPrice.getChosenCheckedStatus() %>>
                                                     <%= supplierPrice.getSupplier().getSupplierName() %>
                                                     <i class="input-helper"></i>
                                                 </label>

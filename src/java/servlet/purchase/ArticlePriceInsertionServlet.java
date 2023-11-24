@@ -37,6 +37,7 @@ public class ArticlePriceInsertionServlet extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
+
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
@@ -55,41 +56,33 @@ public class ArticlePriceInsertionServlet extends HttpServlet {
                 response.sendRedirect("./login");
             }
             request.setAttribute("utilisateur", utilisateur);
-
-            String idArticle = request.getParameter("idArticle");
-            request.setAttribute("idArticle", idArticle);
-
+            
             Connection connection = DBConnection.getConnection();
-
+            
             // All required information
-            List<ArticleRequest> articleRequests = new ArrayList<>();
-            if (idArticle == null || idArticle.trim().equals("")) {
-                articleRequests = ProformaService.getAllArticleRequest(connection);
-            } else {
-                articleRequests = ProformaService.getAllArticleRequest(idArticle, connection);
-            }
+            List<ArticleRequest> articleRequests = ProformaService.getAllArticleRequest(connection);
             request.setAttribute("articleRequests", articleRequests);
-
+            
             List<Proforma> proformas = ProformaService.getAllAvailableProforma(connection);
             request.setAttribute("proformas", proformas);
-
+            
             List<Article> articles = ArticlePriceService.getAllArticle(connection);
             request.setAttribute("articles", articles);
 
             // All required assets
             List<String> css = new ArrayList<>();
             css.add("./assets/css/supplier/supplier.css");
-
+            
             List<String> js = new ArrayList<>();
             js.add("./assets/js/purchase/article-choice.js");
-
+            
             request.setAttribute("css", css);
             request.setAttribute("js", js);
-
+            
             // Page definition
             request.setAttribute("title", "Detail d'une demande");
             request.setAttribute("contentPage", "./pages/request/articlePriceInsertion.jsp");
-
+            
             request.getRequestDispatcher("./template.jsp").forward(request, response);
         } catch (Exception e) {
             e.printStackTrace();
@@ -114,9 +107,9 @@ public class ArticlePriceInsertionServlet extends HttpServlet {
             }
             request.setAttribute("utilisateur", utilisateur);
             String idArticle = request.getParameter("idArticle");
-
+            
             Connection connection = DBConnection.getConnection();
-
+            
             // All required information
             List<ArticleRequest> articleRequests = new ArrayList<>();
             if (idArticle == null || idArticle.trim().equals("")) {
@@ -124,29 +117,30 @@ public class ArticlePriceInsertionServlet extends HttpServlet {
             } else {
                 articleRequests = ProformaService.getAllArticleRequest(idArticle, connection);
             }
-
+            
+            
             request.setAttribute("articleRequests", articleRequests);
-
+            
             List<Proforma> proformas = ProformaService.getAllAvailableProforma(connection);
             request.setAttribute("proformas", proformas);
-
+            
             List<Article> articles = ArticlePriceService.getAllArticle(connection);
             request.setAttribute("articles", articles);
 
             // All required assets
             List<String> css = new ArrayList<>();
             css.add("./assets/css/supplier/supplier.css");
-
+            
             List<String> js = new ArrayList<>();
             js.add("./assets/js/purchase/article-choice.js");
-
+            
             request.setAttribute("css", css);
             request.setAttribute("js", js);
-
+            
             // Page definition
             request.setAttribute("title", "Detail d'une demande");
             request.setAttribute("contentPage", "./pages/request/articlePriceInsertion.jsp");
-
+            
             request.getRequestDispatcher("./template.jsp").forward(request, response);
         } catch (Exception e) {
             e.printStackTrace();

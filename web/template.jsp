@@ -29,6 +29,7 @@
         <link rel="stylesheet" href="assets/css/style.css">
         <!-- End layout styles -->
         <link rel="shortcut icon" href="assets/images/favicon.ico" />
+        <script src="./assets/js/apexcharts.min.js"></script>
     </head>
 
     <body>
@@ -191,13 +192,13 @@
                             <div class="collapse" id="ui-basic">
                                 <ul class="nav flex-column sub-menu">
                                     <li class="nav-item"> <a class="nav-link" href="./purchase-request-list">Demandes d'achat</a></li>
-                                    <% if(utilisateur.inAchatService()) { %>
+                                        <% if(utilisateur.inAchatService()) { %>
                                     <li class="nav-item"> <a class="nav-link" href="./article-price-insertion">Proformas</a></li>
                                     <li class="nav-item"> <a class="nav-link" href="./purchase-statistics">Statistiques d'achat</a></li>
-                                    <% } %>
-                                    <% if(utilisateur.inFinanceService()) { %>
+                                        <% } %>
+                                        <% if(utilisateur.inFinanceService()) { %>
                                     <li class="nav-item"> <a class="nav-link" href="./purchase-order-list">Bon de commande</a></li>
-                                    <% } %>
+                                        <% } %>
                                 </ul>
                             </div>
                         </li>

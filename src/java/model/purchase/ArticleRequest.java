@@ -28,7 +28,6 @@ public class ArticleRequest {
     List<ArticleQuantity> articleQuantityDetails;
     List<Supplier> convenableSuppliers;
     List<SupplierArticlePrice> supplierArticlePrices;
-    
     // Getter and setter
 
     public Article getArticle() {

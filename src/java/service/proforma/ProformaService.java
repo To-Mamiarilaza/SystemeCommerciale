@@ -31,27 +31,10 @@ import model.supplier.Supplier;
 public class ProformaService {
     // A class who provide all required method for proforma managing
     
-    // Check the payment condition
-    public static void checkPaymentCondition(PurchaseOrder purchaseOrder) throws Exception {
-        int sum = 0;
-        if (purchaseOrder.getPaymentConditions().size() == 0) throw new Exception("On doit ajouter des conditions de payement");
-        
-        for (PaymentCondition paymentCondition : purchaseOrder.getPaymentConditions()) {
-            sum += paymentCondition.getPercentage();
-        }
-        
-        if (sum != 100) {
-            throw new Exception("La somme des pourcentages de payement doit être égale à 100 !");
-        }
-    }
-    
     // save a purchase order to the database
     public static void savePurchaseOrder(PurchaseOrder purchaseOrder, Connection connection) throws Exception {
         // Save the main purchaseOrder
         GenericDAO.save(purchaseOrder, connection);
-        
-        // verifie si le condition de payment n'est pas egale à 100
-        checkPaymentCondition(purchaseOrder);
         
         // Insert all payment condition
         for (PaymentCondition paymentCondition : purchaseOrder.getPaymentConditions()) {
@@ -191,7 +174,7 @@ public class ProformaService {
     
     // get all supplier price of the article
     public static List<SupplierArticlePrice> getAllSupplierArticlePrice(Article article, Connection connection) throws Exception {
-        String query = "SELECT * FROM v_supplier_article_price_valid WHERE id_article = " + article.getIdArticle() + " ORDER BY unit_price ASC";
+        String query = "SELECT * FROM v_supplier_article_price_valid WHERE id_article = " + article.getIdArticle() + "ORDER BY unit_price ASC";
         List<SupplierArticlePrice> supplilerArticlePrices = (List<SupplierArticlePrice>) GenericDAO.directQuery(SupplierArticlePrice.class, query, connection);
         return supplilerArticlePrices;
     }

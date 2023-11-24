@@ -140,8 +140,7 @@
                     <a href="./purchase-order-validation?idPurchaseOrder=<%= purchaseOrder.getIdPurchaseOrder() %>&status=0" class="btn btn-gradient-success px-5 me-2">Refuse</a>
                     <br>
                     <% } %>
-                    <a href="./purchase-order-list" class="btn btn-light mt-3 me-3">Cancel</a>
-                    <a href="./PdfPurchaseOrder?idPurchaseOrder=<%= purchaseOrder.getIdPurchaseOrder() %>" class="btn btn-gradient-warning mt-3">Voir pdf</a>
+                    <a href="./purchase-order-list" class="btn btn-light mt-3">Cancel</a>
                 </div>
             </div>
         </div>

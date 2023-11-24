@@ -4,11 +4,13 @@
  */
 package model.purchase;
 
+import generalisation.GenericDAO.GenericDAO;
 import generalisation.annotations.DBField;
 import generalisation.annotations.DBTable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import model.base.Service;
 import model.supplier.Supplier;
 import service.util.DisplayUtil;
 
@@ -224,6 +226,15 @@ public class PurchaseOrder {
     }
 
     // methods
+    //get the value of all purchase
+    public double montantTtc(List<PurchaseOrder> listPurchase){
+        double montant = 0;
+        for (int i = 0; i < listPurchase.size(); i++) {
+            montant+=listPurchase.get(i).getTotalTTC();
+        }
+         return montant;      
+    }
+    
     // remove a payment condition
     public void removePaymentCondition(String part, String jour) throws Exception {
         if (part == null || part.trim().equals("")) {

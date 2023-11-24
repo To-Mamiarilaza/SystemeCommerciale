@@ -128,15 +128,6 @@ public class PurchaseOrderInsertion extends HttpServlet {
             throws ServletException, IOException {
         PrintWriter out = response.getWriter();
         try {
-            
-            if (request.getParameter("nbJourDelivery") == null || request.getParameter("nbJourDelivery").trim().equals("")) {
-                throw new Exception("Le jour de livraison ne doit pas être vide !");
-            }
-            
-            if (request.getParameter("idPaymentMethod") == null || request.getParameter("idPaymentMethod").trim().equals("")) {
-                throw new Exception("Le mode de payment ne doit pas être vide !");
-            }
-            
             int nbJourDelivery = Integer.valueOf(request.getParameter("nbJourDelivery"));
             int idSupplier = Integer.valueOf(request.getParameter("idSupplier"));
             int idPaymentMethod = Integer.valueOf(request.getParameter("idPaymentMethod"));
