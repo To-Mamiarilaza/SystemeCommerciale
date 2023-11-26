@@ -26,4 +26,8 @@ public class DBConnection {
             connection.setAutoCommit(false);
             return connection;
     }
+    
+    public static void main(String[] args) throws Exception {
+        System.out.println("Connection : " + getConnection());
+    }
 }

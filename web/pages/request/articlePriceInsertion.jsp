@@ -17,7 +17,7 @@
                     aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <p>Voulez vous vraiment choisir cette fournisseur ? <br> <span class="text-small text-danger"> Vous devez aumoins en ajouter trois ! </span> </p>
+                <p>Voulez vous vraiment choisir cette fournisseur ? <br> <span class="text-small text-danger"> Vous devez au moins en ajouter trois ! </span> </p>
                 <a href="./article-price-insertion" class="btn btn-secondary">Annuler</a>
                 <a href="" id="validationDestination" class="btn btn-primary">Choisir</a>
             </div>
