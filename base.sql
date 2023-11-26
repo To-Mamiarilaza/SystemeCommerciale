@@ -372,3 +372,22 @@ DELETE FROM purchase_order;
 
 DELETE FROM article_quantity;
 DELETE FROM purchase_request;
+
+create or replace view v_purchase_article_request as
+ SELECT pr.id_purchase_request,
+    pr.sending_date,
+    pr.id_utilisateur,
+    pr.id_service,
+    pr.title,
+    pr.description,
+    pr.status,
+    aq.id_article_quantity,
+    aq.id_article,
+    aq.quantity,
+    aq.id_purchase_order,
+    aq.amount,
+    aq.status AS article_status
+   FROM (purchase_request pr
+     JOIN article_quantity aq ON ((aq.id_purchase_request = pr.id_purchase_request)))
+  WHERE ((aq.status = 2) AND (pr.status = 2))
+  GROUP BY pr.id_service, pr.id_purchase_request, aq.id_article_quantity
