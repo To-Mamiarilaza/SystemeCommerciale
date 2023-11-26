@@ -87,7 +87,7 @@ public class PurchaseStatisticsServlet extends HttpServlet {
             request.setAttribute("js", js);
 
             List<PurchaseOrder> montantTtc = (List<PurchaseOrder>) GenericDAO.directQuery(PurchaseOrder.class, "select * from purchase_order where status = 2", null);
-            double montant = new PurchaseOrder().montantTtc(montantTtc);
+            double montant = (new PurchaseOrder()).montantTtc(montantTtc);
 
             List<ArticleRequest> articleEnAttente = (List<ArticleRequest>) GenericDAO.directQuery(ArticleRequest.class, "select * from v_article_request", null);
             int nombreRequest = articleEnAttente.size();
