@@ -4,6 +4,7 @@
  */
 package service.email;
 
+import java.io.File;
 import java.util.Properties;
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
@@ -29,11 +30,11 @@ public class EmailSender {
     
     public static void sendEmail(String[] recipients, String subject, String content, String filename) {
         // Sender's email and password
+        File file = new File("");
+        System.out.println("PATH : " + file.getAbsolutePath());
+
         final String senderEmail = "mamiarilaza.to@gmail.com";
         final String senderPassword = "kqlw korv hluf efwz";
-        
-        // RecipientEmail
-        final String recipientEmail = "mamiarilaza.to@gmail.com";
         
         // Setting all properties
         Properties properties = new Properties();

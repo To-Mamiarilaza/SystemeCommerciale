@@ -8,13 +8,13 @@
 
 <!-- Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
-    aria-hidden="true">
+     aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">Validation choix fournisseur</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"
-                    aria-label="Close"></button>
+                        aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <p>Voulez vous vraiment choisir cette fournisseur ? <br> <span class="text-small text-danger"> Vous devez au moins en ajouter trois ! </span> </p>
@@ -52,16 +52,19 @@
                             <div class="form-group me-4">
                                 <label for="">Filtre par article</label>
                                 <select name="idArticle" id=""
-                                    class="form-control form-control-sm px-5 mt-2">
+                                        class="form-control form-control-sm px-5 mt-2">
                                     <option value="">Toutes les articles</option>
                                     <% for(Article article : articles) { %>
-                                        <option value="<%= article.getIdArticle() %>"><%= article.getDesignation() %></option>
+                                    <option value="<%= article.getIdArticle() %>"><%= article.getDesignation() %></option>
                                     <% } %>
                                 </select>
                             </div>
                             <div>
                                 <input type="submit" class="mx-2 btn btn-gradient-primary"
-                                    value="Filtrer">
+                                       value="Filtrer">
+                            </div>
+                            <div>
+                                <a href="./send-article-request" class="mx-2 btn btn-outline-primary"><i class="mdi mdi-send me-4"></i>Demande de proforma</a>
                             </div>
                         </div>
                     </form>
@@ -116,7 +119,7 @@
                                     <div class="row">
                                         <div class="col-md-5">
                                             <select name="idSupplier" id=""
-                                                class="form-control form-control-sm">
+                                                    class="form-control form-control-sm">
                                                 <% for(Supplier supplier : articleRequest.getConvenableSuppliers()) { %>
                                                 <option value="<%= supplier.getIdSupplier() %>"><%= supplier.getSupplierName() %></option>
                                                 <% } %>
@@ -124,8 +127,8 @@
                                         </div>
                                         <div class="col-md-5 px-0">
                                             <input type="number" name="price"
-                                                class="form-control form-control-sm"
-                                                placeholder="30 000 AR" required>
+                                                   class="form-control form-control-sm"
+                                                   placeholder="30 000 AR" required>
                                         </div>
                                         <div class="col-md-2 px-3">
                                             <button type="submit" class="add-button"><i
