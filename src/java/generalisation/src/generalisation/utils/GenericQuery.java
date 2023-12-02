@@ -4,6 +4,7 @@
  */
 package generalisation.utils;
 
+import generalisation.src.generalisation.utils.GenericUtil;
 import generalisation.annotations.DBField;
 import generalisation.annotations.DBTable;
 import java.lang.reflect.Field;

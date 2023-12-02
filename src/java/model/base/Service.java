@@ -7,7 +7,7 @@ package model.base;
 import generalisation.GenericDAO.GenericDAO;
 import generalisation.annotations.DBField;
 import generalisation.annotations.DBTable;
-import generalisation.utils.GenericUtil;
+import generalisation.src.generalisation.utils.GenericUtil;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
@@ -113,7 +113,7 @@ public class Service {
     public static void main(String[] args) throws Exception {
         List<Service> listeService = (List<Service>) GenericDAO.directQuery(Service.class, "select * from service where status = 1", null);
         for (int i = 0; i < listeService.size(); i++) {
-            ServiceDepense sp = listeService.get(i).getServiceDepense(38337600.00);
+            ServiceDepense sp = listeService.get(i).getServiceDepense(1.00);
             System.out.println(sp.getMontant());
         }
         Arrays.toString(listeService.toArray());

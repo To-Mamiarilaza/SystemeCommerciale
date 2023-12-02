@@ -373,23 +373,11 @@ DELETE FROM purchase_order;
 DELETE FROM article_quantity;
 DELETE FROM purchase_request;
 
+UPDATE supplier_article_price SET chosen = false;
+
 
 -- vue pour avoir les depense
-create or replace view v_depense_mensuel as 
-SELECT
-    EXTRACT(MONTH FROM sending_date) AS mois,
-    EXTRACT(YEAR FROM sending_date) AS annee,
-    SUM(amount) AS montant_mensuel
-FROM
-    v_purchase_article_request
-WHERE
-    EXTRACT(YEAR FROM sending_date) = '2023' -- annee 2023
-AND status = 2
-GROUP BY
-    EXTRACT(MONTH FROM sending_date), EXTRACT(YEAR FROM sending_date)
-ORDER BY
-    annee, mois;
-create or replace view v_purchase_article_request as
+CREATE OR REPLACE VIEW v_purchase_article_request as
  SELECT pr.id_purchase_request,
     pr.sending_date,
     pr.id_utilisateur,
@@ -406,4 +394,20 @@ create or replace view v_purchase_article_request as
    FROM (purchase_request pr
      JOIN article_quantity aq ON ((aq.id_purchase_request = pr.id_purchase_request)))
   WHERE ((aq.status = 2) AND (pr.status = 2))
-  GROUP BY pr.id_service, pr.id_purchase_request, aq.id_article_quantity
+  GROUP BY pr.id_service, pr.id_purchase_request, aq.id_article_quantity;
+
+CREATE OR REPLACE VIEW v_depense_mensuel as 
+SELECT
+    EXTRACT(MONTH FROM sending_date) AS mois,
+    EXTRACT(YEAR FROM sending_date) AS annee,
+    SUM(amount) AS montant_mensuel
+FROM
+    v_purchase_article_request
+WHERE
+    EXTRACT(YEAR FROM sending_date) = '2023' -- annee 2023
+AND status = 2
+GROUP BY
+    EXTRACT(MONTH FROM sending_date), EXTRACT(YEAR FROM sending_date)
+ORDER BY
+    annee, mois;
+

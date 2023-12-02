@@ -141,6 +141,7 @@
                     <br>
                     <% } %>
                     <a href="./purchase-order-list" class="btn btn-light mt-3">Cancel</a>
+                    <a href="./PdfPurchaseOrder?idPurchaseOrder=<%= purchaseOrder.getIdPurchaseOrder() %>" class="btn btn-info mt-3">Voir pdf</a>
                 </div>
             </div>
         </div>
