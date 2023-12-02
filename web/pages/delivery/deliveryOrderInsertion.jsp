@@ -80,24 +80,21 @@
                                 <tr>
                                     <td>Savon</td>
                                     <td>40</td>
-                                    <td><a href="" class="text-warning"><i
-                                                class="mdi mdi-settings action-icon me-5"></i></a>
+                                    <td>
                                         <a href="" class="text-danger"><i class="mdi mdi-close action-icon"></i></a>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>Pomme</td>
                                     <td>8</td>
-                                    <td><a href="" class="text-warning"><i
-                                                class="mdi mdi-settings action-icon me-5"></i></a>
+                                    <td>
                                         <a href="" class="text-danger"><i class="mdi mdi-close action-icon"></i></a>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>Pomme</td>
                                     <td>8</td>
-                                    <td><a href="" class="text-warning"><i
-                                                class="mdi mdi-settings action-icon me-5"></i></a>
+                                    <td>
                                         <a href="" class="text-danger"><i class="mdi mdi-close action-icon"></i></a>
                                     </td>
                                 </tr>
@@ -106,13 +103,16 @@
 
                                 <tr>
                                     <td>
-                                        <input type="text" class="form-control" value="Savon" readonly>
+                                        <select class="form-select form-control-sm">
+                                            <option value="1">Savon</option>
+                                            <option value="2">Cache bouche</option>
+                                        </select>
                                     </td>
                                     <td>
-                                        <input type="text" class="form-control" name="quantite">
+                                        <input type="number" class="form-control form-control-sm" name="quantite">
                                     </td>
                                     <td>
-                                        <button class="btn btn-info">Modifier</button>
+                                        <button class="btn btn-info">Ajouter</button>
                                     </td>
                                 </tr>
 
