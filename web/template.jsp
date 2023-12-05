@@ -186,10 +186,16 @@
                         <% } %>
                         
                         <li class="nav-item">
-                            <a class="nav-link" href="./all-article">
+                            <a class="nav-link" data-bs-toggle="collapse" href="#ui-basic2" aria-expanded="false" aria-controls="ui-basic">
                                 <span class="menu-title">Reception besoin</span>
                                 <i class="mdi mdi-call-received menu-icon"></i>
                             </a>
+                            <div class="collapse" id="ui-basic2">
+                                <ul class="nav flex-column sub-menu">
+                                    <li class="nav-item"> <a class="nav-link" href="./dept-request-reception-list">Receptions des demandes</a></li>
+                                    <li class="nav-item"> <a class="nav-link" href="./dept-reception-order-list">Accusés de reception</a></li>
+                                </ul>
+                            </div>
                         </li>
                         
                         <li class="nav-item">

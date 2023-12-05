@@ -123,7 +123,7 @@
                     <a href="" class="btn btn-gradient-info mt-3 me-3">Facturé</a>
                     <a href="./client-purchase-order-list" class="btn btn-gradient-light mt-3">Cancel</a>
                     <a href="./client-purchase-order-list" class="btn text-info mt-3 mx-5">Voir le facture</a>
-                    <a href="./client-purchase-order-list" class="btn text-info mt-3 ">Voir le bon de commande</a>
+                    <a href="./client-purchase-order-list" class="btn text-info mt-3 ">Voir le bon de livraison</a>
                 </div>
             </div>
         </div>

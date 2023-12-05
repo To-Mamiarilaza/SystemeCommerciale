@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package reception;
+package servlet.departement.reception;
 
 import servlet.store.*;
 import servlet.sale.*;
@@ -21,8 +21,8 @@ import model.base.Utilisateur;
  *
  * @author to
  */
-@WebServlet(name = "RequestReceptionListServlet", urlPatterns = {"/request-reception-list"})
-public class RequestReceptionListServlet extends HttpServlet {
+@WebServlet(name = "DeptRequestReceptionListServlet", urlPatterns = {"/dept-request-reception-list"})
+public class DeptRequestReceptionListServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -81,7 +81,7 @@ public class RequestReceptionListServlet extends HttpServlet {
             
             // Page definition
             request.setAttribute("title", "Insertion bon de livraison");
-            request.setAttribute("contentPage", "./pages/store/entryRequestList.jsp");
+            request.setAttribute("contentPage", "./pages/reception/requestReceptionList.jsp");
             
             request.getRequestDispatcher("./template.jsp").forward(request, response);
         } catch (Exception e) {
