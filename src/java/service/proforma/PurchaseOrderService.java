@@ -6,7 +6,7 @@ package service.proforma;
 
 import connection.DBConnection;
 import generalisation.GenericDAO.GenericDAO;
-import generalisation.utils.GenericUtil;
+import generalisation.src.generalisation.utils.GenericUtil;
 import java.sql.Connection;
 import java.util.List;
 import model.purchase.InvoiceLineItem;

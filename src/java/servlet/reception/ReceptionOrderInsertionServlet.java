@@ -2,8 +2,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package servlet.purchase;
+package servlet.reception;
 
+import servlet.purchase.*;
 import connection.DBConnection;
 import generalisation.GenericDAO.GenericDAO;
 import generalisation.src.generalisation.utils.GenericUtil;
@@ -30,8 +31,8 @@ import service.proforma.SupplierService;
  *
  * @author To Mamiarilaza
  */
-@WebServlet(name = "PurchaseOrderInsertion", urlPatterns = {"/purchase-order-insertion"})
-public class PurchaseOrderInsertion extends HttpServlet {
+@WebServlet(name = "ReceptionOrderInsertionServlet", urlPatterns = {"/reception-order-insertion"})
+public class ReceptionOrderInsertionServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -77,37 +78,20 @@ public class PurchaseOrderInsertion extends HttpServlet {
                 response.sendRedirect("./login");
             }
             request.setAttribute("utilisateur", utilisateur);
-            
-            PurchaseOrder purchaseOrder = new PurchaseOrder();
-            request.getSession().setAttribute("purchaseOrder", purchaseOrder);
-            
-            // All required information
-            Connection connection = DBConnection.getConnection();
-            
-            String idSupplier = request.getParameter("idSupplier");
-            Proforma proforma = ProformaService.getProforma(idSupplier, connection);
-            SupplierService.loadSupplierOwnedCategory(proforma.getSupplier(), connection);
-            request.setAttribute("proforma", proforma);
-            
-            List<PaymentMethod> paymentMethods = ProformaService.getAllPaymentMehod(connection);
-            request.setAttribute("paymentMethods", paymentMethods);
-            
-            connection.close();
-            
+
             // All required assets
             List<String> css = new ArrayList<>();
             css.add("assets/css/supplier/supplier.css");
             
             List<String> js = new ArrayList<>();
-            js.add("./assets/js/purchase/payment-method.js");
-            js.add("./assets/js/purchase/purchase-order-save.js");
+            js.add("assets/js/bootstrap.bundle.min.js");
             
             request.setAttribute("css", css);
             request.setAttribute("js", js);
             
             // Page definition
-            request.setAttribute("title", "Nouvelle bon de commande");
-            request.setAttribute("contentPage", "./pages/request/purchaseOrderInsertion.jsp");
+            request.setAttribute("title", "Insertion bon de livraison");
+            request.setAttribute("contentPage", "./pages/delivery/receptionOrderInsertion.jsp");
             
             request.getRequestDispatcher("./template.jsp").forward(request, response);
         } catch (Exception e) {
@@ -127,40 +111,6 @@ public class PurchaseOrderInsertion extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         PrintWriter out = response.getWriter();
-        try {
-            int nbJourDelivery = Integer.valueOf(request.getParameter("nbJourDelivery"));
-            int idSupplier = Integer.valueOf(request.getParameter("idSupplier"));
-            int idPaymentMethod = Integer.valueOf(request.getParameter("idPaymentMethod"));
-            
-            Connection connection = DBConnection.getConnection();
-            
-            Supplier supplier = GenericDAO.findById(Supplier.class, idSupplier, connection);
-            PaymentMethod paymentMethod = GenericDAO.findById(PaymentMethod.class, idPaymentMethod, connection);
-            LocalDate deliveryDate = LocalDate.now().plusDays(nbJourDelivery);
-            
-            Proforma proforma = ProformaService.getProforma(supplier, connection);
-            
-            PurchaseOrder purchaseOrder = (PurchaseOrder) request.getSession().getAttribute("purchaseOrder");
-            purchaseOrder.setDate(LocalDate.now());
-            purchaseOrder.setSupplier(supplier);
-            purchaseOrder.setPaymentMethod(paymentMethod);
-            purchaseOrder.setDeliveryDate(deliveryDate);
-            purchaseOrder.setTotalTVA(proforma.getTotalTVA());
-            purchaseOrder.setTotalHT(proforma.getTotalHT());
-            purchaseOrder.setTotalTTC(proforma.getTotalTTC());
-            purchaseOrder.setStatus(1);     // En attente de validation
-            purchaseOrder.setLineItems(proforma.getInvoiceLineItems());
-            
-            ProformaService.savePurchaseOrder(purchaseOrder, connection);
-            
-            connection.commit();
-            connection.close();
-            
-            out.print("{\"success\": \"success\"}");
-        } catch (Exception e) {
-            e.printStackTrace();
-            out.print("{\"error\": \"" + e.getMessage() + "\"}");
-        }
     }
 
     /**

@@ -16,7 +16,7 @@ public class DBConnection {
         // Fonction qui renvoie la connection vers la base : 
             String database = "system_commerce";       // Nom de la base
             String user = "postgres";       // User dans postgres
-            String mdp = "prom15";       // Mot de passe
+            String mdp = "postgres";       // Mot de passe
             
             Class.forName("org.postgresql.Driver");
             
@@ -25,5 +25,9 @@ public class DBConnection {
             
             connection.setAutoCommit(false);
             return connection;
+    }
+    
+    public static void main(String[] args) throws Exception {
+        System.out.println("Connection : " + getConnection());
     }
 }

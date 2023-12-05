@@ -90,10 +90,12 @@
                         <% if(request.getAttribute("error") != null) { %>
                         <p class="text-error"><i class="mdi mdi-information-outline"></i><%=request.getAttribute("error") %></p>
                         <% } %>
-                        <div class="mt-3">
-                            <button type="submit"
-                                    class="btn btn-gradient-primary px-5 me-2">Modifier demande</button>
-                        </div>
+                        <% if(purchaseRequest.getStatus() == 1) { %>
+                            <div class="mt-3">
+                                <button type="submit"
+                                        class="btn btn-gradient-primary px-5 me-2">Modifier demande</button>
+                            </div>
+                        <% } %>
                         <div class="mt-3">
                             <% if(purchaseRequest.getStatus() == 1 && user.getIsAdmin() == true) { %>
                             <a href="./PurchaseRequestAction?idHelp=1" class="btn btn-gradient-danger px-5 me-2">Valide</a>

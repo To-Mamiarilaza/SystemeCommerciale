@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package generalisation.utils;
+package generalisation.src.generalisation.utils;
 
 import java.sql.*;
 import java.lang.reflect.Constructor;

@@ -8,7 +8,7 @@ import generalisation.annotations.DBField;
 import java.sql.*;
 import generalisation.connection.DBConnection;
 import generalisation.utils.GenericQuery;
-import generalisation.utils.GenericUtil;
+import generalisation.src.generalisation.utils.GenericUtil;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.time.LocalDate;

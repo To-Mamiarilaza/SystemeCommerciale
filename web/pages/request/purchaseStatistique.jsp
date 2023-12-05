@@ -1,4 +1,4 @@
-<%@page import="model.purchase.*, model.article.*, model.base.*, model.statistics.*, model.supplier.Supplier, java.util.List, java.util.Arrays, java.util.stream.Collectors" %>
+<%@page import="model.purchase.*, generalisation.src.generalisation.utils.*, model.article.*, model.base.*, model.statistics.*, model.supplier.Supplier, java.util.List, java.util.Arrays, java.util.stream.Collectors" %>
 <%
     double montant = (Double) request.getAttribute("sommeMontant");
     int nombreRequest = (Integer) request.getAttribute("nombreRequest");
@@ -21,11 +21,14 @@
         
         /* Traitement de la valeur du depense chaque mois */
         List<DepenseMensuel> depenseMensuel = (List<DepenseMensuel>) request.getAttribute("depenseMensuel");
+        GenericUtil.detailList(depenseMensuel);
         
         /* Extraction des colonnes de mois et les valeurs pour chaque mois */
             String[] month = depenseMensuel.stream().map(depense -> depense.getMoisString()).toArray(String[]::new);
             String[] montantValues = depenseMensuel.stream().map(depense -> String.valueOf(depense.getValue_depense())).toArray(String[]::new);
          
+            out.print(montantValues[0]);
+            
         /* Transformation des tableaux en String */    
             String monthString = Arrays.toString(month);
             String montantString = Arrays.toString(montantValues);

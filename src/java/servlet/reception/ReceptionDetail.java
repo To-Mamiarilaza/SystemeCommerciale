@@ -2,9 +2,8 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package servlet.purchase;
+package servlet.reception;
 
-import generalisation.GenericDAO.GenericDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -14,21 +13,14 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import model.base.Service;
 import model.base.Utilisateur;
-import model.purchase.ArticleRequest;
-import model.purchase.PurchaseOrder;
-import model.statistics.DepenseMensuel;
-import model.statistics.ServiceDepense;
 
 /**
  *
- * @author To Mamiarilaza
+ * @author to
  */
-@WebServlet(name = "PurchaseStatisticsServlet", urlPatterns = {"/purchase-statistics"})
-public class PurchaseStatisticsServlet extends HttpServlet {
+@WebServlet(name = "ReceptionDetail", urlPatterns = {"/reception-detail"})
+public class ReceptionDetail extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -47,10 +39,10 @@ public class PurchaseStatisticsServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet PurchaseStatisticsServlet</title>");
+            out.println("<title>Servlet ReceptionDetail</title>");            
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet PurchaseStatisticsServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet ReceptionDetail at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -75,44 +67,23 @@ public class PurchaseStatisticsServlet extends HttpServlet {
             }
             request.setAttribute("utilisateur", utilisateur);
 
-            // All required informations
             // All required assets
             List<String> css = new ArrayList<>();
             css.add("assets/css/supplier/supplier.css");
-
+            
             List<String> js = new ArrayList<>();
-            js.add("assets/vendors/chart.js/Chart.min.js");
+            js.add("assets/js/bootstrap.bundle.min.js");
             
             request.setAttribute("css", css);
             request.setAttribute("js", js);
-
-            List<PurchaseOrder> montantTtc = (List<PurchaseOrder>) GenericDAO.directQuery(PurchaseOrder.class, "select * from purchase_order where status = 2", null);
-            double montant = (new PurchaseOrder()).montantTtc(montantTtc);
-
-            List<ArticleRequest> articleEnAttente = (List<ArticleRequest>) GenericDAO.directQuery(ArticleRequest.class, "select * from v_article_request", null);
-            int nombreRequest = articleEnAttente.size();
-            //service depense
-            List<ServiceDepense> serviceDepense = new ArrayList<>();
-            //liste des service
-            List<Service> listeService = (List<Service>) GenericDAO.directQuery(Service.class, "select * from service where status = 1", null);
-            for (int i = 0; i < listeService.size(); i++) {
-                ServiceDepense sp = listeService.get(i).getServiceDepense(montant);
-                serviceDepense.add(sp);
-            }
-            List<DepenseMensuel> depenseMensuel = new DepenseMensuel().getDepenseMensuel(montant);
             
-            request.setAttribute("depenseMensuel", depenseMensuel);
-            request.setAttribute("sommeMontant", montant);
-            request.setAttribute("nombreRequest", nombreRequest);
-            request.setAttribute("serviceDepense", serviceDepense);
-            request.setAttribute("listeService", listeService);
             // Page definition
-            request.setAttribute("title", "Detail d'une demande");
-            request.setAttribute("contentPage", "./pages/request/purchaseStatistique.jsp");
-
+            request.setAttribute("title", "Insertion bon de livraison");
+            request.setAttribute("contentPage", "./pages/delivery/receptionDetail.jsp");
+            
             request.getRequestDispatcher("./template.jsp").forward(request, response);
-        } catch (Exception ex) {
-            ex.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

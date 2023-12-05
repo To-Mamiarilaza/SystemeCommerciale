@@ -23,4 +23,16 @@ public class SupplierService {
         List<Category> categoryList = (List<Category>) GenericDAO.directQuery(Category.class, whereClause, connection);
         supplier.setOwnedCategoryList(categoryList);
     }
+    
+    // Get all supplier email
+    public static String[] getSuppliersEmail(Connection connection) throws Exception {
+        List<Supplier> suppliersEmail = (List<Supplier>) GenericDAO.getAll(Supplier.class, null, connection);
+        String[] emails = new String[suppliersEmail.size()];
+        
+        for (int i = 0; i < emails.length; i++) {
+            emails[i] = suppliersEmail.get(i).getMail();
+        }
+        
+        return emails;
+    }
 }
