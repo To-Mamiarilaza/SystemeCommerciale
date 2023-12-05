@@ -2,7 +2,7 @@
     <h3 class="page-title">
         <span class="page-title-icon bg-gradient-primary text-white me-2">
             <i class="mdi mdi-home"></i>
-        </span> Reception
+        </span> Bon de commande client
     </h3>
     <nav aria-label="breadcrumb">
         <ul class="breadcrumb">
@@ -17,7 +17,7 @@
     <div class="col-12 grid-margin">
         <div class="card">
             <div class="card-body">
-                <h4 class="card-title">Bon de livraison et leur receptions</h4>
+                <h4 class="card-title">Listes des bon de commandes</h4>
                 <div class="mt-4 d-flex align-items-center justify-content-between">
                     <form action="./PurchaseRequestFilter" method="POST">
                         <div class="input-groups d-flex align-items-center">
@@ -41,7 +41,7 @@
                         </div>
                     </form>
                     <div>
-                        <a href="./delivery-order-insertion" class="btn btn-gradient-primary">Inserer bon de livraison</a>
+                        <a href="./client-purchase-order-insertion" class="btn btn-gradient-primary">Inserer bon de commande</a>
                     </div>
                 </div>
                 <div class="table-responsive mt-2">
@@ -49,10 +49,9 @@
                         <thead>
                             <tr>
                                 <th> Date </th>
-                                <th> BDL </th>
-                                <th> Livreur </th>
-                                <th> BDR </th>
-                                <th> Responsable </th>
+                                <th> Reference </th>
+                                <th> Nom client </th>
+                                <th> Addresse </th>
                                 <th> Etat </th>
                                 <th></th>
                             </tr>
@@ -60,28 +59,26 @@
                         <tbody>
                             <tr>
                                 <td>12-11-2023</td>
-                                <td>BDL0001</td>
+                                <td>BDC0001</td>
                                 <td>RAZAFINDRAKOTO Sergio</td>
-                                <td>BDR0002</td>
-                                <td>TIARILALA Fiaro</td>
+                                <td>Tanjombato</td>
                                 <td>
                                     <label class="badge badge-warning label-width">En attente</label>
                                 </td>
                                 <td>
-                                    <a href="./reception-detail"><i class="mdi mdi-clipboard-text action-icon"></i></a>
+                                    <a href="./client-purchase-order-detail"><i class="mdi mdi-clipboard-text action-icon"></i></a>
                                 </td>
                             </tr>
                             <tr>
                                 <td>12-11-2023</td>
-                                <td>BDL0001</td>
+                                <td>BDC0001</td>
                                 <td>RAZAFINDRAKOTO Sergio</td>
-                                <td>BDR0002</td>
-                                <td>TIARILALA Fiaro</td>
+                                <td>Tanjombato</td>
                                 <td>
                                     <label class="badge badge-warning label-width">En attente</label>
                                 </td>
                                 <td>
-                                    <a href="./reception-detail"><i class="mdi mdi-clipboard-text action-icon"></i></a>
+                                    <a href="./client-purchase-order-detail"><i class="mdi mdi-clipboard-text action-icon"></i></a>
                                 </td>
                             </tr>
                         </tbody>

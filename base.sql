@@ -411,3 +411,17 @@ GROUP BY
 ORDER BY
     annee, mois;
 
+-- DATA SCRIPT POUR PROCESS VENTE
+
+ALTER SEQUENCE seq_service RESTART WITH 6;
+INSERT INTO service(service, fonction, creation_date, status ) VALUES ('Vente', 'Responsable des ventes', '2022-01-01', 1);
+INSERT INTO service(service, fonction, creation_date, status ) VALUES ('Magasin', 'Responsable du magasin', '2022-01-01', 1);
+
+
+ALTER SEQUENCE seq_utilisateur RESTART WITH 7;
+INSERT INTO utilisateur(id_service, username, password, mail, status, admin, photo ) VALUES (6, 'Tiavina MALALANIAINA', 'tiavina', 'tiavina@gmail.com', 1, true, 'tiavina.png');
+INSERT INTO utilisateur(id_service, username, password, mail, status, admin, photo ) VALUES (6, 'Rivo ANDRIANINA', 'rivo', 'rivo@gmail.com', 1, false, 'rivo.png');
+INSERT INTO utilisateur(id_service, username, password, mail, status, admin, photo ) VALUES (7, 'George MANANTENA', 'george', 'george@gmail.com', 1, true, 'george.png');
+INSERT INTO utilisateur(id_service, username, password, mail, status, admin, photo ) VALUES (7, 'Solo ANDRIANASOLO', 'solo', 'solo@gmail.com', 1, false, 'solo.png');
+
+

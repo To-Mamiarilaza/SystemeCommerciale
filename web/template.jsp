@@ -184,6 +184,14 @@
                             </a>
                         </li>
                         <% } %>
+                        
+                        <li class="nav-item">
+                            <a class="nav-link" href="./all-article">
+                                <span class="menu-title">Reception besoin</span>
+                                <i class="mdi mdi-call-received menu-icon"></i>
+                            </a>
+                        </li>
+                        
                         <li class="nav-item">
                             <a class="nav-link" data-bs-toggle="collapse" href="#ui-basic" aria-expanded="false" aria-controls="ui-basic">
                                 <span class="menu-title">Processus Achat</span>
@@ -203,6 +211,41 @@
                                 </ul>
                             </div>
                         </li>
+                        
+                        <% if(utilisateur.inVenteService()) { %>
+                        <li class="nav-item">
+                            <a class="nav-link" data-bs-toggle="collapse" href="#ui-basic-vente" aria-expanded="false" aria-controls="ui-basic">
+                                <span class="menu-title">Processus Vente</span>
+                                <i class="mdi mdi-cart menu-icon"></i>
+                            </a>
+                            <div class="collapse" id="ui-basic-vente">
+                                <ul class="nav flex-column sub-menu">
+                                    <li class="nav-item"> <a class="nav-link" href="./proforma-sending">Envoie proforma</a></li>
+                                    <li class="nav-item"> <a class="nav-link" href="./client-purchase-order-list">Bon de commande</a></li>
+                                </ul>
+                            </div>
+                        </li>
+                        <% } %>
+                        <% if(utilisateur.inMagasinService()) { %>
+                        <li class="nav-item">
+                            <a class="nav-link" data-bs-toggle="collapse" href="#ui-basic-vente" aria-expanded="false" aria-controls="ui-basic">
+                                <span class="menu-title">Processus Magasin</span>
+                                <i class="mdi mdi-cart menu-icon"></i>
+                            </a>
+                            <div class="collapse" id="ui-basic-vente">
+                                <ul class="nav flex-column sub-menu">
+                                    <li class="nav-item"> <a class="nav-link" href="./entry-request-list">Entree en magasin</a></li>
+                                    <li class="nav-item"> <a class="nav-link" href="./entry-order-list">Bon d'entree</a></li>
+                                    <li class="nav-item"> <a class="nav-link" href="./article-method">Article et methode</a></li>
+                                    <li class="nav-item"> <a class="nav-link" href="./movement-history">Historiques mouvements</a></li>
+                                    <li class="nav-item"> <a class="nav-link" href="./etat-stock">Etat de stock</a></li>
+                                    <li class="nav-item"> <a class="nav-link" href="./outgoing-request-list">Demande de sortie</a></li>
+                                    <li class="nav-item"> <a class="nav-link" href="./outgoing-order-list">Bon de sortie</a></li>
+                                </ul>
+                            </div>                                                                                                                                                            
+                        </li>
+                        <% } %>
+                        
                     </ul>
                 </nav>
                 <!-- partial -->

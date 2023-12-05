@@ -43,6 +43,8 @@ public class Utilisateur {
     // Service checking
     public static final int APPROVISIONNEMENT_SERVICE_ID = 4;
     public static final int FINANCE_SERVICE_ID = 5;
+    public static final int VENTE_SERVICE_ID = 6;
+    public static final int MAGASIN_SERVICE_ID = 7;
     
     // Getter and Setter
 
@@ -149,6 +151,20 @@ public class Utilisateur {
     
     public boolean inAchatService() {
         if (getService().getIdService() == APPROVISIONNEMENT_SERVICE_ID) {
+            return true;
+        }
+        return false;
+    }
+    
+    public boolean inVenteService() {
+        if (getService().getIdService() == VENTE_SERVICE_ID) {
+            return true;
+        }
+        return false;
+    }
+    
+    public boolean inMagasinService() {
+        if (getService().getIdService() == MAGASIN_SERVICE_ID) {
             return true;
         }
         return false;
