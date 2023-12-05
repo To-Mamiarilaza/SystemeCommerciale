@@ -425,3 +425,22 @@ INSERT INTO utilisateur(id_service, username, password, mail, status, admin, pho
 INSERT INTO utilisateur(id_service, username, password, mail, status, admin, photo ) VALUES (7, 'Solo ANDRIANASOLO', 'solo', 'solo@gmail.com', 1, false, 'solo.png');
 
 
+-- Table for sale 
+
+CREATE SEQUENCE seq_proforma_sending;
+CREATE TABLE proforma_sending (
+    id_proforma_sending INTEGER PRIMARY KEY DEFAULT nextval('seq_proforma_sending'),
+    email VARCHAR(100),
+    date_sending DATE,
+    status int
+);
+
+CREATE SEQUENCE seq_article_quantity_sale;
+CREATE TABLE article_quantity_sale (
+    id_article_quantity_sale INTEGER PRIMARY KEY DEFAULT nextval('seq_article_quantity_sale'),
+    id_article int,
+    quantity DOUBLE PRECISION,
+    id_proforma_sending int,
+    status int,
+    FOREIGN KEY (id_proforma_sending) REFERENCES proforma_sending(id_proforma_sending)
+);

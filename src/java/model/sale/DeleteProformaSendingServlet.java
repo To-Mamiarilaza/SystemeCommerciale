@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package servlet.sale;
+package model.sale;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -12,17 +12,14 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import java.util.ArrayList;
-import java.util.List;
-import model.base.Utilisateur;
-import model.sale.ProformaSending;
+import model.purchase.PurchaseRequest;
 
 /**
  *
- * @author to
+ * @author chalman
  */
-@WebServlet(name = "ProformaSendingDetailServlet", urlPatterns = {"/proforma-sending-detail"})
-public class ProformaSendingDetailServlet extends HttpServlet {
+@WebServlet(name = "DeleteProformaSendingServlet", urlPatterns = {"/DeleteProformaSending"})
+public class DeleteProformaSendingServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -41,10 +38,10 @@ public class ProformaSendingDetailServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet ReceptionListServlet</title>");            
+            out.println("<title>Servlet DeleteProformaSendingServlet</title>");            
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet ReceptionListServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet DeleteProformaSendingServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -62,32 +59,15 @@ public class ProformaSendingDetailServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        response.setContentType("text/html;charset=UTF-8");
         try {
-            Utilisateur utilisateur = (Utilisateur) request.getSession().getAttribute("utilisateur");
-            if (utilisateur == null) {
-                response.sendRedirect("./login");
-            }
-            request.setAttribute("utilisateur", utilisateur);
+            String code = request.getParameter("code");
             
             HttpSession session = request.getSession();
-            ProformaSending proformaSending = (ProformaSending)session.getAttribute("proformaSending");
-            request.setAttribute("proformaSending", proformaSending);
-
-            // All required assets
-            List<String> css = new ArrayList<>();
-            css.add("assets/css/supplier/supplier.css");
+            ProformaSending pr = (ProformaSending) session.getAttribute("proformaSending");
+            pr.deleteRequest(code);
+            pr.displayProforma();
             
-            List<String> js = new ArrayList<>();
-            js.add("assets/js/bootstrap.bundle.min.js");
-            
-            request.setAttribute("css", css);
-            request.setAttribute("js", js);
-            
-            // Page definition
-            request.setAttribute("title", "Insertion bon de livraison");
-            request.setAttribute("contentPage", "./pages/sale/proformaSendingDetail.jsp");
-            
-            request.getRequestDispatcher("./template.jsp").forward(request, response);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -104,16 +84,7 @@ public class ProformaSendingDetailServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        try {
-            HttpSession session = request.getSession();
-            ProformaSending proformaSending = (ProformaSending)session.getAttribute("proformaSending");
-            String email = request.getParameter("email");
-            proformaSending.setEmail(email);
-            doGet(request, response);
-        } catch(Exception e) {
-            request.setAttribute("error", e.getMessage());
-            e.printStackTrace();
-        }
+        processRequest(request, response);
     }
 
     /**

@@ -1,3 +1,5 @@
+<%@page import="model.article.*, model.sale.*" %>
+
 <div class="page-header">
     <h3 class="page-title">
         <span class="page-title-icon bg-gradient-primary text-white me-2">
@@ -13,7 +15,9 @@
         </ul>
     </nav>
 </div>
-
+<% if(request.getAttribute("proformaSending") != null) { 
+ProformaSending proformaSending = (ProformaSending)request.getAttribute("proformaSending");
+%>
 <div class="row">
     <div class="col-10 grid-margin mx-auto">
         <div class="card">
@@ -48,7 +52,7 @@
                         <dl class="row">
                             <dt class="col-sm-6 px-0">Email client</dt>
                             <dd class="col-sm-6 px-0">
-                                test.test@gmail.com
+                                <%=proformaSending.getEmail() %>
                             </dd>
                         </dl>
                     </div>
@@ -69,17 +73,18 @@
                         </tr>
                     </thead>
                     <tbody>
+                        <% for(int i = 0; i < proformaSending.getArticles().size(); i++) { %>
                         <tr>
-                            <td>Cache bouche</td>
+                            <td><%=proformaSending.getArticles().get(i).getArticle().getDesignation() %></td>
                             <td>10 000 AR</td>
-                            <td>6</td>
+                            <td><%=proformaSending.getArticles().get(i).getQuantity() %></td>
                             <td>20</td>
                             <td>20 %</td>
                             <td class="text-right">2 000 AR</td>
                             <td class="text-right">60 000 AR</td>
                             <td class="text-right">72 000 AR</td>
                         </tr>
-
+                        <% } %>
                         <!-- TOTAL ROW -->
 
                         <tr>
@@ -100,11 +105,11 @@
                 </div>
                 <div class="mt-3">
                     
-                    <a href="./proforma-sending" class="btn btn-info mt-3">Envoyer le proforma</a>
-                    <a href="./proforma-sending" class="btn btn-light mt-3">Cancel</a>
+                    <a href="./SaveProformaSending?status=1" class="btn btn-info mt-3">Envoyer le proforma</a>
+                    <a href="./SaveProformaSending?status=0" class="btn btn-light mt-3">Cancel</a>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
+<% } %>

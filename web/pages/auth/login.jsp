@@ -41,11 +41,11 @@
                             <h6 class="font-weight-light">Veillez vous connecter</h6>
                             <form action="./login" method="POST" class="pt-3">
                                 <div class="form-group">
-                                    <input type="text" name="username" value="George MANANTENA" class="form-control form-control-lg" id="exampleInputEmail1"
+                                    <input type="text" name="username" value="Tiavina MALALANIAINA" class="form-control form-control-lg" id="exampleInputEmail1"
                                         placeholder="Username">
                                 </div>
                                 <div class="form-group">
-                                    <input type="password" name="password" value="george" class="form-control form-control-lg"
+                                    <input type="password" name="password" value="tiavina" class="form-control form-control-lg"
                                         id="exampleInputPassword1" placeholder="Password">
                                 </div>
                                 <% if(error != null) { %>

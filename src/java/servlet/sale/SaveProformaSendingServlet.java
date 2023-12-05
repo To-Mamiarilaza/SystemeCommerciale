@@ -12,17 +12,15 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import java.util.ArrayList;
-import java.util.List;
-import model.base.Utilisateur;
+import java.time.LocalDate;
 import model.sale.ProformaSending;
 
 /**
  *
- * @author to
+ * @author chalman
  */
-@WebServlet(name = "ProformaSendingDetailServlet", urlPatterns = {"/proforma-sending-detail"})
-public class ProformaSendingDetailServlet extends HttpServlet {
+@WebServlet(name = "SaveProformaSendingServlet", urlPatterns = {"/SaveProformaSending"})
+public class SaveProformaSendingServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -41,10 +39,10 @@ public class ProformaSendingDetailServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet ReceptionListServlet</title>");            
+            out.println("<title>Servlet SaveProformaSendingServlet</title>");            
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet ReceptionListServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet SaveProformaSendingServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -63,32 +61,20 @@ public class ProformaSendingDetailServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
-            Utilisateur utilisateur = (Utilisateur) request.getSession().getAttribute("utilisateur");
-            if (utilisateur == null) {
-                response.sendRedirect("./login");
-            }
-            request.setAttribute("utilisateur", utilisateur);
-            
+            Integer status = Integer.valueOf(request.getParameter("status"));
             HttpSession session = request.getSession();
             ProformaSending proformaSending = (ProformaSending)session.getAttribute("proformaSending");
-            request.setAttribute("proformaSending", proformaSending);
-
-            // All required assets
-            List<String> css = new ArrayList<>();
-            css.add("assets/css/supplier/supplier.css");
             
-            List<String> js = new ArrayList<>();
-            js.add("assets/js/bootstrap.bundle.min.js");
-            
-            request.setAttribute("css", css);
-            request.setAttribute("js", js);
-            
-            // Page definition
-            request.setAttribute("title", "Insertion bon de livraison");
-            request.setAttribute("contentPage", "./pages/sale/proformaSendingDetail.jsp");
-            
-            request.getRequestDispatcher("./template.jsp").forward(request, response);
-        } catch (Exception e) {
+            if(status == 1) {   //Envoyer
+                proformaSending.setDateSending(LocalDate.now());
+                proformaSending.save();
+                response.sendRedirect("./proforma-sending");
+            } else {    //Refuser
+                session.removeAttribute("proformaSending");
+                response.sendRedirect("./proforma-sending");
+            }
+        } catch(Exception e) {
+            request.setAttribute("error", e.getMessage());
             e.printStackTrace();
         }
     }
@@ -104,16 +90,7 @@ public class ProformaSendingDetailServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        try {
-            HttpSession session = request.getSession();
-            ProformaSending proformaSending = (ProformaSending)session.getAttribute("proformaSending");
-            String email = request.getParameter("email");
-            proformaSending.setEmail(email);
-            doGet(request, response);
-        } catch(Exception e) {
-            request.setAttribute("error", e.getMessage());
-            e.printStackTrace();
-        }
+        processRequest(request, response);
     }
 
     /**
