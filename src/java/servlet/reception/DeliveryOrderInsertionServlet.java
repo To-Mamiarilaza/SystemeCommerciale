@@ -65,7 +65,7 @@ public class DeliveryOrderInsertionServlet extends HttpServlet {
             }
             request.setAttribute("utilisateur", utilisateur);
             List<Article> articles = (List<Article>) GenericDAO.getAll(Article.class, " where status = 1", null);
-            List<PurchaseOrder> bonCommande = (List<PurchaseOrder>) GenericDAO.getAll(PurchaseOrder.class, "where status = 2", null);
+            List<PurchaseOrder> bonCommande = (List<PurchaseOrder>) GenericDAO.getAll(PurchaseOrder.class, "where id_purchase_order not in (select id_purchase_order from supplier_delivery_order) and status = 2", null);
             request.setAttribute("articles", articles);
             request.setAttribute("commandes", bonCommande);
             // All required assets
@@ -126,6 +126,7 @@ public class DeliveryOrderInsertionServlet extends HttpServlet {
             }
 
         } catch (Exception ex) {
+            ex.printStackTrace();
             response.sendRedirect("./delivery-order-insertion?error=" + ex.getMessage());
         }
     }

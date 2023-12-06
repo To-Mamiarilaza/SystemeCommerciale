@@ -38,30 +38,42 @@ public class ReceptionDetail extends HttpServlet {
             request.setAttribute("utilisateur", utilisateur);
             int idReception = Integer.valueOf(request.getParameter("idReception"));
             ReceptionOrder reception = (ReceptionOrder) GenericDAO.findById(ReceptionOrder.class, idReception, null);
-            List<ReceptionArticleDetails> receptionArticle = (List<ReceptionArticleDetails>) GenericDAO.directQuery(ReceptionArticleDetails.class, "select * from reception_article_details where id_reception_order = "+reception.getIdReceptionOrder(), null);
-            List<DeliveryArticleDetails> deliveryArticle = (List<DeliveryArticleDetails>) GenericDAO.directQuery(DeliveryArticleDetails.class, "select * from supplier_delivery_details where id_supplier_delivery_order = "+reception.getDeliveryOrder().getIdSupplierDeliveryOrder(), null);
-            List<Anomalie> anomalyDelivery = (List<Anomalie>) GenericDAO.directQuery(Anomalie.class, "select * from anomaly where id_type_anomalie = 1 and id = "+reception.getDeliveryOrder().getIdSupplierDeliveryOrder(), null);
-            List<DetailAnomalie> anomalyDeliveryDetails = (List<DetailAnomalie>) GenericDAO.directQuery(DetailAnomalie.class, "select * from detail_anomalie where id_anomalie = "+anomalyDelivery.get(0).getIdAnomalie(), null);
-            
+            List<ReceptionArticleDetails> receptionArticle = (List<ReceptionArticleDetails>) GenericDAO.directQuery(ReceptionArticleDetails.class, "select * from reception_article_details where id_reception_order = " + reception.getIdReceptionOrder(), null);
+            List<DeliveryArticleDetails> deliveryArticle = (List<DeliveryArticleDetails>) GenericDAO.directQuery(DeliveryArticleDetails.class, "select * from supplier_delivery_details where id_supplier_delivery_order = " + reception.getDeliveryOrder().getIdSupplierDeliveryOrder(), null);
+            // anomalie de livraison
+            List<Anomalie> anomalyDelivery = (List<Anomalie>) GenericDAO.directQuery(Anomalie.class, "select * from anomalie where id_type_anomalie = 1 and id = " + reception.getDeliveryOrder().getIdSupplierDeliveryOrder(), null);
+            List<DetailAnomalie> anomalyDeliveryDetails = new ArrayList<>();
+            if (!anomalyDelivery.isEmpty()) {
+                anomalyDeliveryDetails = (List<DetailAnomalie>) GenericDAO.directQuery(DetailAnomalie.class, "select * from detail_anomalie where id_anomalie = " + anomalyDelivery.get(0).getIdAnomalie(), null);
+            }
+            // anomalie de reception
+            List<Anomalie> anomalyReception = (List<Anomalie>) GenericDAO.directQuery(Anomalie.class, "select * from anomalie where id_type_anomalie = 2 and id = " + reception.getDeliveryOrder().getIdSupplierDeliveryOrder(), null);
+            List<DetailAnomalie> anomalyReceptionDetails = new ArrayList<>();
+            if (!anomalyReception.isEmpty()) {
+                anomalyReceptionDetails = (List<DetailAnomalie>) GenericDAO.directQuery(DetailAnomalie.class, "select * from detail_anomalie where id_anomalie = " + anomalyDelivery.get(0).getIdAnomalie(), null);
+            }
+
             request.setAttribute("reception", reception);
             request.setAttribute("receptionArticle", receptionArticle);
             request.setAttribute("deliveryArticle", deliveryArticle);
             request.setAttribute("anomalyDelivery", anomalyDelivery);
             request.setAttribute("anomalyDeliveryDetails", anomalyDeliveryDetails);
+            request.setAttribute("anomalyReception", anomalyReception);
+            request.setAttribute("anomalyReceptionDetails", anomalyReceptionDetails);
             // All required assets
             List<String> css = new ArrayList<>();
             css.add("assets/css/supplier/supplier.css");
-            
+
             List<String> js = new ArrayList<>();
             js.add("assets/js/bootstrap.bundle.min.js");
-            
+
             request.setAttribute("css", css);
             request.setAttribute("js", js);
-            
+
             // Page definition
             request.setAttribute("title", "Insertion bon de livraison");
             request.setAttribute("contentPage", "./pages/delivery/receptionDetail.jsp");
-            
+
             request.getRequestDispatcher("./template.jsp").forward(request, response);
         } catch (Exception e) {
             e.printStackTrace();

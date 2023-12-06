@@ -50,11 +50,11 @@ public class SupplierDeliveryOrder {
             for (int j = 0; j < articlesQuantity.size(); j++) {
                 if (articlesDetails.get(i).getArticle().getIdArticle() == articlesQuantity.get(j).getArticle().getIdArticle()) {
                     if (articlesDetails.get(i).getQuantity() < articlesQuantity.get(j).getQuantity()) {
-                        String anommalie = "nous avons constatés des annomalies de " + articlesQuantity.get(j).getArticle().getDesignation() + " attendue : " + articlesQuantity.get(j).getQuantity() + " -> reçu : " + articlesDetails.get(i).getQuantity();
+                        String anommalie = "nous avons constatés des annomalies de " + articlesQuantity.get(j).getArticle().getDesignation() + " attendue : " + articlesQuantity.get(j).getQuantity() + "; reçu : " + articlesDetails.get(i).getQuantity();
                         anommalies.add(anommalie);
                     }
                 } else {
-                    String anommalie = "l'article que vous avez choisit n'est pas inclus dans notre bon de commande";
+                    String anommalie = "l'article "+ articlesQuantity.get(j).getArticle().getDesignation() +" n'est pas inclus dans notre bon de commande";
                     anommalies.add(anommalie);
                 }
             }
@@ -89,7 +89,11 @@ public class SupplierDeliveryOrder {
 
     // getters and setters
     public int getStatus() {
-        return 1;
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
     }
 
     public List<ArticleDetails> getListeArticles() {

@@ -37,6 +37,20 @@ public class ReceptionOrder {
     List<ArticleDetails> listeArticles;
 
     //methods
+    public String getStatusString(int status) {
+        switch (status) {
+            case 1:
+                return "<label class=\"badge badge-gradient-warning label-width\"> En attente </label>";
+            case 2:
+                return "<label class=\"badge badge-gradient-success label-width\"> En magasin </label>";
+            case 0:
+                return "<label class=\"badge badge-gradient-danger label-width\"> Rejeter </label>";
+            default:
+                break;
+        }
+        return "";
+    }
+
     //constructors
     public ReceptionOrder(int idReceptionOrder, LocalDate receptionDate, String responsableName, String responsableContact, int status, String reference, SupplierDeliveryOrder deliveryOrder, List<ArticleDetails> listeArticles) {
         this.idReceptionOrder = idReceptionOrder;
@@ -111,7 +125,7 @@ public class ReceptionOrder {
     }
 
     public int getStatus() {
-        return 1;
+        return status;
     }
 
     public void setStatus(int status) {

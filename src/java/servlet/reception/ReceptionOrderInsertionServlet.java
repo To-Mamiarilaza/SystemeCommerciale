@@ -35,7 +35,6 @@ public class ReceptionOrderInsertionServlet extends HttpServlet {
                 response.sendRedirect("./login");
             }
             SupplierDeliveryOrder delivery = (SupplierDeliveryOrder) request.getSession().getAttribute("supplierDeliveryOrder");
-            System.out.println(delivery.getListeArticles().size());
             request.setAttribute("utilisateur", utilisateur);
             ReceptionOrder reception = new ReceptionOrder();
             reception.setListeArticles(delivery.getListeArticles());
@@ -81,6 +80,8 @@ public class ReceptionOrderInsertionServlet extends HttpServlet {
             reception.setResponsableContact(contactResponsable);
             reception.setResponsableName(nomResponsable);
             reception.setListeArticles(delivery.getListeArticles());
+            reception.setStatus(1);
+            delivery.setStatus(1);
 
             GenericDAO.save(delivery, null);
             

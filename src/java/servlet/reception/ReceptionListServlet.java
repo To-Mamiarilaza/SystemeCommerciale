@@ -32,7 +32,7 @@ public class ReceptionListServlet extends HttpServlet {
                 response.sendRedirect("./login");
             }
             request.setAttribute("utilisateur", utilisateur);
-            List<ReceptionOrder> receptions = (List<ReceptionOrder>) GenericDAO.getAll(ReceptionOrder.class, " where status = 1", null);
+            List<ReceptionOrder> receptions = (List<ReceptionOrder>) GenericDAO.getAll(ReceptionOrder.class, "", null);
            
             request.setAttribute("receptions", receptions);
             // All required assets
@@ -46,7 +46,7 @@ public class ReceptionListServlet extends HttpServlet {
             request.setAttribute("js", js);
             
             // Page definition
-            request.setAttribute("title", "Insertion bon de livraison");
+            request.setAttribute("title", "Liste des receptions");
             request.setAttribute("contentPage", "./pages/delivery/receptionList.jsp");
             
             request.getRequestDispatcher("./template.jsp").forward(request, response);

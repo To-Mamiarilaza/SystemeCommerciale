@@ -1,10 +1,77 @@
 <%@page contentType="text/html; charset=UTF-8" %>
-<%@page import="model.purchase.*, model.reception.*, model.article.*, model.base.*, model.supplier.Supplier, java.util.List" %>
+<%@page import="model.anomalie.*, model.purchase.*, model.reception.*, model.article.*, model.base.*, model.supplier.Supplier, java.util.List" %>
 <% 
     ReceptionOrder reception = (ReceptionOrder) request.getAttribute("reception");
     List<ReceptionArticleDetails> receptionArticles = (List<ReceptionArticleDetails>) request.getAttribute("receptionArticle");
     List<DeliveryArticleDetails> deliveryArticles = (List<DeliveryArticleDetails>) request.getAttribute("deliveryArticle");
+    List<Anomalie> deliveryAnomalie = (List<Anomalie>) request.getAttribute("anomalyDelivery");
+    List<DetailAnomalie> deliveryAnomalyDetails = (List<DetailAnomalie>) request.getAttribute("anomalyDeliveryDetails");
+    List<Anomalie> receptionAnomalie = (List<Anomalie>) request.getAttribute("anomalyReception");
+    List<DetailAnomalie> receptionAnomalyDetails = (List<DetailAnomalie>) request.getAttribute("anomalyReceptionDetails");
 %>
+<!-- MODAL FOR THE DELIVERY -->
+<div class="modal fade" id="deliveryModal" tabindex="-1" aria-labelledby="deliveryModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="deliveryModalLabel">Anomalie bon de livraison</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <% if(deliveryAnomalyDetails.size() > 0 && deliveryAnomalie.size() > 0) { %>
+                <p><strong>On a constate les anomalies suivants</strong></p>
+                <ul>
+                    <% for(int i=0; i<deliveryAnomalyDetails.size();i++) { %>
+                    <li> <%= deliveryAnomalyDetails.get(i).getDetail() %> </li>
+                        <% } %>
+                </ul>
+                <h5>Explication</h5>
+                <hr>
+                <% for(int i=0; i<deliveryAnomalie.size();i++) { %>
+                <p> <strong> Explication : <%= deliveryAnomalie.get(i).getExplication() %> </strong> </p>
+                <% } %>
+                <% } else { out.print("<p><strong> Pas d'anomalies constatés </strong></p>"); } %>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- MODAL FOR THE DELIVERY -->
+
+<!-- MODAL FOR THE RECEPTION -->
+<div class="modal fade" id="receptionModal" tabindex="-1" aria-labelledby="receptionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="receptionModalLabel">Anomalie reception</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="./reception-order-insertion">
+                <div class="modal-body">
+                    <% if(receptionAnomalyDetails.size() > 0 && receptionAnomalie.size() > 0) { %>
+                    <p><strong>On a constate les anomalies suivants</strong></p>
+                    <ul>
+                        <% for(int i=0; i<receptionAnomalyDetails.size();i++) { %>
+                        <li> <%= receptionAnomalyDetails.get(i).getDetail() %> </li>
+                            <% } %>
+                    </ul>
+                    <h5>Explication</h5>
+                    <hr>
+                    <% for(int i=0; i<receptionAnomalie.size();i++) { %>
+                    <p> <strong> Explication : <%= receptionAnomalie.get(i).getExplication() %> </strong> </p>
+                    <% } %>
+                    <% } else { out.print("<p><strong> Pas d'anomalies constatés </strong></p>"); } %>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- MODAL FOR THE RECEPTION -->
 <div class="page-header">
     <h3 class="page-title">
         <span class="page-title-icon bg-gradient-primary text-white me-2">
@@ -130,12 +197,15 @@
                             </div>
                         </div>
                     </div>
+                    <% if(reception.getStatus() == 1) { %>
                     <div class="mt-4 mx-2">
                         <div class="div">
-                            <a href="./get-into-store?idReception=<%= reception.getIdReceptionOrder() %>&idDelivery=<%= reception.getDeliveryOrder().getIdSupplierDeliveryOrder() %>" class="btn btn-info me-4">Envoyer au magasin</a>
-                            <a href="./reception-list" class="btn btn-danger me-4">Annuler</a>
+                            <a href="./get-into-store?idReception=<%= reception.getIdReceptionOrder() %>&idDelivery=<%= reception.getDeliveryOrder().getIdSupplierDeliveryOrder() %>&action=valider" class="btn btn-info me-4">Envoyer au magasin</a>
+                            <a href="./get-into-store?idReception=<%= reception.getIdReceptionOrder() %>&idDelivery=<%= reception.getDeliveryOrder().getIdSupplierDeliveryOrder() %>&action=rejeter" class="btn btn-danger me-4"> Rejeter </a>
+                            <a href="./reception-list" class="btn btn-secondary"> Annuler </a>
                         </div>
                     </div>
+                    <% } %>
                 </div>
             </div>
         </div>

@@ -71,7 +71,7 @@
                                 <td><%= receptions.get(i).getReference() %></td>
                                 <td><%= receptions.get(i).getResponsableName() %></td>
                                 <td>
-                                    <label class="badge badge-warning label-width">En attente</label>
+                                    <%= receptions.get(i).getStatusString(receptions.get(i).getStatus()) %>
                                 </td>
                                 <td>
                                     <a href="./reception-detail?idReception=<%= receptions.get(i).getIdReceptionOrder() %>"><i class="mdi mdi-clipboard-text action-icon"></i></a>
