@@ -4,28 +4,20 @@
  */
 package servlet.reception;
 
-import servlet.purchase.*;
-import connection.DBConnection;
 import generalisation.GenericDAO.GenericDAO;
-import generalisation.src.generalisation.utils.GenericUtil;
 import java.io.IOException;
-import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.sql.Connection;
+import jakarta.servlet.http.HttpSession;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import model.base.Utilisateur;
-import model.purchase.PaymentMethod;
-import model.purchase.Proforma;
-import model.purchase.PurchaseOrder;
-import model.supplier.Supplier;
-import service.proforma.ProformaService;
-import service.proforma.SupplierService;
+import model.reception.ReceptionOrder;
+import model.reception.SupplierDeliveryOrder;
 
 /**
  *
@@ -34,41 +26,6 @@ import service.proforma.SupplierService;
 @WebServlet(name = "ReceptionOrderInsertionServlet", urlPatterns = {"/reception-order-insertion"})
 public class ReceptionOrderInsertionServlet extends HttpServlet {
 
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet PurchaseOrderInsertion</title>");            
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet PurchaseOrderInsertion at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
-    }
-
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -77,47 +34,78 @@ public class ReceptionOrderInsertionServlet extends HttpServlet {
             if (utilisateur == null) {
                 response.sendRedirect("./login");
             }
+            SupplierDeliveryOrder delivery = (SupplierDeliveryOrder) request.getSession().getAttribute("supplierDeliveryOrder");
             request.setAttribute("utilisateur", utilisateur);
+            ReceptionOrder reception = new ReceptionOrder();
+            reception.setListeArticles(delivery.getListeArticles());
+            request.getSession().setAttribute("reception", reception);
 
             // All required assets
             List<String> css = new ArrayList<>();
             css.add("assets/css/supplier/supplier.css");
-            
+
             List<String> js = new ArrayList<>();
             js.add("assets/js/bootstrap.bundle.min.js");
-            
+
             request.setAttribute("css", css);
             request.setAttribute("js", js);
-            
+            request.setAttribute("delivery", delivery);
+
             // Page definition
             request.setAttribute("title", "Insertion bon de livraison");
             request.setAttribute("contentPage", "./pages/delivery/receptionOrderInsertion.jsp");
-            
+
             request.getRequestDispatcher("./template.jsp").forward(request, response);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        PrintWriter out = response.getWriter();
+        try {
+            SupplierDeliveryOrder delivery = (SupplierDeliveryOrder) request.getSession().getAttribute("supplierDeliveryOrder");
+
+            String referenceLivraison = request.getParameter("referenceLivraison");
+            String referenceReception = request.getParameter("reference");
+            LocalDate date = LocalDate.parse(request.getParameter("date"));
+            String nomResponsable = request.getParameter("responsable");
+            String contactResponsable = request.getParameter("responsableContact");
+
+            ReceptionOrder reception = (ReceptionOrder) request.getSession().getAttribute("reception");
+
+            reception.setReceptionDate(date);
+            reception.setReference(referenceReception);
+            reception.setResponsableContact(contactResponsable);
+            reception.setResponsableName(nomResponsable);
+            reception.setListeArticles(delivery.getListeArticles());
+            reception.setStatus(1);
+            delivery.setStatus(1);
+
+            GenericDAO.save(delivery, null);
+            
+            List<SupplierDeliveryOrder> lastDelivery = (List<SupplierDeliveryOrder>) GenericDAO.directQuery(SupplierDeliveryOrder.class, "select * from supplier_delivery_order order by id_supplier_delivery_order desc", null);
+            
+            reception.setDeliveryOrder(lastDelivery.get(0));
+            
+            GenericDAO.save(reception, null);
+            
+            List<ReceptionOrder> lastReception = (List<ReceptionOrder>) GenericDAO.directQuery(ReceptionOrder.class, "select * from reception_order order by id_reception_order desc limit 1", null);
+            for (int i = 0; i < delivery.getListeArticles().size(); i++) {
+                GenericDAO.directUpdate("insert into supplier_delivery_details values (default, " + lastDelivery.get(0).getIdSupplierDeliveryOrder() + ", " + delivery.getListeArticles().get(i).getArticle().getIdArticle() + ", " + delivery.getListeArticles().get(i).getQuantity() + ")", null);
+            }
+            for (int i = 0; i < reception.getListeArticles().size(); i++) {
+                GenericDAO.directUpdate("insert into reception_article_details values (default, " + lastReception.get(0).getIdReceptionOrder()+ ", " + reception.getListeArticles().get(i).getArticle().getIdArticle() + ", " + reception.getListeArticles().get(i).getQuantity() + ")", null);
+            }
+
+            request.getSession().removeAttribute("supplierDeliveryOrder");
+            response.sendRedirect("./reception-list");
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
     @Override
     public String getServletInfo() {
         return "Short description";

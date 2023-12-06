@@ -4,8 +4,8 @@
  */
 package servlet.reception;
 
+import generalisation.GenericDAO.GenericDAO;
 import java.io.IOException;
-import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -13,7 +13,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
+import model.anomalie.Anomalie;
+import model.anomalie.DetailAnomalie;
 import model.base.Utilisateur;
+import model.reception.DeliveryArticleDetails;
+import model.reception.ReceptionArticleDetails;
+import model.reception.ReceptionOrder;
 
 /**
  *
@@ -22,41 +27,6 @@ import model.base.Utilisateur;
 @WebServlet(name = "ReceptionDetail", urlPatterns = {"/reception-detail"})
 public class ReceptionDetail extends HttpServlet {
 
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet ReceptionDetail</title>");            
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet ReceptionDetail at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
-    }
-
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -66,46 +36,55 @@ public class ReceptionDetail extends HttpServlet {
                 response.sendRedirect("./login");
             }
             request.setAttribute("utilisateur", utilisateur);
+            int idReception = Integer.valueOf(request.getParameter("idReception"));
+            ReceptionOrder reception = (ReceptionOrder) GenericDAO.findById(ReceptionOrder.class, idReception, null);
+            List<ReceptionArticleDetails> receptionArticle = (List<ReceptionArticleDetails>) GenericDAO.directQuery(ReceptionArticleDetails.class, "select * from reception_article_details where id_reception_order = " + reception.getIdReceptionOrder(), null);
+            List<DeliveryArticleDetails> deliveryArticle = (List<DeliveryArticleDetails>) GenericDAO.directQuery(DeliveryArticleDetails.class, "select * from supplier_delivery_details where id_supplier_delivery_order = " + reception.getDeliveryOrder().getIdSupplierDeliveryOrder(), null);
+            // anomalie de livraison
+            List<Anomalie> anomalyDelivery = (List<Anomalie>) GenericDAO.directQuery(Anomalie.class, "select * from anomalie where id_type_anomalie = 1 and id = " + reception.getDeliveryOrder().getIdSupplierDeliveryOrder(), null);
+            List<DetailAnomalie> anomalyDeliveryDetails = new ArrayList<>();
+            if (!anomalyDelivery.isEmpty()) {
+                anomalyDeliveryDetails = (List<DetailAnomalie>) GenericDAO.directQuery(DetailAnomalie.class, "select * from detail_anomalie where id_anomalie = " + anomalyDelivery.get(0).getIdAnomalie(), null);
+            }
+            // anomalie de reception
+            List<Anomalie> anomalyReception = (List<Anomalie>) GenericDAO.directQuery(Anomalie.class, "select * from anomalie where id_type_anomalie = 2 and id = " + reception.getDeliveryOrder().getIdSupplierDeliveryOrder(), null);
+            List<DetailAnomalie> anomalyReceptionDetails = new ArrayList<>();
+            if (!anomalyReception.isEmpty()) {
+                anomalyReceptionDetails = (List<DetailAnomalie>) GenericDAO.directQuery(DetailAnomalie.class, "select * from detail_anomalie where id_anomalie = " + anomalyDelivery.get(0).getIdAnomalie(), null);
+            }
 
+            request.setAttribute("reception", reception);
+            request.setAttribute("receptionArticle", receptionArticle);
+            request.setAttribute("deliveryArticle", deliveryArticle);
+            request.setAttribute("anomalyDelivery", anomalyDelivery);
+            request.setAttribute("anomalyDeliveryDetails", anomalyDeliveryDetails);
+            request.setAttribute("anomalyReception", anomalyReception);
+            request.setAttribute("anomalyReceptionDetails", anomalyReceptionDetails);
             // All required assets
             List<String> css = new ArrayList<>();
             css.add("assets/css/supplier/supplier.css");
-            
+
             List<String> js = new ArrayList<>();
             js.add("assets/js/bootstrap.bundle.min.js");
-            
+
             request.setAttribute("css", css);
             request.setAttribute("js", js);
-            
+
             // Page definition
             request.setAttribute("title", "Insertion bon de livraison");
             request.setAttribute("contentPage", "./pages/delivery/receptionDetail.jsp");
-            
+
             request.getRequestDispatcher("./template.jsp").forward(request, response);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
     }
 
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
     @Override
     public String getServletInfo() {
         return "Short description";
