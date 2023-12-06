@@ -1,3 +1,10 @@
+<%@page import="java.util.List, model.stock.ArticleMethodMapping, model.stock.GestionMethod, model.article.Article, model.base.Utilisateur" %>
+<%
+    Utilisateur utilisateur = (Utilisateur) request.getAttribute("utilisateur");
+    List<GestionMethod> gestionMethods = (List<GestionMethod>) request.getAttribute("gestionMethods");
+    List<ArticleMethodMapping> articleMethods = (List<ArticleMethodMapping>) request.getAttribute("articleMethods");
+    List<Article> articles = (List<Article>) request.getAttribute("articleWithoutMethods");
+%>
 <div class="page-header">
     <h3 class="page-title">
         <span class="page-title-icon bg-gradient-primary text-white me-2">
@@ -31,39 +38,24 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>Savon</td>
-                                    <td>
-                                        <select class="form-select form-control-sm" name="" id="">
-                                            <option value="">FIFO</option>
-                                            <option value="">LIFO</option>
-                                            <option value="">CUMP</option>
-                                        </select>
-                                    </td>
-                                    <td><a href="" class="btn btn-success btn-sm">Valider</a></td>
-                                </tr>
-                                <tr>
-                                    <td>Savon</td>
-                                    <td>
-                                        <select class="form-select form-control-sm" name="" id="">
-                                            <option value="">FIFO</option>
-                                            <option value="">LIFO</option>
-                                            <option value="">CUMP</option>
-                                        </select>
-                                    </td>
-                                    <td><a href="" class="btn btn-success btn-sm">Valider</a></td>
-                                </tr>
-                                <tr>
-                                    <td>Savon</td>
-                                    <td>
-                                        <select class="form-select form-control-sm" name="" id="">
-                                            <option value="">FIFO</option>
-                                            <option value="">LIFO</option>
-                                            <option value="">CUMP</option>
-                                        </select>
-                                    </td>
-                                    <td><a href="" class="btn btn-success btn-sm">Valider</a></td>
-                                </tr>
+                            
+                            <% for(Article article : articles) { %>
+                            <tr>
+                            <form action="./article-method" method="POST">
+                                <input type="hidden" name="idArticle" value="<%= article.getIdArticle() %>">
+                                <td><%= article.getDesignation() %></td>
+                                <td>
+                                    <select class="form-select form-control-sm" name="idMethod" id="">
+                                        <% for(GestionMethod method : gestionMethods) { %>
+                                        <option value="<%= method.getIdGestionMethod() %>"><%= method.getGestionMethodName() %></option>
+                                        <% } %>
+                                    </select>
+                                </td>
+                                <td><button type="submit" class="btn btn-success btn-sm">Valider</button></td>
+                            </form>
+                            </tr>
+                            <% } %>
+                            
                             </tbody>
                         </table>
                     </div>
@@ -75,34 +67,25 @@
                                 <tr>
                                     <td>Article</td>
                                     <td>Methode</td>
+                                    <% if(utilisateur.getIsAdmin()) { %>
+                                    <td></td>
+                                    <% } %>
                                 </tr>
                             </thead>
                             <tbody>
+                                <% for(ArticleMethodMapping mapping : articleMethods) { %>
                                 <tr>
-                                    <td>Savon</td>
-                                    <td>FIFO</td>
+                                    <td><%= mapping.getArticle().getDesignation() %></td>
+                                    <td><%= mapping.getGestionMethod().getGestionMethodName() %></td>
+                                    <% if(utilisateur.getIsAdmin()) { %>
+                                    <td><a href="./delete-article-mapping?idMapping=<%= mapping.getIdArticleMethodMapping() %>" class="text-danger"><i class="mdi mdi-close"></i></a></td>
+                                    <% } %>
                                 </tr>
-                                <tr>
-                                    <td>Cache bouche</td>
-                                    <td>FIFO</td>
-                                </tr>
-                                <tr>
-                                    <td>Cache bouche</td>
-                                    <td>FIFO</td>
-                                </tr>
-                                <tr>
-                                    <td>Cache bouche</td>
-                                    <td>FIFO</td>
-                                </tr>
-                                <tr>
-                                    <td>Cache bouche</td>
-                                    <td>FIFO</td>
-                                </tr>
+                                <% } %>
                             </tbody>
                         </table>
                     </div>
                 </div>
-
 
             </div>
         </div>

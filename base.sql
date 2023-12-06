@@ -424,4 +424,34 @@ INSERT INTO utilisateur(id_service, username, password, mail, status, admin, pho
 INSERT INTO utilisateur(id_service, username, password, mail, status, admin, photo ) VALUES (7, 'George MANANTENA', 'george', 'george@gmail.com', 1, true, 'george.png');
 INSERT INTO utilisateur(id_service, username, password, mail, status, admin, photo ) VALUES (7, 'Solo ANDRIANASOLO', 'solo', 'solo@gmail.com', 1, false, 'solo.png');
 
+-- Base pour Sprint 3
+CREATE SEQUENCE seq_gestion_method;
+CREATE TABLE gestion_method (
+    id_gestion_method INTEGER PRIMARY KEY DEFAULT(nextval('seq_gestion_method')),
+    gestion_method_name VARCHAR(10)
+);
 
+CREATE SEQUENCE seq_article_method_mapping;
+CREATE TABLE article_method_mapping (
+    id_article_method_mapping INTEGER PRIMARY KEY DEFAULT(nextval('seq_article_method_mapping')),
+    id_article INTEGER,
+    id_gestion_method INTEGER,
+    FOREIGN KEY(id_article) REFERENCES article(id_article),
+    FOREIGN KEY(id_gestion_method) REFERENCES gestion_method(id_gestion_method)
+);
+
+ALTER SEQUENCE seq_gestion_method RESTART WITH 1;
+INSERT INTO gestion_method 
+(gestion_method_name) 
+VALUES
+('FIFO'),
+('LIFO'),
+('CUMP');
+
+ALTER SEQUENCE seq_article_method_mapping RESTART WITH 1;
+INSERT INTO article_method_mapping
+(id_article, id_gestion_method)
+VALUES
+(1, 1),
+(2, 2),
+(3, 3);
