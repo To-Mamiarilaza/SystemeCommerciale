@@ -411,3 +411,26 @@ GROUP BY
 ORDER BY
     annee, mois;
 
+CREATE TABLE type_anomalie (
+    id_type_anomalie serial PRIMARY KEY not null,
+    type_anomalie VARCHAR(10) NOT NULL
+);
+insert into type_anomalie (type_anomalie) values 
+                                        ('BDL'),
+                                        ('BDR'),
+                                        ('BDE');
+
+create sequence seq_anomalie;
+CREATE TABLE anomalie (
+    id_anomalie int default nextval('seq_anomalie') PRIMARY KEY NOT NULL,
+    id_type_anomalie INT REFERENCES type_anomalie(id_type_anomalie) NOT NULL,
+    explication TEXT
+);
+
+create sequence seq_detail_anomalie;
+CREATE TABLE detail_anomalie (
+    id_detail_anomalie INT default nextval('seq_detail_anomalie') primary key not null ,
+    id_anomalie INT,
+    detail TEXT,
+    FOREIGN KEY (id_anomalie) REFERENCES anomalie(id_anomalie) ON DELETE CASCADE
+);
