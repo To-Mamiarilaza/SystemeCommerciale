@@ -1,3 +1,5 @@
+<%@page import="model.purchaseClient.*, model.article.*, model.sale.*, java.util.List" %>
+
 <div class="page-header">
     <h3 class="page-title">
         <span class="page-title-icon bg-gradient-primary text-white me-2">
@@ -57,30 +59,23 @@
                             </tr>
                         </thead>
                         <tbody>
+                            <% if(request.getAttribute("purchaseOrderClients") != null) { 
+                            List<PurchaseOrderClient> purchaseOrders = (List<PurchaseOrderClient>)request.getAttribute("purchaseOrderClients");
+                            for(int i = 0; i < purchaseOrders.size(); i++) {
+                            %>
                             <tr>
-                                <td>12-11-2023</td>
-                                <td>BDC0001</td>
-                                <td>RAZAFINDRAKOTO Sergio</td>
-                                <td>Tanjombato</td>
+                                <td><%=purchaseOrders.get(i).getDateInsertion() %></td>
+                                <td><%=purchaseOrders.get(i).getReference() %></td>
+                                <td><%=purchaseOrders.get(i).getClientName() %></td>
+                                <td><%=purchaseOrders.get(i).getAdresse() %></td>
                                 <td>
-                                    <label class="badge badge-warning label-width">En attente</label>
+                                    <label class="badge badge-<%=purchaseOrders.get(i).getBadgeStatus() %> label-width"><%=purchaseOrders.get(i).getStatusLetter() %></label>
                                 </td>
                                 <td>
-                                    <a href="./client-purchase-order-detail"><i class="mdi mdi-clipboard-text action-icon"></i></a>
+                                    <a href="./client-purchase-order-detail?idPurchaseOrderClient=<%=purchaseOrders.get(i).getIdPurchaseOrderClient() %>"><i class="mdi mdi-clipboard-text action-icon"></i></a>
                                 </td>
                             </tr>
-                            <tr>
-                                <td>12-11-2023</td>
-                                <td>BDC0001</td>
-                                <td>RAZAFINDRAKOTO Sergio</td>
-                                <td>Tanjombato</td>
-                                <td>
-                                    <label class="badge badge-warning label-width">En attente</label>
-                                </td>
-                                <td>
-                                    <a href="./client-purchase-order-detail"><i class="mdi mdi-clipboard-text action-icon"></i></a>
-                                </td>
-                            </tr>
+                            <% } } %>
                         </tbody>
                     </table>
                 </div>

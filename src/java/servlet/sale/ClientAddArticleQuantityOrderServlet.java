@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package model.sale;
+package servlet.sale;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -12,14 +12,17 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import model.purchase.PurchaseRequest;
+import model.purchaseClient.ArticleOrder;
+import model.purchaseClient.PurchaseOrderClient;
+import model.sale.ArticleQuantitySale;
+import model.sale.ProformaSending;
 
 /**
  *
  * @author chalman
  */
-@WebServlet(name = "DeleteProformaSendingServlet", urlPatterns = {"/DeleteProformaSending"})
-public class DeleteProformaSendingServlet extends HttpServlet {
+@WebServlet(name = "ClientAddArticleQuantityOrderServlet", urlPatterns = {"/ClientAddArticleQuantityOrder"})
+public class ClientAddArticleQuantityOrderServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -38,10 +41,10 @@ public class DeleteProformaSendingServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet DeleteProformaSendingServlet</title>");            
+            out.println("<title>Servlet ClientAddArticleQuantityOrderServlet</title>");            
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet DeleteProformaSendingServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet ClientAddArticleQuantityOrderServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -59,18 +62,7 @@ public class DeleteProformaSendingServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try {
-            String code = request.getParameter("code");
-            
-            HttpSession session = request.getSession();
-            ProformaSending pr = (ProformaSending) session.getAttribute("proformaSending");
-            pr.deleteRequest(code);
-            pr.displayProforma();
-            
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        processRequest(request, response);
     }
 
     /**
@@ -84,7 +76,25 @@ public class DeleteProformaSendingServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+               response.setContentType("text/plain;charset=UTF-8");
+          
+        PrintWriter out = response.getWriter();
+        try {
+            String article = request.getParameter("article");
+            String quantity = request.getParameter("quantity");
+            HttpSession session = request.getSession();
+            PurchaseOrderClient purchaseOrderClient = (PurchaseOrderClient)session.getAttribute("purchaseOrderClient");
+            ArticleOrder articleOrder = purchaseOrderClient.addArticleQuantity(article, quantity);
+            purchaseOrderClient.displayProforma();
+            if(articleOrder.getIsExist() == false) {
+                out.print("{\"code\":\""+articleOrder.getArticle().getCode()+"\", \"article\":\""+articleOrder.getArticle().getDesignation()+"\", \"quantity\":\""+articleOrder.getQuantity()+"\", \"exist\": false}");;
+            } else {
+                out.print("{\"code\":\""+articleOrder.getArticle().getCode()+"\", \"article\":\""+articleOrder.getArticle().getDesignation()+"\", \"quantity\":\""+articleOrder.getQuantity()+"\", \"exist\": true}");
+            }
+        } catch(Exception e) {
+            request.setAttribute("error", e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     /**

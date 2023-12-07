@@ -4,6 +4,7 @@
  */
 package servlet.sale;
 
+import generalisation.GenericDAO.GenericDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -14,6 +15,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 import model.base.Utilisateur;
+import model.purchaseClient.ArticleOrder;
+import model.purchaseClient.PurchaseOrderClient;
 
 /**
  *
@@ -67,6 +70,14 @@ public class ClientPurchaseOrderDetail extends HttpServlet {
             }
             request.setAttribute("utilisateur", utilisateur);
 
+            String idPurchaseOrderClient = request.getParameter("idPurchaseOrderClient");
+            PurchaseOrderClient purchaseOrderClient = GenericDAO.findById(PurchaseOrderClient.class, Integer.valueOf(idPurchaseOrderClient), null);
+            List<ArticleOrder> articleQuantityOrder = (List<ArticleOrder>) GenericDAO.directQuery(ArticleOrder.class, "SELECT * FROM article_quantity_order WHERE id_purchase_order_client="+idPurchaseOrderClient, null);
+            purchaseOrderClient.setArticleOrder(articleQuantityOrder);
+            
+            request.setAttribute("purchaseOrderClient", purchaseOrderClient);
+            
+            
             // All required assets
             List<String> css = new ArrayList<>();
             css.add("assets/css/supplier/supplier.css");
