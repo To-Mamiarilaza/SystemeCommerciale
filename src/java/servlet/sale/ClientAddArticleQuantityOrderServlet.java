@@ -4,7 +4,6 @@
  */
 package servlet.sale;
 
-import generalisation.GenericDAO.GenericDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -12,17 +11,18 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.List;
-import model.base.Utilisateur;
+import jakarta.servlet.http.HttpSession;
+import model.purchaseClient.ArticleOrder;
 import model.purchaseClient.PurchaseOrderClient;
+import model.sale.ArticleQuantitySale;
+import model.sale.ProformaSending;
 
 /**
  *
- * @author to
+ * @author chalman
  */
-@WebServlet(name = "ClientPurchaseOrderListServlet", urlPatterns = {"/client-purchase-order-list"})
-public class ClientPurchaseOrderListServlet extends HttpServlet {
+@WebServlet(name = "ClientAddArticleQuantityOrderServlet", urlPatterns = {"/ClientAddArticleQuantityOrder"})
+public class ClientAddArticleQuantityOrderServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -41,10 +41,10 @@ public class ClientPurchaseOrderListServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet ClientPurchaseOrderListServlet</title>");            
+            out.println("<title>Servlet ClientAddArticleQuantityOrderServlet</title>");            
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet ClientPurchaseOrderListServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet ClientAddArticleQuantityOrderServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -62,35 +62,7 @@ public class ClientPurchaseOrderListServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        try {
-            Utilisateur utilisateur = (Utilisateur) request.getSession().getAttribute("utilisateur");
-            if (utilisateur == null) {
-                response.sendRedirect("./login");
-            }
-            request.setAttribute("utilisateur", utilisateur);
-
-            //Liste des demandes de bon de commande
-            List<PurchaseOrderClient> purchaseOrderClients = (List<PurchaseOrderClient>) GenericDAO.getAll(PurchaseOrderClient.class, null, null);
-            request.setAttribute("purchaseOrderClients", purchaseOrderClients);
-            
-            // All required assets
-            List<String> css = new ArrayList<>();
-            css.add("assets/css/supplier/supplier.css");
-            
-            List<String> js = new ArrayList<>();
-            js.add("assets/js/bootstrap.bundle.min.js");
-            
-            request.setAttribute("css", css);
-            request.setAttribute("js", js);
-            
-            // Page definition
-            request.setAttribute("title", "Bon de commande client");
-            request.setAttribute("contentPage", "./pages/sale/purchaseOrderList.jsp");
-            
-            request.getRequestDispatcher("./template.jsp").forward(request, response);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        processRequest(request, response);
     }
 
     /**
@@ -104,7 +76,25 @@ public class ClientPurchaseOrderListServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+               response.setContentType("text/plain;charset=UTF-8");
+          
+        PrintWriter out = response.getWriter();
+        try {
+            String article = request.getParameter("article");
+            String quantity = request.getParameter("quantity");
+            HttpSession session = request.getSession();
+            PurchaseOrderClient purchaseOrderClient = (PurchaseOrderClient)session.getAttribute("purchaseOrderClient");
+            ArticleOrder articleOrder = purchaseOrderClient.addArticleQuantity(article, quantity);
+            purchaseOrderClient.displayProforma();
+            if(articleOrder.getIsExist() == false) {
+                out.print("{\"code\":\""+articleOrder.getArticle().getCode()+"\", \"article\":\""+articleOrder.getArticle().getDesignation()+"\", \"quantity\":\""+articleOrder.getQuantity()+"\", \"exist\": false}");;
+            } else {
+                out.print("{\"code\":\""+articleOrder.getArticle().getCode()+"\", \"article\":\""+articleOrder.getArticle().getDesignation()+"\", \"quantity\":\""+articleOrder.getQuantity()+"\", \"exist\": true}");
+            }
+        } catch(Exception e) {
+            request.setAttribute("error", e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     /**

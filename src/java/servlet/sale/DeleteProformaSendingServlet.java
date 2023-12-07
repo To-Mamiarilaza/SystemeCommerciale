@@ -4,7 +4,6 @@
  */
 package servlet.sale;
 
-import generalisation.GenericDAO.GenericDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -12,17 +11,16 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.List;
-import model.base.Utilisateur;
-import model.purchaseClient.PurchaseOrderClient;
+import jakarta.servlet.http.HttpSession;
+import model.purchase.PurchaseRequest;
+import model.sale.ProformaSending;
 
 /**
  *
- * @author to
+ * @author chalman
  */
-@WebServlet(name = "ClientPurchaseOrderListServlet", urlPatterns = {"/client-purchase-order-list"})
-public class ClientPurchaseOrderListServlet extends HttpServlet {
+@WebServlet(name = "DeleteProformaSendingServlet", urlPatterns = {"/DeleteProformaSending"})
+public class DeleteProformaSendingServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -41,10 +39,10 @@ public class ClientPurchaseOrderListServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet ClientPurchaseOrderListServlet</title>");            
+            out.println("<title>Servlet DeleteProformaSendingServlet</title>");            
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet ClientPurchaseOrderListServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet DeleteProformaSendingServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -62,32 +60,15 @@ public class ClientPurchaseOrderListServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        response.setContentType("text/html;charset=UTF-8");
         try {
-            Utilisateur utilisateur = (Utilisateur) request.getSession().getAttribute("utilisateur");
-            if (utilisateur == null) {
-                response.sendRedirect("./login");
-            }
-            request.setAttribute("utilisateur", utilisateur);
-
-            //Liste des demandes de bon de commande
-            List<PurchaseOrderClient> purchaseOrderClients = (List<PurchaseOrderClient>) GenericDAO.getAll(PurchaseOrderClient.class, null, null);
-            request.setAttribute("purchaseOrderClients", purchaseOrderClients);
+            String code = request.getParameter("code");
             
-            // All required assets
-            List<String> css = new ArrayList<>();
-            css.add("assets/css/supplier/supplier.css");
+            HttpSession session = request.getSession();
+            ProformaSending pr = (ProformaSending) session.getAttribute("proformaSending");
+            pr.deleteRequest(code);
+            pr.displayProforma();
             
-            List<String> js = new ArrayList<>();
-            js.add("assets/js/bootstrap.bundle.min.js");
-            
-            request.setAttribute("css", css);
-            request.setAttribute("js", js);
-            
-            // Page definition
-            request.setAttribute("title", "Bon de commande client");
-            request.setAttribute("contentPage", "./pages/sale/purchaseOrderList.jsp");
-            
-            request.getRequestDispatcher("./template.jsp").forward(request, response);
         } catch (Exception e) {
             e.printStackTrace();
         }

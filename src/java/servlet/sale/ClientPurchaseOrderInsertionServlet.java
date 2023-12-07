@@ -4,6 +4,7 @@
  */
 package servlet.sale;
 
+import generalisation.GenericDAO.GenericDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -11,9 +12,13 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
+import model.article.Article;
 import model.base.Utilisateur;
+import model.purchase.PaymentMethod;
+import model.purchaseClient.PurchaseOrderClient;
 
 /**
  *
@@ -66,13 +71,22 @@ public class ClientPurchaseOrderInsertionServlet extends HttpServlet {
                 response.sendRedirect("./login");
             }
             request.setAttribute("utilisateur", utilisateur);
-
+            
+            List<PaymentMethod> paymentMethods = (List<PaymentMethod>) GenericDAO.getAll(PaymentMethod.class, null, null);
+            request.setAttribute("paymentMethods", paymentMethods);
+            List<Article> articles = (List<Article>) GenericDAO.getAll(Article.class, null, null);
+            HttpSession session = request.getSession();
+            request.setAttribute("articles", articles);
+            PurchaseOrderClient purchaseOrderClient = new PurchaseOrderClient();
+            session.setAttribute("purchaseOrderClient", purchaseOrderClient);
+            
             // All required assets
             List<String> css = new ArrayList<>();
             css.add("assets/css/supplier/supplier.css");
             
             List<String> js = new ArrayList<>();
             js.add("assets/js/bootstrap.bundle.min.js");
+            js.add("assets/js/sale/purchaseOrderClient.js");
             
             request.setAttribute("css", css);
             request.setAttribute("js", js);
@@ -98,7 +112,35 @@ public class ClientPurchaseOrderInsertionServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        try {
+            System.out.println("Tonga");
+            String reference = request.getParameter("reference");
+            String date = request.getParameter("date");
+            String nomClient = request.getParameter("clientName");
+            String adress = request.getParameter("adress");
+            String contactDelivery = request.getParameter("contactDelivery");
+            String deliveryDate = request.getParameter("deliveryDate");
+            String methodPayment = request.getParameter("methodPayment");
+            
+            HttpSession session = request.getSession();
+            PurchaseOrderClient purchaseOrderClient = (PurchaseOrderClient)session.getAttribute("purchaseOrderClient");
+            purchaseOrderClient.setReference(reference);
+            purchaseOrderClient.setDateInsertion(date);
+            purchaseOrderClient.setClientName(nomClient);
+            purchaseOrderClient.setAdresse(adress);
+            purchaseOrderClient.setContactDelivery(contactDelivery);
+            purchaseOrderClient.setDeliveryDate(deliveryDate);
+            purchaseOrderClient.setPaymentMethod(methodPayment);
+            purchaseOrderClient.setStatus(5);
+            
+            //Sauvegarder
+            purchaseOrderClient.save(purchaseOrderClient);
+            response.sendRedirect("./client-purchase-order-list");
+        } catch(Exception e) {
+            request.setAttribute("error", e.getMessage());
+            e.printStackTrace();
+            doGet(request, response);
+        }
     }
 
     /**

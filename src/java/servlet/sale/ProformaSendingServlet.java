@@ -4,6 +4,7 @@
  */
 package servlet.sale;
 
+import generalisation.GenericDAO.GenericDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -11,9 +12,13 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
+import model.article.Article;
 import model.base.Utilisateur;
+import model.sale.ArticleQuantitySale;
+import model.sale.ProformaSending;
 
 /**
  *
@@ -65,14 +70,30 @@ public class ProformaSendingServlet extends HttpServlet {
             if (utilisateur == null) {
                 response.sendRedirect("./login");
             }
+            
+            //Liste des articles
+            List<Article> articles = (List<Article>) GenericDAO.getAll(Article.class, null, null);
+            request.setAttribute("articles", articles);
+            
+            //List des proforma
+            List<ProformaSending> profomaSendings = (List<ProformaSending>) GenericDAO.getAll(ProformaSending.class, null, null);
+            request.setAttribute("proformaSendings", profomaSendings);
+            
+            
             request.setAttribute("utilisateur", utilisateur);
 
+            //Initialisation de la session proformaSending
+            ProformaSending proformaSending = new ProformaSending();
+            HttpSession session = request.getSession();
+            session.setAttribute("proformaSending", proformaSending);
+            
             // All required assets
             List<String> css = new ArrayList<>();
             css.add("assets/css/supplier/supplier.css");
             
             List<String> js = new ArrayList<>();
             js.add("assets/js/bootstrap.bundle.min.js");
+            js.add("assets/js/sale/proformaSending.js");
             
             request.setAttribute("css", css);
             request.setAttribute("js", js);
@@ -98,7 +119,25 @@ public class ProformaSendingServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+              response.setContentType("text/plain;charset=UTF-8");
+          
+        PrintWriter out = response.getWriter();
+        try {
+            String article = request.getParameter("article");
+            String quantity = request.getParameter("quantity");
+            HttpSession session = request.getSession();
+            ProformaSending proformaSending = (ProformaSending)session.getAttribute("proformaSending");
+            ArticleQuantitySale articleQuantity = proformaSending.addArticleQuantity(article, quantity);
+            proformaSending.displayProforma();
+            if(articleQuantity.getIsExist() == false) {
+                out.print("{\"code\":\""+articleQuantity.getArticle().getCode()+"\", \"article\":\""+articleQuantity.getArticle().getDesignation()+"\", \"quantity\":\""+articleQuantity.getQuantity()+"\", \"exist\": false}");
+            } else {
+                out.print("{\"code\":\""+articleQuantity.getArticle().getCode()+"\", \"article\":\""+articleQuantity.getArticle().getDesignation()+"\", \"quantity\":\""+articleQuantity.getQuantity()+"\", \"exist\": true}");
+            }
+        } catch(Exception e) {
+            request.setAttribute("error", e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     /**

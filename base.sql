@@ -448,3 +448,47 @@ CREATE TABLE detail_anomalie (
     detail TEXT,
     FOREIGN KEY (id_anomalie) REFERENCES anomalie(id_anomalie) ON DELETE CASCADE
 );
+-- Table for sale 
+
+CREATE SEQUENCE seq_proforma_sending;
+CREATE TABLE proforma_sending (
+    id_proforma_sending INTEGER PRIMARY KEY DEFAULT nextval('seq_proforma_sending'),
+    email VARCHAR(100),
+    date_sending DATE,
+    status int
+);
+
+CREATE SEQUENCE seq_article_quantity_sale;
+CREATE TABLE article_quantity_sale (
+    id_article_quantity_sale INTEGER PRIMARY KEY DEFAULT nextval('seq_article_quantity_sale'),
+    id_article int,
+    quantity DOUBLE PRECISION,
+    id_proforma_sending int,
+    status int,
+    FOREIGN KEY (id_proforma_sending) REFERENCES proforma_sending(id_proforma_sending)
+);
+
+CREATE SEQUENCE seq_purchase_order_client;
+CREATE TABLE purchase_order_client (
+    id_purchase_order_client INTEGER PRIMARY KEY DEFAULT nextval('seq_purchase_order_client'),
+    reference VARCHAR(50),
+    date_insertion DATE,
+    client_name VARCHAR(50),
+    adresse VARCHAR(50),
+    contact_delivery VARCHAR(50),
+    delivery_date DATE,
+    id_payment_method int,
+    status int,
+    FOREIGN KEY (id_payment_method) REFERENCES payment_method(id_payment_method)
+);
+
+CREATE SEQUENCE seq_article_quantity_order;
+CREATE TABLE article_quantity_order (
+    id_article_quantity_order INTEGER PRIMARY KEY DEFAULT nextval('seq_article_quantity_order'),
+    id_article int,
+    quantity DOUBLE PRECISION,
+    id_purchase_order_client int,
+    status int,
+    FOREIGN KEY (id_purchase_order_client) REFERENCES purchase_order_client(id_purchase_order_client),
+    FOREIGN KEY (id_article) REFERENCES article(id_article)
+);
