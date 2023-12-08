@@ -6,7 +6,6 @@ package servlet.purchase;
 
 import connection.DBConnection;
 import generalisation.GenericDAO.GenericDAO;
-import generalisation.src.generalisation.utils.GenericUtil;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;

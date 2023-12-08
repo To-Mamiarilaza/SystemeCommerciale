@@ -1,3 +1,10 @@
+<%@page import="java.util.List, java.time.LocalDate, model.article.Article, model.stock.*" %>
+<%
+    String startDate = (String) request.getAttribute("startDate");
+    String endDate = (String) request.getAttribute("endDate");
+    List<Article> articleList = (List<Article>) request.getAttribute("articleList");
+    EtatStock etatStock = (EtatStock) request.getAttribute("etatStock");
+%>
 <div class="page-header">
     <h3 class="page-title">
         <span class="page-title-icon bg-gradient-primary text-white me-2">
@@ -23,17 +30,19 @@
                     <div class="row align-items-end">
                         <div class="form-group col-md-4">
                             <label for="">Date debut</label>
-                            <input type="date" class="form-control form-control-sm">
+                            <input type="date" name="startDate" class="form-control form-control-sm" value="<%= startDate %>">
                         </div>
                         <div class="form-group col-md-4">
                             <label for="">Date fin</label>
-                            <input type="date" class="form-control form-control-sm">
+                            <input type="date" name="endDate" class="form-control form-control-sm" value="<%= endDate %>">
                         </div>
                         <div class="form-group col-md-4">
                             <label for="">Article</label>
-                            <select name="" class="form-select form-control-sm" id="">
-                                <option value="">Savon</option>
-                                <option value="">Cache bouche</option>
+                            <select name="articleCode" class="form-select form-control-sm" id="">
+                                <option value="">Toutes les articles</option>
+                                <% for(Article article : articleList) { %>
+                                    <option value="<%= article.getCode() %>"><%= article.getDesignation() %></option>
+                                <% } %>
                             </select>
                         </div>
                         <div class="form-group col-md-2">
@@ -45,33 +54,26 @@
                     <thead>
                         <tr class="table-primary">
                             <td>Article</td>
-                            <td>Sortant</td>
+                            <td>Quantite Initiale</td>
                             <td>Entrant</td>
-                            <td>Quantite avant</td>
-                            <td>Quantite restant</td>
-                            <td>Prix Achat</td>
+                            <td>Sortant</td>
+                            <td>Reste</td>
+                            <td>Prix Unitaire</td>
                             <td>Montant</td>
                         </tr>
                     </thead>
                     <tbody>
+                        <% for(Stock stock : etatStock.getStockList()) { %>
                         <tr>
-                            <td>Savon</td>
-                            <td>100 Kg</td>
-                            <td>500 Kg</td>
-                            <td>200 Kg</td>
-                            <td>400 Kg</td>
-                            <td>20 000 AR</td>
-                            <td>1 000 000 AR</td>
+                            <td><%= stock.getArticle().getDesignation() %></td>
+                            <td><%= stock.getInitialQuantity() %></td>
+                            <td><%= stock.getIncoming() %></td>
+                            <td><%= stock.getOutgoing() %></td>
+                            <td><%= stock.getRemain() %></td>
+                            <td><%= stock.getUnitPriceDisplay() %></td>
+                            <td><%= stock.getAmountDisplay() %> AR</td>
                         </tr>
-                        <tr>
-                            <td>Savon</td>
-                            <td>100 Kg</td>
-                            <td>500 Kg</td>
-                            <td>200 Kg</td>
-                            <td>400 Kg</td>
-                            <td>20 000 AR</td>
-                            <td>1 000 000 AR</td>
-                        </tr>
+                        <% } %>
 
                         <!-- TOTAL ROW -->
                         <tr class="table-primary">
@@ -81,7 +83,7 @@
                             <td></td>
                             <td></td>
                             <td>TOTAL</td>
-                            <td>12 000 000 AR</td>
+                            <td><%= etatStock.getStockTotalValue() %> AR</td>
                         </tr>
                         <!-- TOTAL ROW -->
 

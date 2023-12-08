@@ -2,11 +2,8 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package servlet.reception;
+package servlet.store;
 
-import servlet.purchase.*;
-import connection.DBConnection;
-import generalisation.GenericDAO.GenericDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -14,24 +11,14 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.sql.Connection;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import model.base.Utilisateur;
-import model.purchase.PaymentMethod;
-import model.purchase.Proforma;
-import model.purchase.PurchaseOrder;
-import model.supplier.Supplier;
-import service.proforma.ProformaService;
-import service.proforma.SupplierService;
+import model.movement.out.OutgoingOrder;
 
 /**
  *
- * @author To Mamiarilaza
+ * @author to
  */
-@WebServlet(name = "ReceptionOrderInsertionServlet", urlPatterns = {"/reception-order-insertion"})
-public class ReceptionOrderInsertionServlet extends HttpServlet {
+@WebServlet(name = "AddOutgoingOrderDetailServlet", urlPatterns = {"/add-outgoing-order-detail"})
+public class AddOutgoingOrderDetailServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -50,10 +37,10 @@ public class ReceptionOrderInsertionServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet PurchaseOrderInsertion</title>");            
+            out.println("<title>Servlet AddOutgoingOrderDetailServlet</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet PurchaseOrderInsertion at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet AddOutgoingOrderDetailServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -71,31 +58,22 @@ public class ReceptionOrderInsertionServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        PrintWriter out = response.getWriter();
         try {
-            Utilisateur utilisateur = (Utilisateur) request.getSession().getAttribute("utilisateur");
-            if (utilisateur == null) {
-                response.sendRedirect("./login");
-            }
-            request.setAttribute("utilisateur", utilisateur);
+            System.out.println("On arrive chez moi !");
+            
+            String idArticle = request.getParameter("idArticle");
+            String designation = request.getParameter("designation");
+            String quantity = request.getParameter("quantity");
 
-            // All required assets
-            List<String> css = new ArrayList<>();
-            css.add("assets/css/supplier/supplier.css");
-            
-            List<String> js = new ArrayList<>();
-            js.add("assets/js/bootstrap.bundle.min.js");
-            
-            request.setAttribute("css", css);
-            request.setAttribute("js", js);
-            
-            // Page definition
-            request.setAttribute("title", "Insertion bon de livraison");
-            request.setAttribute("contentPage", "./pages/delivery/receptionOrderInsertion.jsp");
-            
-            request.getRequestDispatcher("./template.jsp").forward(request, response);
+            OutgoingOrder outgoingOrder = (OutgoingOrder) request.getSession().getAttribute("outgoingOrder");
+            outgoingOrder.addNewDetail(idArticle, designation, quantity);
+            out.print("{\"success\": \"success\"}");
         } catch (Exception e) {
-            e.printStackTrace();
+            out.print("{\"error\": \"" + e.getMessage() + "\"}");
+
         }
+
     }
 
     /**
@@ -109,7 +87,7 @@ public class ReceptionOrderInsertionServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        PrintWriter out = response.getWriter();
+        processRequest(request, response);
     }
 
     /**

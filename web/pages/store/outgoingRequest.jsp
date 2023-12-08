@@ -1,3 +1,7 @@
+<%@page import="java.util.List, model.movement.out.ServiceRequest, model.purchase.ArticleQuantity" %>
+<%
+    List<ServiceRequest> serviceRequests = (List<ServiceRequest>) request.getAttribute("serviceRequests");
+%>
 <div class="page-header">
     <h3 class="page-title">
         <span class="page-title-icon bg-gradient-primary text-white me-2">
@@ -23,45 +27,25 @@
                         <h5 class="text-primary">Besoins des départements</h5>
                         <hr>
                         <div class="row">
-                            <div class="col-md-6">
-                                <a href="./outgoing-order-insertion" class="no-style-link">
+                            <% for(ServiceRequest serviceRequest : serviceRequests) { %>
+                            <div class="col-md-6 mb-4 h-50">
+                                <a href="./outgoing-order-insertion?idService=<%= serviceRequest.getService().getIdService() %>" class="no-style-link">
                                     <div class="border p-4 border-1">
-                                        <h5>Informatique</h5>
+                                        <h5><%= serviceRequest.getService().getService() %></h5>
                                         <ul class="text-black">
+                                            <% for(ArticleQuantity articleQuantity : serviceRequest.getArticleQuantities()) { %>
                                             <li>
                                                 <div class="d-flex justify-content-between">
-                                                    <span>Ordinateur</span><span>8</span>
+                                                    <span><%= articleQuantity.getArticle().getDesignation() %></span><span><%= articleQuantity.getQuantity() %></span>
                                                 </div>
                                             </li>
-                                            <li>
-                                                <div class="d-flex justify-content-between">
-                                                    <span>Cahier spirale</span><span>13</span>
-                                                </div>
-                                            </li>
+                                            <% } %>
                                         </ul>
                                     </div>
                                 </a>
                             </div>
+                            <% } %>
 
-                            <div class="col-md-6">
-                                <a href="./outgoing-order-insertion" class="no-style-link">
-                                    <div class="border p-4 border-1">
-                                        <h5>Informatique</h5>
-                                        <ul class="text-black">
-                                            <li>
-                                                <div class="d-flex justify-content-between">
-                                                    <span>Ordinateur</span><span>8</span>
-                                                </div>
-                                            </li>
-                                            <li>
-                                                <div class="d-flex justify-content-between">
-                                                    <span>Cahier spirale</span><span>13</span>
-                                                </div>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </a>
-                            </div>
                         </div>
                     </div>
                     <div class="col-md-6">

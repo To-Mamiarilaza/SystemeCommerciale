@@ -455,3 +455,214 @@ VALUES
 (1, 1),
 (2, 2),
 (3, 3);
+
+CREATE VIEW v_article_method_mapping AS
+SELECT a.id_article, code, description, designation, id_category, tva, id_unity, status, g.gestion_method_name
+FROM article a JOIN article_method_mapping am ON a.id_article = am.id_article JOIN gestion_method g ON am.id_gestion_method = g.id_gestion_method;
+
+-- Base pour le gestion de stock
+
+CREATE SEQUENCE IF NOT EXISTS seq_incoming;
+CREATE TABLE incoming
+(
+    id_incoming VARCHAR(10) PRIMARY KEY,
+    date        DATE,
+    id_bde      INTEGER,
+    id_article  INTEGER,
+    quantity    DECIMAL(8, 2),
+    unit_price  DECIMAL(10, 2),
+    current_unit_price DECIMAl(10, 2),
+    etat        INTEGER,
+    FOREIGN KEY (id_article) REFERENCES article (id_article)
+);
+
+CREATE SEQUENCE IF NOT EXISTS seq_outgoing;
+CREATE TABLE outgoing
+(
+    id_outgoing VARCHAR(10) PRIMARY KEY,
+    date        DATE,
+    id_bds      INTEGER,
+    id_incoming VARCHAR(10),
+    quantity    DECIMAL(8, 2),
+    unit_price  DECIMAL(10, 2),
+    etat        INTEGER,
+    FOREIGN KEY (id_incoming) REFERENCES incoming (id_incoming)
+);
+
+-- View montrant les sortie avec les articles 
+CREATE VIEW v_outgoing_article AS
+SELECT o.*, i.id_article FROM 
+outgoing o JOIN incoming i ON o.id_incoming = i.id_incoming;
+
+ALTER SEQUENCE seq_incoming RESTART WITH 1;
+INSERT INTO incoming 
+(id_incoming, date, id_bde, id_article, quantity, unit_price, current_unit_price, etat)   
+VALUES
+('INC0001', '01-01-2023', NULL, 1, 30, 400, NULL, 1),  
+('INC0002', '10-01-2023', NULL, 1, 20, 500, NULL, 1),  
+('INC0003', '01-01-2023', NULL, 2, 10, 3000, NULL, 1),  
+('INC0004', '05-01-2023', NULL, 2, 10, 3200, NULL, 1),  
+('INC0005', '10-01-2023', NULL, 2, 20, 3000, NULL, 1),  
+('INC0006', '01-01-2023', NULL, 3, 15, 4000, NULL, 1),  
+('INC0007', '05-01-2023', NULL, 3, 20, 4000, NULL, 1);
+
+ALTER SEQUENCE seq_outgoing RESTART WITH 1;
+INSERT INTO outgoing
+(id_outgoing, date, id_bds, id_incoming, quantity, unit_price, etat)
+VALUES
+('OUT0001', '05-01-2023', NULL, 'INC0001', 10, NULL, 1),
+('OUT0002', '12-01-2023', NULL, 'INC0001', 5, NULL, 1),
+('OUT0003', '02-01-2023', NULL, 'INC0003', 6, NULL, 1),
+('OUT0004', '08-01-2023', NULL, 'INC0004', 8, NULL, 1),
+('OUT0005', '06-01-2023', NULL, 'INC0006', 10, NULL, 1);
+
+-- View for getting current remaining quantity of each incoming
+CREATE
+OR REPLACE VIEW v_incoming_stock AS
+SELECT i.id_incoming, i.id_bde, date, id_article, (quantity - COALESCE (somme_sortie, 0)) as quantity, unit_price, current_unit_price, etat
+FROM incoming i LEFT JOIN
+    (SELECT id_incoming, SUM (quantity) as somme_sortie FROM outgoing WHERE etat = 1 GROUP BY id_incoming) AS o
+ON
+    i.id_incoming = o.id_incoming
+WHERE (quantity - COALESCE (somme_sortie, 0)) != 0 AND etat = 1;
+
+-- Function for getting the remaining quantity of each incoming on a given date
+CREATE
+OR REPLACE FUNCTION get_incoming_stock(target_date DATE)
+RETURNS TABLE (
+    id_incoming VARCHAR(10),
+    date DATE,
+    id_article INTEGER,
+    reste NUMERIC(8, 2),
+    unit_price NUMERIC(10, 2),
+    etat INTEGER
+)  AS $$
+BEGIN
+RETURN QUERY
+SELECT i.id_incoming,
+       i.date,
+       i.id_article,
+       (quantity - COALESCE(somme_sortie, 0)) as remaining,
+       i.unit_price,
+       i.etat
+FROM incoming i
+         LEFT JOIN
+     (SELECT o.id_incoming, SUM(quantity) as somme_sortie
+      FROM outgoing o
+      WHERE o.date <= target_date
+        AND o.etat = 1
+      GROUP BY o.id_incoming) AS o
+     ON i.id_incoming = o.id_incoming
+WHERE i.date <= target_date
+  AND i.etat = 1;
+END;
+$$
+LANGUAGE plpgsql;
+
+-- Function for getting article stock availability on a date
+CREATE
+OR REPLACE FUNCTION get_stock_availability(target_date DATE)
+RETURNS TABLE (
+    id_article INTEGER,
+    reste NUMERIC(8, 2),
+    unit_price NUMERIC(10, 2),
+    amount NUMERIC(10, 2)
+)  AS $$
+BEGIN
+RETURN QUERY
+SELECT end_stock.id_article,
+       SUM(end_stock.reste),
+        CASE 
+            WHEN SUM(end_stock.reste) = 0 THEN 0
+            ELSE SUM(end_stock.reste * end_stock.unit_price) / COALESCE(SUM(end_stock.reste), 1) -- Prix unitaire moyenne pondéré
+        END,    
+        SUM(end_stock.reste * end_stock.unit_price)
+FROM get_incoming_stock(target_date) end_stock
+GROUP BY end_stock.id_article;
+END;
+$$
+LANGUAGE plpgsql;
+
+-- Function for getting movement quantity on two date
+CREATE
+OR REPLACE FUNCTION get_stock_movement(start_date DATE, end_date DATE)
+RETURNS TABLE (
+    id_article INTEGER,
+    incoming NUMERIC(8, 2),
+    outgoing NUMERIC(8, 2)
+)  AS $$
+BEGIN
+RETURN QUERY
+    SELECT a.id_article, COALESCE(inc.incoming, 0), COALESCE(out.outgoing, 0)
+    FROM article a 
+    LEFT JOIN (SELECT i.id_article, SUM(quantity) as incoming FROM incoming i WHERE start_date < date AND date <= end_date  GROUP BY i.id_article) inc ON inc.id_article = a.id_article
+    LEFT JOIN (SELECT o.id_article, SUM(quantity) as outgoing FROM v_outgoing_article o WHERE start_date < date AND date <= end_date GROUP BY o.id_article) out ON out.id_article = a.id_article
+;
+END;
+$$
+LANGUAGE plpgsql;
+
+-- Function for getting stock availability on two date
+CREATE
+OR REPLACE FUNCTION get_stock_availability(start_date DATE, end_date DATE)
+RETURNS TABLE (
+    id_article INTEGER,
+    code VARCHAR(10),
+    initial_quantity NUMERIC(8, 2),
+    incoming NUMERIC(8, 2),
+    outgoing NUMERIC(8, 2),
+    reste NUMERIC(8, 2),
+    unit_price NUMERIC(10, 2),
+    amount NUMERIC(10, 2)
+)  AS $$
+BEGIN
+RETURN QUERY
+SELECT  end_stock.id_article,
+        a.code,
+        COALESCE(start_stock.reste, 0),
+        mvt.incoming,
+        mvt.outgoing,
+        end_stock.reste,
+        end_stock.unit_price,
+        end_stock.amount
+        FROM get_stock_availability(end_date) end_stock
+        LEFT JOIN
+        get_stock_availability(start_date) start_stock
+        ON end_stock.id_article = start_stock.id_article
+        JOIN article a ON end_stock.id_article = a.id_article
+        JOIN get_stock_movement(start_date, end_date) mvt ON mvt.id_article = a.id_article 
+;
+END;
+$$
+LANGUAGE plpgsql;
+
+-- Gestion des bons de sortie
+CREATE VIEW v_service_valid_request AS
+SELECT aq.*, p.id_service FROM 
+article_quantity aq JOIN purchase_request p ON aq.id_purchase_request = p.id_purchase_request 
+WHERE aq.status = 2;
+
+CREATE SEQUENCE seq_outgoing_order;
+CREATE TABLE outgoing_order (
+    id_outgoing_order INTEGER PRIMARY KEY DEFAULT nextval('seq_outgoing_order'),
+    date DATE,
+    responsable_name VARCHAR,
+    responsable_contact VARCHAR,
+    motif VARCHAR,
+    id_purchase_order INTEGER,
+    id_service INTEGER,
+    status INTEGER,
+    FOREIGN KEY(id_purchase_order) REFERENCES purchase_order(id_purchase_order),
+    FOREIGN KEY(id_service) REFERENCES service(id_service)
+);
+
+CREATE SEQUENCE seq_outgoing_order_detail;
+CREATE TABLE outgoing_order_detail (
+    id_outgoing_order_detail INTEGER PRIMARY KEY DEFAULT nextval('seq_outgoing_order_detail'),
+    id_outgoing_order INTEGER,
+    id_article INTEGER,
+    quantity INTEGER,
+    status INTEGER,
+    FOREIGN KEY(id_article) REFERENCES article(id_article),
+    FOREIGN KEY(id_outgoing_order) REFERENCES outgoing_order(id_outgoing_order)
+);

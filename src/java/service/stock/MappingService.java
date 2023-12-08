@@ -29,6 +29,16 @@ public class MappingService {
         return (List<ArticleMethodMapping>) GenericDAO.getAll(ArticleMethodMapping.class, null, connection);
     }
     
+    // Trouver la methode de gestion d'une article
+    public static ArticleMethodMapping getArticleMethod(Article article, Connection connection) throws Exception {
+        String whereClause = "WHERE id_article = " + article.getIdArticle();
+        List<ArticleMethodMapping> mapping = (List<ArticleMethodMapping>) GenericDAO.getAll(ArticleMethodMapping.class, whereClause, connection);
+        if (mapping.size() == 0) {
+            throw new Exception("L' article " + article.getDesignation() + " n'est pas encore mappé a une methode !");
+        }
+        return mapping.get(0);
+    }
+    
     // Get all article without article method
     public static List<Article> getMissingMethodArticle(Connection connection) throws Exception {
         String whereClause = "WHERE id_article NOT IN (SELECT id_article FROM article_method_mapping)";
@@ -45,4 +55,5 @@ public class MappingService {
     public static void removeArticleMappingMethod(String idArticleMappingMethod) throws Exception {
         GenericDAO.deleteById(ArticleMethodMapping.class, idArticleMappingMethod, null);
     }
+    
 }

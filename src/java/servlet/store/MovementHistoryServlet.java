@@ -4,6 +4,7 @@
  */
 package servlet.store;
 
+import connection.DBConnection;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -11,9 +12,13 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 import model.base.Utilisateur;
+import model.stock.Incoming;
+import model.stock.Outgoing;
+import service.stock.MovementService;
 
 /**
  *
@@ -66,6 +71,14 @@ public class MovementHistoryServlet extends HttpServlet {
                 response.sendRedirect("./login");
             }
             request.setAttribute("utilisateur", utilisateur);
+            
+            // All required informations
+            Connection connection = DBConnection.getConnection();
+            List<Incoming> incomingList = MovementService.getAllIncoming(connection);
+            List<Outgoing> outgoingList = MovementService.getAllOutgoing(connection);
+            
+            request.setAttribute("incomingList", incomingList);
+            request.setAttribute("outgoingList", outgoingList);
 
             // All required assets
             List<String> css = new ArrayList<>();

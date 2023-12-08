@@ -4,6 +4,8 @@
  */
 package servlet.store;
 
+import connection.DBConnection;
+import generalisation.GenericDAO.GenericDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -11,9 +13,14 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.sql.Connection;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import model.article.Article;
 import model.base.Utilisateur;
+import model.stock.EtatStock;
+import service.stock.StockService;
 
 /**
  *
@@ -66,7 +73,30 @@ public class EtatStockServlet extends HttpServlet {
                 response.sendRedirect("./login");
             }
             request.setAttribute("utilisateur", utilisateur);
+            
+            // All required information
+            String startDate = request.getParameter("startDate");
+            String endDate = request.getParameter("endDate");
+            String idArticle = request.getParameter("articleCode");
+            
+            if (startDate == null) {
+                LocalDate now = LocalDate.now();
+                endDate = now.toString();
+                startDate = LocalDate.of(now.getYear(), now.getMonth(), 1).toString();
+            }
+            
+            if (idArticle == null) idArticle = "";
 
+            Connection connection = DBConnection.getConnection();
+            
+            List<Article> articleList = (List<Article>) GenericDAO.getAll(Article.class, "WHERE status = 1", connection);
+            request.setAttribute("endDate", endDate);
+            request.setAttribute("startDate", startDate);
+            request.setAttribute("articleList", articleList);
+            
+            EtatStock etatStock = StockService.getEtatStock(startDate, endDate, idArticle, connection);
+            request.setAttribute("etatStock", etatStock);
+            
             // All required assets
             List<String> css = new ArrayList<>();
             css.add("assets/css/supplier/supplier.css");
