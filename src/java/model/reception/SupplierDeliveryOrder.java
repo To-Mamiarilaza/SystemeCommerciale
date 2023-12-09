@@ -8,7 +8,11 @@ import generalisation.annotations.DBField;
 import generalisation.annotations.DBTable;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import model.purchase.ArticleQuantity;
 import model.purchase.PurchaseOrder;
 
@@ -45,22 +49,35 @@ public class SupplierDeliveryOrder {
     //methods
     // avoir les annomalies concernant le bon de livraison
     public List<String> check_anommalie(List<ArticleDetails> articlesDetails, List<ArticleQuantity> articlesQuantity) {
-        List<String> anommalies = new ArrayList<>();
-        for (int i = 0; i < articlesDetails.size(); i++) {
-            for (int j = 0; j < articlesQuantity.size(); j++) {
-                if (articlesDetails.get(i).getArticle().getIdArticle() == articlesQuantity.get(j).getArticle().getIdArticle()) {
-                    if (articlesDetails.get(i).getQuantity() < articlesQuantity.get(j).getQuantity()) {
-                        String anommalie = "nous avons constatés des annomalies de " + articlesQuantity.get(j).getArticle().getDesignation() + " attendue : " + articlesQuantity.get(j).getQuantity() + "; reçu : " + articlesDetails.get(i).getQuantity();
-                        anommalies.add(anommalie);
-                    }
-                } else {
-                    String anommalie = "l'article "+ articlesQuantity.get(j).getArticle().getDesignation() +" n'est pas inclus dans notre bon de commande";
-                    anommalies.add(anommalie);
+        List<String> anomalies = new ArrayList<>();
+
+        Map<Integer, Double> expectedQuantities = new HashMap<>();
+        for (ArticleQuantity quantity : articlesQuantity) {
+            expectedQuantities.put(quantity.getArticle().getIdArticle(), quantity.getQuantity());
+        }
+
+        for (ArticleDetails detail : articlesDetails) {
+            int articleId = detail.getArticle().getIdArticle();
+
+            if (expectedQuantities.containsKey(articleId)) {
+                double expectedQuantity = expectedQuantities.get(articleId);
+                int receivedQuantity = detail.getQuantity();
+
+                if (receivedQuantity < expectedQuantity) {
+                    String anomaly = "Nous avons constaté des anomalies pour "
+                            + detail.getArticle().getDesignation()
+                            + " - Attendue : " + expectedQuantity
+                            + "=> Reçue : " + receivedQuantity;
+                    anomalies.add(anomaly);
                 }
+            } else {
+                String anomaly = "L'article " + detail.getArticle().getDesignation()
+                        + " n'est pas inclus dans notre bon de commande";
+                anomalies.add(anomaly);
             }
         }
 
-        return anommalies;
+        return anomalies;
     }
 
     //constructor

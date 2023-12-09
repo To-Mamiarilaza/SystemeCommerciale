@@ -1,3 +1,11 @@
+<%@page contentType="text/html; charset=UTF-8" %>
+<%@page import="model.anomalie.*, model.entry.*, model.purchase.*, model.reception.*, model.article.*, model.base.*, model.supplier.Supplier, java.util.List" %>
+<% 
+    EntryOrder entry = (EntryOrder) request.getAttribute("entry");
+    List<EntryOrderArticle> articleEntry = (List<EntryOrderArticle>) request.getAttribute("entryArticles");
+        List<Anomalie> deliveryAnomalie = (List<Anomalie>) request.getAttribute("anomalyDelivery");
+    List<DetailAnomalie> deliveryAnomalyDetails = (List<DetailAnomalie>) request.getAttribute("anomalyDeliveryDetails");
+%>
 <!-- MODAL FOR THE DELIVERY -->
 <div class="modal fade" id="deliveryModal" tabindex="-1" aria-labelledby="deliveryModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -8,16 +16,19 @@
             </div>
             <form action="./reception-order-insertion">
                 <div class="modal-body">
+                    <% if(deliveryAnomalyDetails.size() > 0 && deliveryAnomalie.size() > 0) { %>
                     <p><strong>On a constate les anomalies suivants</strong></p>
                     <ul>
-                        <li>La quantite attendue pour le savon est 12, mais on reçoit 10</li>
-                        <li>La quantite attendue pour le savon est 12, mais on reçoit 10</li>
-                        <li>La quantite attendue pour le savon est 12, mais on reçoit 10</li>
+                        <% for(int i=0; i<deliveryAnomalyDetails.size();i++) { %>
+                        <li> <%= deliveryAnomalyDetails.get(i).getDetail() %> </li>
+                            <% } %>
                     </ul>
                     <h5>Explication</h5>
                     <hr>
-                    <textarea name="explication" readonly placeholder="Vous devez écrire l'explication ici" id=""
-                        class="form-control" cols="30" rows="7"></textarea>
+                    <% for(int i=0; i<deliveryAnomalie.size();i++) { %>
+                    <p> <strong> Explication : <%= deliveryAnomalie.get(i).getExplication() %> </strong> </p>
+                    <% } %>
+                    <% } else { out.print("<p><strong> Pas d'anomalies constatÃ©s </strong></p>"); } %>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -53,7 +64,7 @@
                             <h4 class="mb-4 text-primary">BON D' ENTREE</h4>
                             <div>
                                 <a type="button" data-bs-toggle="modal" data-bs-target="#deliveryModal"
-                                    class="text-danger action-icon">
+                                   class="text-danger action-icon">
                                     <i class="mdi mdi-information-outline"></i>
                                 </a>
                             </div>
@@ -61,61 +72,52 @@
                         <dl class="row">
                             <dt class="col-sm-6 px-0 mb-3">Date</dt>
                             <dd class="col-sm-6 px-0 mb-3">
-                                12-11-2023
+                                <%= entry.getDate() %>
                             </dd>
 
                             <dt class="col-sm-6 px-0 mb-3">Reference entree</dt>
                             <dd class="col-sm-6 px-0 mb-3">
-                                BDE0001
+                                BDE000<%= entry.getIdEntryOrder() %>
                             </dd>
 
                             <dt class="col-sm-6 px-0 mb-3">Reference reception</dt>
                             <dd class="col-sm-6 px-0 mb-3">
-                                BDR0001
+                                <%= entry.getReceptionOrder().getReference() %>
                             </dd>
 
                             <dt class="col-sm-6 px-0 mb-3">Nom du responsable</dt>
                             <dd class="col-sm-6 px-0 mb-3">
-                                RAZAFIARISOA Chresis
+                                <%= entry.getResponsableName() %>
                             </dd>
 
                             <dt class="col-sm-6 px-0 mb-3">Contact du responsable</dt>
                             <dd class="col-sm-6 px-0 mb-3">
-                                +261 34 21 532 69
+                                <%= entry.getResponsableContact() %>
                             </dd>
                         </dl>
                         <h6 class="text-primary">Detail du livraison</h6>
                         <hr class="text-primary">
                         <div class="col-md-5">
                             <ul>
+                                <% for(int i=0; i<articleEntry.size();i++) { %>
                                 <li>
                                     <div class="d-flex justify-content-between">
-                                        <span>Savon</span>
-                                        <span>20 Unite</span>
+                                        <span><%= articleEntry.get(i).getArticle().getDesignation() %></span>
+                                        <span><%= articleEntry.get(i).getQuantity() %> Unite</span>
                                     </div>
                                 </li>
-                                <li>
-                                    <div class="d-flex justify-content-between">
-                                        <span>Cache bouche</span>
-                                        <span>30 Unite</span>
-                                    </div>
-                                </li>
-                                <li>
-                                    <div class="d-flex justify-content-between">
-                                        <span>Cache bouche</span>
-                                        <span>30 Unite</span>
-                                    </div>
-                                </li>
+                                <% } %>
                             </ul>
                         </div>
                     </div>
                 </div>
-
                 <div class="mt-4 mx-2">
+                <% if(entry.getStatus() ==1) { %>
                     <div class="div">
-                        <a href="" class="btn btn-info me-4">Confirmer</a>
-                        <a href="" class="btn btn-danger me-4">Refuser</a>
+                        <a href="./entry-action?action=confirmer&idEntry=<%= entry.getIdEntryOrder() %>" class="btn btn-info me-4">Confirmer</a>
+                        <a href="./entry-action?action=refuser&idEntry=<%= entry.getIdEntryOrder() %>" class="btn btn-danger me-4">Refuser</a>
                     </div>
+                <% } %>
                     <a href="./entry-order-list" class="btn btn-light mt-3">Cancel</a>
                 </div>
             </div>

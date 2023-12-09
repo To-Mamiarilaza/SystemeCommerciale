@@ -68,18 +68,18 @@
                                     <label class="badge badge-info label-width">En attente</label>
                                 </td>
                                 <td>
-                                    <a href="./dept-reception-order-insertion"><i class="mdi mdi-clipboard-text action-icon"></i></a>
-                                </td>
+                                    <a href="./dept-reception-order-insertion?idOutOrder=BDS0001"><i class="mdi mdi-clipboard-text action-icon"></i></a>
+                                </td>ù
                             </tr>
                             <tr>
                                 <td>12-12-2023</td>
-                                <td>BDS0001</td>
+                                <td>BDS0002</td>
                                 <td>Christien RAKOTO</td>
                                 <td>
                                     <label class="badge badge-warning label-width">En attente</label>
                                 </td>
                                 <td>
-                                    <a href="./dept-reception-order-insertion"><i class="mdi mdi-clipboard-text action-icon"></i></a>
+                                    <a href="./dept-reception-order-insertion?idOutOrder=BDS0002"><i class="mdi mdi-clipboard-text action-icon"></i></a>
                                 </td>
                             </tr>
                         </tbody>

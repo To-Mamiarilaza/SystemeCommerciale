@@ -17,10 +17,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 for (var i = 0; i < responseData.length; i++) {
                     var article = responseData[i].article.designation;
                     var quantite = responseData[i].quantity;
-                    tbody.innerHTML += "<tr>\n\
+                    tbody.innerHTML += "<tr id='row_" + i + "'>\n\
                     <td>" + article + "</td>\n\
                     <td>" + quantite + "</td>\n\
-                    <td><i class='mdi mdi-close action-icon text-danger'></i></td>\n\
+                    <td><i class='mdi mdi-close action-icon text-danger' onclick='deleteRow(" + i + ")'></i></td>\n\
                     </tr>";
                 }
             } else {
@@ -32,39 +32,56 @@ document.addEventListener("DOMContentLoaded", function () {
         return false;
     });
 
-
-    var addAnomalieDelivery = document.getElementById("addAnomalieDelivery");
-    addAnomalieDelivery.addEventListener("click", function (event) {
-        event.preventDefault();
-
-        var explication = document.getElementById("explication").value;
-        console.log(explication);
-        var ulElement = document.getElementById("detailsAnnomalie");
-
-        var detailAnomalie = ulElement.getElementsByTagName("li");
-        var details = [];
-        for (var i = 0; i < detailAnomalie.length; i++) {
-            var anomalyText = detailAnomalie[i].textContent || detailAnomalie[i].innerText;
-            console.log(anomalyText);
-            details.push(anomalyText);
-        }
+    window.deleteRow = function (uniqueId) {
+        var row = document.getElementById("row_" + uniqueId);
+        row.remove();
 
         var xhr = new XMLHttpRequest();
-        xhr.open("POST", "/SystemeCommerciale/add-anomalie-delivery", true);
-
+        xhr.open("POST", "/SystemeCommerciale/deleted-article", true);
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
         xhr.onload = function () {
             if (xhr.readyState === 4 && xhr.status === 200) {
-                window.location.href = "/SystemeCommerciale/reception-order-insertion";
             }
-
+            else {
+                alert("une erreur ses produites"+xhr.responseText);
+            }
         };
-
-        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-        var data = "explication=" + encodeURIComponent(explication) + "&detailAnomalie=" + encodeURIComponent(JSON.stringify(details));
+        var data = "idArticle=" + encodeURIComponent(uniqueId);
         xhr.send(data);
         return false;
-    });
+    };
+});
 
+var addAnomalieDelivery = document.getElementById("addAnomalieDelivery");
+addAnomalieDelivery.addEventListener("click", function (event) {
+    event.preventDefault();
+
+    var explication = document.getElementById("explication").value;
+    console.log(explication);
+    var ulElement = document.getElementById("detailsAnnomalie");
+
+    var detailAnomalie = ulElement.getElementsByTagName("li");
+    var details = [];
+    for (var i = 0; i < detailAnomalie.length; i++) {
+        var anomalyText = detailAnomalie[i].textContent || detailAnomalie[i].innerText;
+        console.log(anomalyText);
+        details.push(anomalyText);
+    }
+
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", "/SystemeCommerciale/add-anomalie-delivery", true);
+
+    xhr.onload = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            window.location.href = "/SystemeCommerciale/reception-order-insertion";
+        }
+
+    };
+
+    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    var data = "explication=" + encodeURIComponent(explication) + "&detailAnomalie=" + encodeURIComponent(JSON.stringify(details));
+    xhr.send(data);
+    return false;
 });
 
 

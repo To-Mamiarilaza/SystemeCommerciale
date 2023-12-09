@@ -4,6 +4,7 @@
  */
 package servlet.reception;
 
+import generalisation.GenericDAO.GenericDAO;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -11,6 +12,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
+import model.article.Article;
 import model.reception.ArticleDetails;
 import model.reception.ReceptionOrder;
 
@@ -26,22 +28,29 @@ public class ReceptionOrderActionServlet extends HttpServlet {
             throws ServletException, IOException {
         ReceptionOrder reception = (ReceptionOrder) request.getSession().getAttribute("reception");
         List<ArticleDetails> listeArticles = reception.getListeArticles();
-        int action = Integer.valueOf(request.getParameter("action"));
-        if (action == 1) {
-            //modification
-            int idArticle = Integer.valueOf(request.getParameter("idArticle"));
-            ArticleDetails details = listeArticles.get(idArticle);
-        } else if (action == 2) {
-            //suppression
-            int idArticle = Integer.valueOf(request.getParameter("idArticle"));
-            listeArticles.remove(idArticle);
-            response.sendRedirect("./reception-order-insertion");
-        }
+        //suppression
+        int idArticle = Integer.valueOf(request.getParameter("idArticle"));
+        listeArticles.remove(idArticle);
+        response.sendRedirect("./reception-order-insertion");
+
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        try {
+            ReceptionOrder reception = (ReceptionOrder) request.getSession().getAttribute("reception");
+            List<ArticleDetails> listeArticles = reception.getListeArticles();
+            // modification
+            int idArticle = Integer.valueOf(request.getParameter("idArticle"));
+            double quantity = Double.valueOf(request.getParameter("quantity"));
+            int arrayId = Integer.valueOf(request.getParameter("arrayId"));
+            ArticleDetails ad = new ArticleDetails((Article) GenericDAO.findById(ArticleDetails.class, idArticle, null), (int) quantity);
+            listeArticles.set(arrayId, ad);
+            response.sendRedirect("./reception-order-insertion");
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
     /**

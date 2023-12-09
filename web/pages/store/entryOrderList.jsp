@@ -1,3 +1,8 @@
+<%@page contentType="text/html; charset=UTF-8" %>
+<%@page import="model.purchase.*, model.entry.*, model.purchase.*, model.reception.*, model.article.*, model.base.*, model.supplier.Supplier, java.util.List" %>
+<% 
+    List<EntryOrder> entries = (List<EntryOrder>) request.getAttribute("entries");
+%>
 <div class="page-header">
     <h3 class="page-title">
         <span class="page-title-icon bg-gradient-primary text-white me-2">
@@ -28,8 +33,8 @@
                                 <label for="">Etat du demande</label>
                                 <select name="status" id="" class="form-control form-control-sm px-5 mt-2">
                                     <option value="1">En attente</option>
-                                    <option value="2">Validé</option>
-                                    <option value="0">Refusé</option>
+                                    <option value="2">ValidÃ©</option>
+                                    <option value="0">RefusÃ©</option>
                                 </select>
                             </div>
                             <div>
@@ -43,36 +48,25 @@
                         <thead>
                             <tr>
                                 <th> Date demande </th>
-                                <th> Bon d' entree </th>
+                                <th> Bon d'entree </th>
                                 <th> Etat </th>
                                 <th></th>
                             </tr>
                         </thead>
                         <tbody>
+                            <% for(int i=0; i<entries.size();i++) { %>
                             <tr>
-                                <td>12-11-2023</td>
-                                <td>BOE0001</td>
+                                <td><%= entries.get(i).getDate() %></td>
+                                <td>BDE000<%= entries.get(i).getIdEntryOrder() %></td>
                                 <td>
-                                    <label class="badge badge-warning label-width">En
-                                        attente</label>
+                                    <%= new ReceptionOrder().getStatusString(entries.get(i).getStatus()) %>
                                 </td>
                                 <td>
-                                    <a href="./entry-order-detail"><i
+                                    <a href="./entry-order-detail?idEntry=<%= entries.get(i).getIdEntryOrder() %>"><i
                                             class="mdi mdi-clipboard-text action-icon"></i></a>
                                 </td>
                             </tr>
-                            <tr>
-                                <td>12-11-2023</td>
-                                <td>BOE0001</td>
-                                <td>
-                                    <label class="badge badge-warning label-width">En
-                                        attente</label>
-                                </td>
-                                <td>
-                                    <a href="./entry-order-detail"><i
-                                            class="mdi mdi-clipboard-text action-icon"></i></a>
-                                </td>
-                            </tr>
+                            <% } %>
                         </tbody>
                     </table>
                 </div>
