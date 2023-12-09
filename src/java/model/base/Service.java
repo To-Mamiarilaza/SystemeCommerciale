@@ -7,7 +7,6 @@ package model.base;
 import generalisation.GenericDAO.GenericDAO;
 import generalisation.annotations.DBField;
 import generalisation.annotations.DBTable;
-import generalisation.src.generalisation.utils.GenericUtil;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;

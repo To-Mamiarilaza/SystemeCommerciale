@@ -5,6 +5,7 @@ package servlet.store;
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
 
+import connection.DBConnection;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -12,9 +13,12 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 import model.base.Utilisateur;
+import model.movement.out.ServiceRequest;
+import service.movement.out.ServiceRequestService;
 
 /**
  *
@@ -67,6 +71,12 @@ public class OutgoingRequestListServlet extends HttpServlet {
                 response.sendRedirect("./login");
             }
             request.setAttribute("utilisateur", utilisateur);
+            
+            // All required information
+            Connection connection = DBConnection.getConnection();
+            
+            List<ServiceRequest> requests = ServiceRequestService.getAllServiceRequest(connection);
+            request.setAttribute("serviceRequests", requests);
 
             // All required assets
             List<String> css = new ArrayList<>();

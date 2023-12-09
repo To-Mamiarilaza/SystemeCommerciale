@@ -5,6 +5,8 @@ package servlet.store;
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
 
+import connection.DBConnection;
+import generalisation.GenericDAO.GenericDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -12,9 +14,16 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.sql.Connection;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import model.article.Article;
 import model.base.Utilisateur;
+import model.movement.out.OutgoingOrder;
+import model.movement.out.ServiceRequest;
+import service.movement.out.OutgoingOrderService;
+import service.movement.out.ServiceRequestService;
 
 /**
  *
@@ -67,12 +76,25 @@ public class OutgoingOrderInsertionServlet extends HttpServlet {
                 response.sendRedirect("./login");
             }
             request.setAttribute("utilisateur", utilisateur);
-
+            
+            // All required informations
+            String idService = request.getParameter("idService");
+            
+            Connection connection = DBConnection.getConnection();
+            ServiceRequest serviceRequest = ServiceRequestService.getServiceRequest(idService, connection);
+            OutgoingOrder order = new OutgoingOrder(serviceRequest);
+            order.showDetails();
+            request.getSession().setAttribute("outgoingOrder", order);
+            request.setAttribute("outgoingOrder", order);
+            List<Article> articleList = (List<Article>) GenericDAO.getAll(Article.class, "WHERE status = 1", connection);
+            request.setAttribute("articleList", articleList);
+            
             // All required assets
             List<String> css = new ArrayList<>();
             css.add("assets/css/supplier/supplier.css");
             
             List<String> js = new ArrayList<>();
+            js.add("assets/js/store/outgoing-order.js");
             js.add("assets/js/bootstrap.bundle.min.js");
             
             request.setAttribute("css", css);
@@ -99,7 +121,24 @@ public class OutgoingOrderInsertionServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        try {
+            LocalDate date = LocalDate.parse(request.getParameter("date"));
+            String responsableName = request.getParameter("responsableName");
+            String responsableContact = request.getParameter("responsableContact");
+            String motif = request.getParameter("motif");
+            
+            OutgoingOrder outgoingOrder = (OutgoingOrder) request.getSession().getAttribute("outgoingOrder");
+            outgoingOrder.setDate(date);
+            outgoingOrder.setResponsableName(responsableName);
+            outgoingOrder.setResponsableContact(responsableContact);
+            outgoingOrder.setMotif(motif);
+            
+            OutgoingOrderService.saveOutgoingOrder(outgoingOrder);
+            
+            response.sendRedirect("./outgoing-order-list");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**

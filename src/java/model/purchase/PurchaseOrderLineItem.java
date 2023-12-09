@@ -7,7 +7,6 @@ package model.purchase;
 import generalisation.GenericDAO.GenericDAO;
 import generalisation.annotations.DBField;
 import generalisation.annotations.DBTable;
-import generalisation.src.generalisation.utils.GenericUtil;
 import model.article.Article;
 
 /**
@@ -141,9 +140,5 @@ public class PurchaseOrderLineItem {
         this.tva_amount = invoiceLineItem.getTVAAmount();
         this.ht_amount = invoiceLineItem.getHTAmount();
         this.ttc_amount = invoiceLineItem.getTTCAmount();
-    }
-    
-    public static void main(String[] args) throws Exception {
-        GenericUtil.detailList(GenericDAO.getAll(PurchaseOrderLineItem.class, null, null));
     }
 }

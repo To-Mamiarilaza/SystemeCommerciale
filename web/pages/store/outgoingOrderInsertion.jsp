@@ -1,3 +1,9 @@
+<%@page import="java.util.List, model.movement.out.*, model.article.Article, java.time.LocalDate" %>
+<%
+    OutgoingOrder outgoingOrder = (OutgoingOrder) request.getAttribute("outgoingOrder");
+    List<Article> articleList = (List<Article>) request.getAttribute("articleList");
+    LocalDate now = LocalDate.now();
+%>
 <div class="page-header">
     <h3 class="page-title">
         <span class="page-title-icon bg-gradient-primary text-white me-2">
@@ -20,42 +26,44 @@
                 <div class="row">
                     <div class="col-md-6">
                         <h4 class="card-title">Insertion de bon de sortie</h4>
-                        <form class="forms-sample">
+                        <form action="./outgoing-order-insertion" method="POST" class="forms-sample">
                             <div class="form-group">
                                 <label for="exampleInputEmail1">Date</label>
-                                <input type="date" name="date" class="form-control" id="exampleInputEmail1"
+                                <input type="date" name="date" value="<%= now %>" class="form-control" id="exampleInputEmail1"
                                     placeholder="" readonly>
                             </div>
+                            <% if(outgoingOrder.getService() != null) { %>
+                            <div class="form-group">
+                                <label for="exampleInputPassword1">Departement</label>
+                                <input type="text" class="form-control" id="" value="<%= outgoingOrder.getService().getService() %>" readonly>
+                            </div>
+                            <% } %>
                             <div class="form-group">
                                 <label for="exampleInputUsername1">Nom du responsable</label>
-                                <input type="text" name="livreur" class="form-control" id="exampleInputUsername1">
+                                <input type="text" name="responsableName" class="form-control" id="exampleInputUsername1">
                             </div>
                             <div class="form-group">
                                 <label for="exampleInputUsername1">Contact responsable</label>
-                                <input type="text" name="livreurContact" class="form-control"
+                                <input type="text" name="responsableContact" class="form-control"
                                     id="exampleInputUsername1">
                             </div>
                             <div class="form-group">
                                 <label for="exampleInputUsername1">Motif du sortie</label>
-                                <input type="text" name="livreurContact" class="form-control"
+                                <input type="text" name="motif" class="form-control"
                                     id="exampleInputUsername1">
                             </div>
+                            
+                            <% if(outgoingOrder.getPurchaseOrder() != null) { %>
                             <div class="form-group">
                                 <label for="exampleInputPassword1">Bon de commande</label>
                                 <input type="text" value="BOR0001" name="date" class="form-control"
                                     id="exampleInputEmail1">
                             </div>
-                            <div class="form-group">
-                                <label for="exampleInputPassword1">Departement</label>
-                                <select id="" class="form-select form-control-sm">
-                                    <option value="">Informatique</option>
-                                    <option value="">Achat</option>
-                                </select>
-
-                            </div>
+                            <% } %>
+                            
+                            
                             <p class="text-error">Une erreur s'est produite</p>
-                            <button type="button" data-bs-toggle="modal" data-bs-target="#exampleModal"
-                                class="btn btn-gradient-primary me-2">Crée le bon
+                            <button type="submit" class="btn btn-gradient-primary me-2">Crée le bon
                                 de sortie</button>
                             <a href="./outgoing-request-list" class="btn btn-light">Cancel</a>
                         </form>
@@ -70,46 +78,31 @@
                                     <td></td>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Savon</td>
-                                    <td>40</td>
-                                    <td><a href="" class="text-warning"><i
-                                                class="mdi mdi-settings action-icon me-5"></i></a>
-                                        <a href="" class="text-danger"><i class="mdi mdi-close action-icon"></i></a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Pomme</td>
-                                    <td>8</td>
-                                    <td><a href="" class="text-warning"><i
-                                                class="mdi mdi-settings action-icon me-5"></i></a>
-                                        <a href="" class="text-danger"><i class="mdi mdi-close action-icon"></i></a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Pomme</td>
-                                    <td>8</td>
-                                    <td><a href="" class="text-warning"><i
-                                                class="mdi mdi-settings action-icon me-5"></i></a>
-                                        <a href="" class="text-danger"><i class="mdi mdi-close action-icon"></i></a>
-                                    </td>
-                                </tr>
-
+                            <tbody id="detailList">
+                                <% for(OutgoingOrderDetail detail : outgoingOrder.getDetails()) { %>
+                                    <tr>
+                                        <td><%= detail.getArticle().getDesignation() %></td>
+                                        <td><%= detail.getQuantity() %></td>
+                                        <td>
+                                            <a type="button" onclick="removeDetail(this, '<%= detail.getArticle().getDesignation() %>', <%= detail.getQuantity() %>)" class="text-danger"><i class="mdi mdi-close action-icon"></i></a>
+                                        </td>
+                                    </tr>
+                                <% } %>
                                 <!-- MODIFICATION ROW -->
 
                                 <tr>
                                     <td>
-                                        <select id="" class="form-select form-control-sm">
-                                            <option value="">Savon</option>
-                                            <option value="">Cache bouche</option>
+                                        <select id="articleChoice" class="form-select form-control-sm">
+                                            <% for(Article article : articleList) { %>
+                                                <option value="<%= article.getIdArticle() %>"><%= article.getDesignation() %></option>
+                                            <% } %>
                                         </select>
                                     </td>
                                     <td>
-                                        <input type="text" class="form-control" name="quantite">
+                                        <input id="quantity" type="text" class="form-control" name="quantite">
                                     </td>
                                     <td>
-                                        <button class="btn btn-info">Ajouter</button>
+                                        <button onclick="addNewDetail()" class="btn btn-info">Ajouter</button>
                                     </td>
                                 </tr>
 

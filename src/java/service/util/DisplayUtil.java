@@ -84,8 +84,16 @@ public class DisplayUtil {
         // Formate le LocalDate en tant que chaîne de caractères
         return localDate.format(formatter);
     }
+    
+    public static String prefix(String prefix, int zeroNumber, int value) {
+        int valueLength = String.valueOf(value).length();
+        for (int i = 0; i < (zeroNumber - valueLength); i++) {
+            prefix += "0";
+        }
+        return prefix += String.valueOf(value);
+    }
 
     public static void main(String[] args) {
-        System.out.println(toLetter(252325));
+        System.out.println(prefix("BDS", 4, 18));
     }
 }

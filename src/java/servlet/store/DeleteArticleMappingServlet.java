@@ -4,7 +4,6 @@
  */
 package servlet.store;
 
-import connection.DBConnection;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -12,21 +11,14 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.sql.Connection;
-import java.util.ArrayList;
-import java.util.List;
-import model.article.Article;
-import model.base.Utilisateur;
-import model.stock.ArticleMethodMapping;
-import model.stock.GestionMethod;
 import service.stock.MappingService;
 
 /**
  *
  * @author to
  */
-@WebServlet(name = "ArticleMethodServlet", urlPatterns = {"/article-method"})
-public class ArticleMethodServlet extends HttpServlet {
+@WebServlet(name = "DeleteArticleMappingServlet", urlPatterns = {"/delete-article-mapping"})
+public class DeleteArticleMappingServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -45,10 +37,10 @@ public class ArticleMethodServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet MovementHistoryServlet</title>");            
+            out.println("<title>Servlet DeleteArticleMappingServlet</title>");            
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet MovementHistoryServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet DeleteArticleMappingServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -67,35 +59,11 @@ public class ArticleMethodServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
-            Utilisateur utilisateur = (Utilisateur) request.getSession().getAttribute("utilisateur");
-            if (utilisateur == null) {
-                response.sendRedirect("./login");
-            }
-            request.setAttribute("utilisateur", utilisateur);
+            // Getting parameter
+            String idMapping = request.getParameter("idMapping");
+            MappingService.removeArticleMappingMethod(idMapping);
             
-            // All required information
-            Connection connection = DBConnection.getConnection();
-            List<ArticleMethodMapping> articleMethods = MappingService.getAllArticleMethod(connection);
-            List<Article> articleWithoutMethods = MappingService.getMissingMethodArticle(connection);
-            List<GestionMethod> gestionMethods = MappingService.getAllGestionMethod(connection);
-            request.setAttribute("articleMethods", articleMethods);
-            request.setAttribute("articleWithoutMethods", articleWithoutMethods);
-            request.setAttribute("gestionMethods", gestionMethods);
-            
-            // All required assets
-            List<String> css = new ArrayList<>();
-            css.add("assets/css/supplier/supplier.css");
-            List<String> js = new ArrayList<>();
-            js.add("assets/js/bootstrap.bundle.min.js");
-            
-            request.setAttribute("css", css);
-            request.setAttribute("js", js);
-            
-            // Page definition
-            request.setAttribute("title", "Methodes de gestion article");
-            request.setAttribute("contentPage", "./pages/store/articleMethodMapping.jsp");
-            
-            request.getRequestDispatcher("./template.jsp").forward(request, response);
+            response.sendRedirect("./article-method");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -112,16 +80,7 @@ public class ArticleMethodServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        try {
-            // Get parameter
-            String idArticle = request.getParameter("idArticle");
-            String idMethod = request.getParameter("idMethod");
-            
-            MappingService.setArticleMappingMethod(idArticle, idMethod);
-            
-            response.sendRedirect("./article-method");
-        } catch (Exception e) {
-        }
+        processRequest(request, response);
     }
 
     /**
