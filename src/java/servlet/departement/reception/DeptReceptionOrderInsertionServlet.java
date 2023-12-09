@@ -65,6 +65,7 @@ public class DeptReceptionOrderInsertionServlet extends HttpServlet {
             if (utilisateur == null) {
                 response.sendRedirect("./login");
             }
+            String outOrder = request.getParameter("idOutOrder");
             request.setAttribute("utilisateur", utilisateur);
 
             // All required assets

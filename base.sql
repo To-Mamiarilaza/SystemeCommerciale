@@ -680,3 +680,27 @@ INSERT INTO sale_marge VALUES (40);
 CREATE VIEW v_article_sale_price AS 
 SELECT id_article, (unit_price * (1 + (marge / 100))) as sale_price FROM 
 v_article_first_purchase_price a JOIN sale_marge m ON a.id_article = a.id_article;
+
+CREATE TABLE type_anomalie (
+    id_type_anomalie serial PRIMARY KEY not null,
+    type_anomalie VARCHAR(10) NOT NULL
+);
+insert into type_anomalie (type_anomalie) values 
+                                        ('BDL'),
+                                        ('BDR'),
+                                        ('BDE');
+
+create sequence seq_anomalie;
+CREATE TABLE anomalie (
+    id_anomalie int default nextval('seq_anomalie') PRIMARY KEY NOT NULL,
+    id_type_anomalie INT REFERENCES type_anomalie(id_type_anomalie) NOT NULL,
+    explication TEXT
+);
+
+create sequence seq_detail_anomalie;
+CREATE TABLE detail_anomalie (
+    id_detail_anomalie INT default nextval('seq_detail_anomalie') primary key not null ,
+    id_anomalie INT,
+    detail TEXT,
+    FOREIGN KEY (id_anomalie) REFERENCES anomalie(id_anomalie) ON DELETE CASCADE
+);

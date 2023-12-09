@@ -1,3 +1,8 @@
+<%@page contentType="text/html; charset=UTF-8" %>
+<%@page import="model.purchase.*, model.reception.*, model.article.*, model.base.*, model.supplier.Supplier, java.util.List" %>
+<% 
+    List<ReceptionArticleDetails> receptions = (List<ReceptionArticleDetails>) request.getAttribute("receptionArticles");
+%>
 <!-- Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -8,16 +13,16 @@
             </div>
             <form action="./entry-order-list">
                 <div class="modal-body">
-                    <p><strong>On a constaté les anomalies suivants</strong></p>
+                    <p><strong>On a constatÃ© les anomalies suivants</strong></p>
                     <ul>
-                        <li>La quantite attendue pour le savon est 12, mais on reçoit 10</li>
-                        <li>La quantite attendue pour le savon est 12, mais on reçoit 10</li>
-                        <li>La quantite attendue pour le savon est 12, mais on reçoit 10</li>
+                        <li>La quantite attendue pour le savon est 12, mais on reÃ§oit 10</li>
+                        <li>La quantite attendue pour le savon est 12, mais on reÃ§oit 10</li>
+                        <li>La quantite attendue pour le savon est 12, mais on reÃ§oit 10</li>
                     </ul>
                     <h5>Explication</h5>
                     <hr>
-                    <textarea name="explication" placeholder="Vous devez écrire l'éxplication ici" id=""
-                        class="form-control" cols="30" rows="7"></textarea>
+                    <textarea name="explication" placeholder="Vous devez Ã©crire l'Ã©xplication ici" id=""
+                              class="form-control" cols="30" rows="7"></textarea>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -49,36 +54,37 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-6">
-                        <h4 class="card-title">Insertion de bon d'entrée</h4>
-                        <form class="forms-sample">
+                        <h4 class="card-title">Insertion d'un nouveau bon d'entrÃ©e</h4>
+                        <form class="forms-sample" method="post" action="./entry-order-insertion">
                             <div class="form-group">
                                 <label for="exampleInputEmail1">Date</label>
-                                <input type="date" name="date" class="form-control" id="exampleInputEmail1"
-                                    placeholder="" readonly>
+                                <input type="date" name="date" class="form-control" id="exampleInputEmail1">
                             </div>
                             <div class="form-group">
                                 <label for="exampleInputPassword1">Bon de reception</label>
-                                <input type="text" value="BOR0001" name="date" class="form-control"
-                                    id="exampleInputEmail1" readonly>
+                                <input type="text" value="<%= receptions.get(0).getReceptionOrder().getReference() %>" name="date" class="form-control"
+                                       id="exampleInputEmail1" readonly>
                             </div>
+                            <input type="hidden" name="idReception" value="<%= receptions.get(0).getReceptionOrder().getIdReceptionOrder() %>">
                             <div class="form-group">
                                 <label for="exampleInputUsername1">Nom du responsable</label>
-                                <input type="text" name="livreur" class="form-control" id="exampleInputUsername1">
+                                <input type="text" name="responsableName" class="form-control" id="exampleInputUsername1">
                             </div>
                             <div class="form-group">
                                 <label for="exampleInputUsername1">Contact responsable</label>
-                                <input type="text" name="livreurContact" class="form-control"
-                                    id="exampleInputUsername1">
+                                <input type="text" name="responsableContact" class="form-control"
+                                       id="exampleInputUsername1">
                             </div>
-                            <p class="text-error">Une erreur s'est produite</p>
-                            <button type="button" data-bs-toggle="modal" data-bs-target="#exampleModal"
-                                class="btn btn-gradient-primary me-2">Crée le bon
-                                de récéption</button>
+                            <% if(request.getParameter("error") != null) { %>
+                            <p class="text-error"><%= request.getParameter("error") %></p>
+                            <% } %>
+                            <input type="submit"
+                                    class="btn btn-gradient-primary me-2" value="CrÃ©e le bon d'entree">
                             <a href="./entry-request-list" class="btn btn-light">Cancel</a>
                         </form>
                     </div>
                     <div class="col-md-6">
-                        <h4 class="card-title">Détails des articles recue</h4>
+                        <h4 class="card-title">DÃ©tails des articles recue</h4>
                         <table class="table align-middle">
                             <thead>
                                 <tr class="table-primary">
@@ -88,47 +94,15 @@
                                 </tr>
                             </thead>
                             <tbody>
+                                <% for(int i=0;i<receptions.size();i++) { %>
                                 <tr>
-                                    <td>Savon</td>
-                                    <td>40</td>
-                                    <td><a href="" class="text-warning"><i
-                                                class="mdi mdi-settings action-icon me-5"></i></a>
-                                        <a href="" class="text-danger"><i class="mdi mdi-close action-icon"></i></a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Pomme</td>
-                                    <td>8</td>
-                                    <td><a href="" class="text-warning"><i
-                                                class="mdi mdi-settings action-icon me-5"></i></a>
-                                        <a href="" class="text-danger"><i class="mdi mdi-close action-icon"></i></a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Pomme</td>
-                                    <td>8</td>
-                                    <td><a href="" class="text-warning"><i
-                                                class="mdi mdi-settings action-icon me-5"></i></a>
-                                        <a href="" class="text-danger"><i class="mdi mdi-close action-icon"></i></a>
-                                    </td>
-                                </tr>
-
-                                <!-- MODIFICATION ROW -->
-
-                                <tr>
+                                    <td><%= receptions.get(i).getArticle().getDesignation() %></td>
+                                    <td><%= receptions.get(i).getQuantity() %></td>
                                     <td>
-                                        <input type="text" class="form-control" value="Savon" readonly>
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control" name="quantite">
-                                    </td>
-                                    <td>
-                                        <button class="btn btn-info">Modifier</button>
+                                        <a href="./deleted-entry-article?id=<%=i%>&idReception=<%= receptions.get(i).getReceptionOrder().getIdReceptionOrder() %>" class="text-danger"><i class="mdi mdi-close action-icon"></i></a>
                                     </td>
                                 </tr>
-
-                                <!-- MODIFICATION ROW -->
-
+                                <% } %>                            
                             </tbody>
                         </table>
                     </div>

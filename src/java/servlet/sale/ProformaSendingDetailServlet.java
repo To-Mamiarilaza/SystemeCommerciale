@@ -11,9 +11,11 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
 import model.base.Utilisateur;
+import model.sale.ProformaSending;
 
 /**
  *
@@ -66,6 +68,10 @@ public class ProformaSendingDetailServlet extends HttpServlet {
                 response.sendRedirect("./login");
             }
             request.setAttribute("utilisateur", utilisateur);
+            
+            HttpSession session = request.getSession();
+            ProformaSending proformaSending = (ProformaSending)session.getAttribute("proformaSending");
+            request.setAttribute("proformaSending", proformaSending);
 
             // All required assets
             List<String> css = new ArrayList<>();
@@ -98,7 +104,16 @@ public class ProformaSendingDetailServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        try {
+            HttpSession session = request.getSession();
+            ProformaSending proformaSending = (ProformaSending)session.getAttribute("proformaSending");
+            String email = request.getParameter("email");
+            proformaSending.setEmail(email);
+            doGet(request, response);
+        } catch(Exception e) {
+            request.setAttribute("error", e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     /**

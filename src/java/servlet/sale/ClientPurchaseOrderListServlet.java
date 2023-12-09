@@ -4,6 +4,7 @@
  */
 package servlet.sale;
 
+import generalisation.GenericDAO.GenericDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -14,6 +15,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 import model.base.Utilisateur;
+import model.purchaseClient.PurchaseOrderClient;
 
 /**
  *
@@ -67,6 +69,10 @@ public class ClientPurchaseOrderListServlet extends HttpServlet {
             }
             request.setAttribute("utilisateur", utilisateur);
 
+            //Liste des demandes de bon de commande
+            List<PurchaseOrderClient> purchaseOrderClients = (List<PurchaseOrderClient>) GenericDAO.getAll(PurchaseOrderClient.class, null, null);
+            request.setAttribute("purchaseOrderClients", purchaseOrderClients);
+            
             // All required assets
             List<String> css = new ArrayList<>();
             css.add("assets/css/supplier/supplier.css");
