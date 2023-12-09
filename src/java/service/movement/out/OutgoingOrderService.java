@@ -182,6 +182,24 @@ public class OutgoingOrderService {
         String query = "UPDATE outgoing_order SET status = 10 WHERE id_outgoing_order = " + idOutgoingOrder;
         GenericDAO.directUpdate(query, null);
     }
+    
+    // get all id in a outgoing order to in sql format
+    public static String getAllId(OutgoingOrder outgoingOrder) {
+        String result = "";
+        for (OutgoingOrderDetail detail : outgoingOrder.getDetails()) {
+            result += detail.getArticle().getIdArticle() + ", ";
+        }
+        result = result.substring(0, result.length() - 2);
+        return result;
+    }
+     
+    // Disable service request
+    public static void disableServiceRequest(OutgoingOrder outgoingOrder, Connection connection) throws Exception {
+        String findIdQuery = "SELECT id_article_quantity FROM v_service_valid_request WHERE id_service = %d AND id_article IN (%s)";
+        findIdQuery = String.format(findIdQuery, outgoingOrder.getService().getIdService(), getAllId(outgoingOrder));
+        String query = "UPDATE article_quantity SET status = 3 WHERE id_article_quantity IN (" + findIdQuery + ")";
+        GenericDAO.directUpdate(query, connection);
+    }
 
     // save outgoing order
     public static void saveOutgoingOrder(OutgoingOrder outgoingOrder) throws Exception {
@@ -212,6 +230,9 @@ public class OutgoingOrderService {
                 detail.setIdOutgoingOrder(keyValue);
                 GenericDAO.save(detail, connection);
             }
+            
+            // Disable service request
+            disableServiceRequest(outgoingOrder, connection);
 
             connection.commit();
             connection.close();

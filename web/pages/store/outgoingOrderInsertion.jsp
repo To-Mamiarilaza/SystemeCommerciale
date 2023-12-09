@@ -40,17 +40,17 @@
                             <% } %>
                             <div class="form-group">
                                 <label for="exampleInputUsername1">Nom du responsable</label>
-                                <input type="text" name="responsableName" class="form-control" id="exampleInputUsername1">
+                                <input type="text" name="responsableName" class="form-control" id="exampleInputUsername1" required="">
                             </div>
                             <div class="form-group">
                                 <label for="exampleInputUsername1">Contact responsable</label>
                                 <input type="text" name="responsableContact" class="form-control"
-                                    id="exampleInputUsername1">
+                                       id="exampleInputUsername1" required>
                             </div>
                             <div class="form-group">
                                 <label for="exampleInputUsername1">Motif du sortie</label>
                                 <input type="text" name="motif" class="form-control"
-                                    id="exampleInputUsername1">
+                                       id="exampleInputUsername1" required>
                             </div>
                             
                             <% if(outgoingOrder.getPurchaseOrder() != null) { %>

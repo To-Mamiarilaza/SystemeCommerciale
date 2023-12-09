@@ -666,3 +666,17 @@ CREATE TABLE outgoing_order_detail (
     FOREIGN KEY(id_article) REFERENCES article(id_article),
     FOREIGN KEY(id_outgoing_order) REFERENCES outgoing_order(id_outgoing_order)
 );
+
+-- view pour avoir le premier prix d'achat
+CREATE VIEW v_article_first_purchase_price AS 
+SELECT * FROM incoming WHERE id_incoming IN 
+(SELECT MIN(id_incoming) FROM incoming GROUP BY id_article);
+
+CREATE TABLE sale_marge (
+    marge DOUBLE PRECISION
+);
+INSERT INTO sale_marge VALUES (40);
+
+CREATE VIEW v_article_sale_price AS 
+SELECT id_article, (unit_price * (1 + (marge / 100))) as sale_price FROM 
+v_article_first_purchase_price a JOIN sale_marge m ON a.id_article = a.id_article;
