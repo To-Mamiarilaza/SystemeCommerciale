@@ -1,3 +1,8 @@
+<%@page contentType="text/html; charset=UTF-8" %>
+<%@page import="model.entry.*, model.purchase.*, model.reception.*, model.article.*, model.base.*, model.supplier.Supplier, java.util.List" %>
+<% 
+    List<ReceptionOrder> receptions = (List<ReceptionOrder>) request.getAttribute("receptions");
+%>
 <div class="page-header">
     <h3 class="page-title">
         <span class="page-title-icon bg-gradient-primary text-white me-2">
@@ -28,8 +33,8 @@
                                 <label for="">Etat du demande</label>
                                 <select name="status" id="" class="form-control form-control-sm px-5 mt-2">
                                     <option value="1">En attente</option>
-                                    <option value="2">Validé</option>
-                                    <option value="0">Refusé</option>
+                                    <option value="2">ValidÃ©</option>
+                                    <option value="0">RefusÃ©</option>
                                 </select>
                             </div>
                             <div>
@@ -49,30 +54,21 @@
                             </tr>
                         </thead>
                         <tbody>
+                            <% for(int i=0; i<receptions.size(); i++) { %>
                             <tr>
-                                <td>12-11-2023</td>
-                                <td>BDR0001</td>
+                                <td><%= receptions.get(i).getReceptionDate() %></td>
+                                <td><%= receptions.get(i).getReference() %></td>
                                 <td>
-                                    <label class="badge badge-warning label-width">En
-                                        attente</label>
+                                    <%= new EntryOrder().getStatusString(receptions.get(i).getStatus()) %>
                                 </td>
+                                <% if(receptions.get(i).getStatus() == 2) { %>
                                 <td>
-                                    <a href="./entry-order-insertion"><i
+                                    <a href="./entry-order-insertion?idReception=<%= receptions.get(i).getIdReceptionOrder() %>"><i
                                             class="mdi mdi-clipboard-text action-icon"></i></a>
                                 </td>
+                                <% } %>
                             </tr>
-                            <tr>
-                                <td>12-11-2023</td>
-                                <td>BDR0001</td>
-                                <td>
-                                    <label class="badge badge-warning label-width">En
-                                        attente</label>
-                                </td>
-                                <td>
-                                    <a href="./entry-order-insertion"><i
-                                            class="mdi mdi-clipboard-text action-icon"></i></a>
-                                </td>
-                            </tr>
+                            <% } %>
                         </tbody>
                     </table>
                 </div>

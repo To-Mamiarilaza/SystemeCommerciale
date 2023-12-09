@@ -38,11 +38,7 @@ public class DeliveryArticleInsertionServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        SupplierDeliveryOrder delivery = (SupplierDeliveryOrder) request.getSession().getAttribute("supplierDeliveryOrder");
-        response.setContentType("application/json");
-        Gson gson = new Gson();
-        String jsonData = gson.toJson(delivery.getListeArticles());
-        response.getWriter().write(jsonData);
+        response.sendRedirect("./delivery-order-insertion");
     }
 
     @Override

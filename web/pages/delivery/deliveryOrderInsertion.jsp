@@ -91,7 +91,7 @@
                                 <ul id="detailsAnnomalie">
                                     <% for (String anomaly : anomalies) { %>
                                     <li><%= anomaly %></li>
-                                        <% } %>
+                                    <% } %>
                                 </ul>
                                 <% } %>
                                 <h5>Explication</h5>

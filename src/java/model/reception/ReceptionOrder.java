@@ -3,7 +3,11 @@ package model.reception;
 import generalisation.annotations.DBField;
 import generalisation.annotations.DBTable;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import model.purchase.ArticleQuantity;
 import model.purchase.PurchaseOrder;
 
 /**
@@ -37,12 +41,32 @@ public class ReceptionOrder {
     List<ArticleDetails> listeArticles;
 
     //methods
+    // avoir les annomalies concernant le bon de reception
+    public List<String> checkAnomalie(List<ArticleDetails> articlesDetailsDelivery, List<ArticleDetails> articlesDetailsReception) {
+        List<String> anomalies = new ArrayList<>();
+
+        for (ArticleDetails deliveryDetail : articlesDetailsDelivery) {
+            for (ArticleDetails receptionDetail : articlesDetailsReception) {
+                System.out.println("Id delivery details : "+deliveryDetail.getArticle().getIdArticle() + " Id reception article details : " + receptionDetail.getArticle().getIdArticle());
+                if (deliveryDetail.getArticle().getIdArticle() != receptionDetail.getArticle().getIdArticle()) {
+                    String anomaly = "L'article " + deliveryDetail.getArticle().getDesignation()
+                            + " doit être dans les articles commandés";
+                    anomalies.add(anomaly);
+                }
+            }
+        }
+
+        return anomalies;
+    }
+
     public String getStatusString(int status) {
         switch (status) {
             case 1:
                 return "<label class=\"badge badge-gradient-warning label-width\"> En attente </label>";
             case 2:
-                return "<label class=\"badge badge-gradient-success label-width\"> En magasin </label>";
+                return "<label class=\"badge badge-gradient-success label-width\"> Confirmer </label>";
+            case 5:
+                return "<label class=\"badge badge-gradient-success label-width\"> Confirmer </label>";
             case 0:
                 return "<label class=\"badge badge-gradient-danger label-width\"> Rejeter </label>";
             default:

@@ -4,7 +4,7 @@
  */
 package servlet.store;
 
-import servlet.sale.*;
+import generalisation.GenericDAO.GenericDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -15,6 +15,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 import model.base.Utilisateur;
+import model.entry.EntryOrder;
 
 /**
  *
@@ -66,6 +67,8 @@ public class EntryOrderList extends HttpServlet {
             if (utilisateur == null) {
                 response.sendRedirect("./login");
             }
+            List<EntryOrder> entries = (List<EntryOrder>) GenericDAO.getAll(EntryOrder.class, "", null);
+            request.setAttribute("entries", entries);
             request.setAttribute("utilisateur", utilisateur);
 
             // All required assets
@@ -79,7 +82,7 @@ public class EntryOrderList extends HttpServlet {
             request.setAttribute("js", js);
             
             // Page definition
-            request.setAttribute("title", "Insertion bon de livraison");
+            request.setAttribute("title", "Liste des entrees");
             request.setAttribute("contentPage", "./pages/store/entryOrderList.jsp");
             
             request.getRequestDispatcher("./template.jsp").forward(request, response);

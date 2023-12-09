@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package servlet.departement.reception;
+package servlet.reception;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -11,16 +11,14 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.List;
-import model.base.Utilisateur;
+import model.reception.SupplierDeliveryOrder;
 
 /**
  *
- * @author to
+ * @author Fy Botas
  */
-@WebServlet(name = "DeptReceptionOrderInsertionServlet", urlPatterns = {"/dept-reception-order-insertion"})
-public class DeptReceptionOrderInsertionServlet extends HttpServlet {
+@WebServlet(name = "DeletedArticle", urlPatterns = {"/deleted-article"})
+public class DeletedArticle extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -39,10 +37,10 @@ public class DeptReceptionOrderInsertionServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet ReceptionOrderInsertionServlet</title>");            
+            out.println("<title>Servlet DeletedArticle</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet ReceptionOrderInsertionServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet DeletedArticle at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -60,32 +58,6 @@ public class DeptReceptionOrderInsertionServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        try {
-            Utilisateur utilisateur = (Utilisateur) request.getSession().getAttribute("utilisateur");
-            if (utilisateur == null) {
-                response.sendRedirect("./login");
-            }
-            String outOrder = request.getParameter("idOutOrder");
-            request.setAttribute("utilisateur", utilisateur);
-
-            // All required assets
-            List<String> css = new ArrayList<>();
-            css.add("assets/css/supplier/supplier.css");
-            
-            List<String> js = new ArrayList<>();
-            js.add("assets/js/bootstrap.bundle.min.js");
-            
-            request.setAttribute("css", css);
-            request.setAttribute("js", js);
-            
-            // Page definition
-            request.setAttribute("title", "Insertion accusé de récéption");
-            request.setAttribute("contentPage", "./pages/reception/receptionOrderInsertion.jsp");
-            
-            request.getRequestDispatcher("./template.jsp").forward(request, response);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     /**
@@ -99,7 +71,9 @@ public class DeptReceptionOrderInsertionServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        SupplierDeliveryOrder delivery = (SupplierDeliveryOrder) request.getSession().getAttribute("supplierDeliveryOrder");
+        int idArticle = Integer.valueOf(request.getParameter("idArticle"));
+        delivery.getListeArticles().remove(idArticle);
     }
 
     /**

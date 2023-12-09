@@ -3,7 +3,12 @@
 <%
    SupplierDeliveryOrder delivery = (SupplierDeliveryOrder) request.getAttribute("delivery");
    List<ArticleDetails> articles = delivery.getListeArticles();
-   // activer le modal : data-bs-toggle="modal" data-bs-target="#exampleModal"
+   List<String> anomalies = (List<String>) request.getAttribute("anomalies");
+   boolean hasAnomalies = true;
+   if(anomalies == null)
+   {
+        hasAnomalies = false;
+   } 
    
 %>
 
@@ -15,9 +20,17 @@
                 <h1 class="modal-title fs-5" id="exampleModalLabel"> Modification </h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form action="./reception-order-insertion" method="post">
+            <form action="./reception-action"" method="post">
                 <div class="modal-body">
-                    <input type="text" name="article" value="">
+                    <label for="article"> Choisissez l'article </label>
+                    <select name="idArticle" class="form-control p-3" id="article">
+                        <% for(int i=0; i<articles.size();i++) { %>
+                        <option value="<%= articles.get(i).getArticle().getIdArticle() %>"><%= articles.get(i).getArticle().getDesignation() %></option>
+                        <input type="hidden" name="arrayId" value="<%= i %>">
+                        <% } %>
+                    </select>
+                    <label for="quantity"> quantite reçu </label>
+                    <input type="number" step="any" name="quantity" class="form-control p-3" id="quantity">
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -81,15 +94,35 @@
                                 <tr>
                                     <td><%= articles.get(i).getArticle().getDesignation() %></td>
                                     <td> <%= articles.get(i).getQuantity() %> </td>
-                                    <td><a href="./reception-action?action=1&idArticle=<%= i+1 %>" class="text-warning"><i
-                                                class="mdi mdi-settings action-icon me-5"></i></a>
-                                        <a href="./reception-action?action=2&idArticle=<%= i+1 %>" class="text-danger"><i class="mdi mdi-close action-icon"></i></a>
+                                    <td>
+                                        <a href="./reception-action?idArticle=<%= i %>" class="text-danger"><i class="mdi mdi-close action-icon"></i></a>
                                     </td>
                                 </tr>
                                 <% } %>                              
 
                             </tbody>
                         </table>
+                        <% if(hasAnomalies && anomalies.size() > 0) { %>            
+                        <div>
+                            <div class="modal-body">
+                                <% if (hasAnomalies) { %>
+                                <p><strong>On a constaté les anomalies suivants</strong></p>
+                                <ul id="detailsAnnomalie">
+                                    <% for (String anomaly : anomalies) { %>
+                                    <li><%= anomaly %></li>
+                                        <% } %>
+                                </ul>
+                                <% } %>
+                                <h5>Explication</h5>
+                                <hr>
+                                <textarea name="explication" placeholder="Vous devez décrire une explication ici" id="explication"
+                                          class="form-control" cols="30" rows="7"></textarea>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-primary" id="addAnomalieReception">Valider</button>
+                            </div>
+                        </div>
+                        <% } %>
                     </div>
                 </div>
             </div>
