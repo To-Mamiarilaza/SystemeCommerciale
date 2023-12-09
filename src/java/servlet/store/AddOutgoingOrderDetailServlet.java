@@ -4,7 +4,6 @@
  */
 package servlet.store;
 
-import connection.DBConnection;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -12,21 +11,14 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.sql.Connection;
-import java.util.ArrayList;
-import java.util.List;
-import model.article.Article;
-import model.base.Utilisateur;
-import model.stock.ArticleMethodMapping;
-import model.stock.GestionMethod;
-import service.stock.MappingService;
+import model.movement.out.OutgoingOrder;
 
 /**
  *
  * @author to
  */
-@WebServlet(name = "ArticleMethodServlet", urlPatterns = {"/article-method"})
-public class ArticleMethodServlet extends HttpServlet {
+@WebServlet(name = "AddOutgoingOrderDetailServlet", urlPatterns = {"/add-outgoing-order-detail"})
+public class AddOutgoingOrderDetailServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -45,10 +37,10 @@ public class ArticleMethodServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet MovementHistoryServlet</title>");            
+            out.println("<title>Servlet AddOutgoingOrderDetailServlet</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet MovementHistoryServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet AddOutgoingOrderDetailServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -66,39 +58,22 @@ public class ArticleMethodServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        PrintWriter out = response.getWriter();
         try {
-            Utilisateur utilisateur = (Utilisateur) request.getSession().getAttribute("utilisateur");
-            if (utilisateur == null) {
-                response.sendRedirect("./login");
-            }
-            request.setAttribute("utilisateur", utilisateur);
+            System.out.println("On arrive chez moi !");
             
-            // All required information
-            Connection connection = DBConnection.getConnection();
-            List<ArticleMethodMapping> articleMethods = MappingService.getAllArticleMethod(connection);
-            List<Article> articleWithoutMethods = MappingService.getMissingMethodArticle(connection);
-            List<GestionMethod> gestionMethods = MappingService.getAllGestionMethod(connection);
-            request.setAttribute("articleMethods", articleMethods);
-            request.setAttribute("articleWithoutMethods", articleWithoutMethods);
-            request.setAttribute("gestionMethods", gestionMethods);
-            
-            // All required assets
-            List<String> css = new ArrayList<>();
-            css.add("assets/css/supplier/supplier.css");
-            List<String> js = new ArrayList<>();
-            js.add("assets/js/bootstrap.bundle.min.js");
-            
-            request.setAttribute("css", css);
-            request.setAttribute("js", js);
-            
-            // Page definition
-            request.setAttribute("title", "Methodes de gestion article");
-            request.setAttribute("contentPage", "./pages/store/articleMethodMapping.jsp");
-            
-            request.getRequestDispatcher("./template.jsp").forward(request, response);
+            String idArticle = request.getParameter("idArticle");
+            String designation = request.getParameter("designation");
+            String quantity = request.getParameter("quantity");
+
+            OutgoingOrder outgoingOrder = (OutgoingOrder) request.getSession().getAttribute("outgoingOrder");
+            outgoingOrder.addNewDetail(idArticle, designation, quantity);
+            out.print("{\"success\": \"success\"}");
         } catch (Exception e) {
-            e.printStackTrace();
+            out.print("{\"error\": \"" + e.getMessage() + "\"}");
+
         }
+
     }
 
     /**
@@ -112,16 +87,7 @@ public class ArticleMethodServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        try {
-            // Get parameter
-            String idArticle = request.getParameter("idArticle");
-            String idMethod = request.getParameter("idMethod");
-            
-            MappingService.setArticleMappingMethod(idArticle, idMethod);
-            
-            response.sendRedirect("./article-method");
-        } catch (Exception e) {
-        }
+        processRequest(request, response);
     }
 
     /**

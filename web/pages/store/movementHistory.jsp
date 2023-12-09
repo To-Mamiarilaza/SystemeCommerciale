@@ -1,3 +1,9 @@
+<%@page import="java.util.List, model.stock.Incoming, model.stock.Outgoing" %>
+<%
+    List<Incoming> incomingList = (List<Incoming>) request.getAttribute("incomingList");
+    List<Outgoing> outgoingList = (List<Outgoing>) request.getAttribute("outgoingList");
+
+%>
 <div class="page-header">
     <h3 class="page-title">
         <span class="page-title-icon bg-gradient-primary text-white me-2">
@@ -33,20 +39,15 @@
                                 </tr>
                             </thead>
                             <tbody>
+                                <% for(Incoming incoming : incomingList) { %>
                                 <tr>
-                                    <td>ENT0001</td>
-                                    <td>10-12-2023</td>
-                                    <td>BDE0001</td>
-                                    <td>Cache bouche</td>
-                                    <td>120</td>
+                                    <td>#<%= incoming.getIdIncoming() %></td>
+                                    <td><%= incoming.getDate() %></td>
+                                    <td><%= incoming.getIdBDE() %></td>
+                                    <td><%= incoming.getArticle().getDesignation() %></td>
+                                    <td><%= incoming.getQuantity() %></td>
                                 </tr>
-                                <tr>
-                                    <td>ENT0001</td>
-                                    <td>10-12-2023</td>
-                                    <td>BDE0001</td>
-                                    <td>Cache bouche</td>
-                                    <td>120</td>
-                                </tr>
+                                <% } %>
                             </tbody>
                         </table>
                     </div>
@@ -62,13 +63,15 @@
                                     <td>Article</td>
                                     <td>Quantite</td>
                                 </tr>
+                                <% for(Outgoing outgoing : outgoingList) { %>
                                 <tr>
-                                    <td>SRT0001</td>
-                                    <td>10-12-2023</td>
-                                    <td>BDS0001</td>
-                                    <td>Cache bouche</td>
-                                    <td>80</td>
+                                    <td>#<%= outgoing.getIdOutgoing() %></td>
+                                    <td><%= outgoing.getDate() %></td>
+                                    <td><%= outgoing.getIdBDS() %></td>
+                                    <td><%= outgoing.getIncoming().getArticle().getDesignation() %></td>
+                                    <td><%= outgoing.getQuantity() %></td>
                                 </tr>
+                                <% } %>
                             </thead>
                         </table>
                     </div>

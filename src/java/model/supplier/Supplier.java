@@ -7,7 +7,6 @@ package model.supplier;
 import generalisation.GenericDAO.GenericDAO;
 import generalisation.annotations.DBField;
 import generalisation.annotations.DBTable;
-import generalisation.src.generalisation.utils.GenericUtil;
 import java.util.ArrayList;
 import java.util.List;
 import model.article.Category;

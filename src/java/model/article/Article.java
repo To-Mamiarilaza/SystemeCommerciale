@@ -7,6 +7,7 @@ package model.article;
 import generalisation.GenericDAO.GenericDAO;
 import generalisation.annotations.DBField;
 import generalisation.annotations.DBTable;
+import model.stock.ArticleMethodMapping;
 
 /**
  *
@@ -30,7 +31,7 @@ public class Article {
     Unity unity;
     @DBField(name = "status")
     int status;
-    
+
 ///Getters et setters
     public int getIdArticle() {
         return idArticle;

@@ -7,7 +7,6 @@ package model.purchase;
 import generalisation.GenericDAO.GenericDAO;
 import generalisation.annotations.DBField;
 import generalisation.annotations.DBTable;
-import generalisation.src.generalisation.utils.GenericUtil;
 import java.time.LocalDate;
 import model.article.Article;
 import model.supplier.Supplier;
