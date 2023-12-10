@@ -15,6 +15,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import model.purchase.ArticleQuantity;
 import model.purchase.PurchaseOrder;
+import service.util.DisplayUtil;
 
 /**
  *
@@ -25,9 +26,6 @@ public class SupplierDeliveryOrder {
 
     @DBField(name = "id_supplier_delivery_order", isPrimaryKey = true)
     int idSupplierDeliveryOrder;
-
-    @DBField(name = "reference")
-    String reference;
 
     @DBField(name = "delivery_date")
     LocalDate delivery_date;
@@ -81,19 +79,18 @@ public class SupplierDeliveryOrder {
     }
 
     //constructor
-    public SupplierDeliveryOrder(int idSupplierDeliveryOrder, String reference, LocalDate delivery_date, PurchaseOrder purchaseOrder, String deliversName, String deliversContact, List<ArticleDetails> listeArticle) {
+    public SupplierDeliveryOrder(int idSupplierDeliveryOrder, LocalDate delivery_date, PurchaseOrder purchaseOrder, String deliversName, String deliversContact, int status, List<ArticleDetails> listeArticles) {
         this.idSupplierDeliveryOrder = idSupplierDeliveryOrder;
-        this.reference = reference;
         this.delivery_date = delivery_date;
         this.purchaseOrder = purchaseOrder;
         this.deliversName = deliversName;
         this.deliversContact = deliversContact;
-        this.listeArticles = listeArticle;
+        this.status = status;
+        this.listeArticles = listeArticles;
     }
 
-    public SupplierDeliveryOrder(int idSupplierDeliveryOrder, String reference, LocalDate delivery_date, PurchaseOrder purchaseOrder, String deliversName, String deliversContact, int status) {
+    public SupplierDeliveryOrder(int idSupplierDeliveryOrder, LocalDate delivery_date, PurchaseOrder purchaseOrder, String deliversName, String deliversContact, int status) {
         this.idSupplierDeliveryOrder = idSupplierDeliveryOrder;
-        this.reference = reference;
         this.delivery_date = delivery_date;
         this.purchaseOrder = purchaseOrder;
         this.deliversName = deliversName;
@@ -130,12 +127,9 @@ public class SupplierDeliveryOrder {
     }
 
     public String getReference() {
-        return reference;
+        return DisplayUtil.prefix("BDL", 4, getIdSupplierDeliveryOrder());
     }
 
-    public void setReference(String reference) {
-        this.reference = reference;
-    }
 
     public LocalDate getDelivery_date() {
         return delivery_date;

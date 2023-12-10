@@ -4,6 +4,7 @@
  */
 package servlet.departement.reception;
 
+import generalisation.GenericDAO.GenericDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -14,6 +15,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 import model.base.Utilisateur;
+import model.dept.DeptReception;
 
 /**
  *
@@ -39,7 +41,7 @@ public class DeptReceptionOrderListServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet ReceptionOrderInsertionServlet</title>");            
+            out.println("<title>Servlet ReceptionOrderInsertionServlet</title>");
             out.println("</head>");
             out.println("<body>");
             out.println("<h1>Servlet ReceptionOrderInsertionServlet at " + request.getContextPath() + "</h1>");
@@ -67,20 +69,29 @@ public class DeptReceptionOrderListServlet extends HttpServlet {
             }
             request.setAttribute("utilisateur", utilisateur);
 
+            List<DeptReception> deptReceptions = new ArrayList<>();
+            if (request.getParameter("date") == null || request.getParameter("status") == null) {
+                deptReceptions = (List<DeptReception>) GenericDAO.getAll(DeptReception.class, " where id_dept_reception in (select id_dept_reception from dept_reception_article)", null);
+            } else {
+                String date = request.getParameter("date");
+                int status = Integer.valueOf(request.getParameter("status"));
+                deptReceptions = (List<DeptReception>) GenericDAO.getAll(DeptReception.class, " where id_dept_reception in (select id_dept_reception from dept_reception_article) and date <= '"+date+"' and status = "+status, null);
+            }
+            request.setAttribute("deptReceptions", deptReceptions);
             // All required assets
             List<String> css = new ArrayList<>();
             css.add("assets/css/supplier/supplier.css");
-            
+
             List<String> js = new ArrayList<>();
             js.add("assets/js/bootstrap.bundle.min.js");
-            
+
             request.setAttribute("css", css);
             request.setAttribute("js", js);
-            
+
             // Page definition
             request.setAttribute("title", "Insertion accusé de récéption");
             request.setAttribute("contentPage", "./pages/reception/receptionOrderList.jsp");
-            
+
             request.getRequestDispatcher("./template.jsp").forward(request, response);
         } catch (Exception e) {
             e.printStackTrace();

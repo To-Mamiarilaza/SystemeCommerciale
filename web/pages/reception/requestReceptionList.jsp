@@ -1,7 +1,11 @@
 <%@page import="java.util.List"%>
 <%@page import="model.purchase.PurchaseRequest"%>
 <%@page import="model.base.Service"%>
-
+<%@page import="model.movement.out.*, model.purchase.*, model.reception.*, model.article.*, model.base.*, model.supplier.Supplier, java.util.List" %>
+<%@page contentType="text/html; charset=UTF-8" %>
+<%
+    List<OutgoingOrder> outOrders = (List<OutgoingOrder>) request.getAttribute("outOrders");
+%>
 <div class="page-header">
     <h3 class="page-title">
         <span class="page-title-icon bg-gradient-primary text-white me-2">
@@ -23,27 +27,24 @@
             <div class="card-body">
                 <h4 class="card-title">Receptions des besoins</h4>
                 <div class="mt-4 d-flex align-items-center justify-content-between">
-                    <form action="./PurchaseRequestFilter" method="POST">
+                    <form action="./dept-request-reception-list" method="GET">
                         <div class="input-groups d-flex align-items-center">
                             <div class="form-group me-4">
-                                <label for="">Service</label>
-                                <select name="service" id=""
-                                    class="form-control form-control-sm px-5 mt-2">
-                                    <option value="">Service</option>
-                                </select>
+                                <label for="">Date</label>
+                                <input type="date" name="date" class="form-control form-control-sm px-5 mt-2">
                             </div>
                             <div class="form-group me-4">
                                 <label for="">Etat du demande</label>
                                 <select name="status" id=""
-                                    class="form-control form-control-sm px-5 mt-2">
-                                    <option value="1">Non traite</option>
-                                    <option value="2">Valide</option>
+                                        class="form-control form-control-sm px-5 mt-2">
+                                    <option value="10">Non traite</option>
+                                    <option value="15">Valide</option>
                                     <option value="0">Refuse</option>
                                 </select>
                             </div>
                             <div>
                                 <input type="submit" class="mx-2 btn btn-gradient-primary"
-                                    value="Chercher">
+                                       value="Chercher">
                             </div>
                         </div>
                     </form>
@@ -60,28 +61,19 @@
                             </tr>
                         </thead>
                         <tbody>
+                            <% for(int i=0; i< outOrders.size();i++) { %>
                             <tr>
-                                <td>12-12-2023</td>
-                                <td>BDS0001</td>
-                                <td>Christien RAKOTO</td>
+                                <td><%= outOrders.get(i).getDate() %></td>
+                                <td><%= outOrders.get(i).getReference() %></td>
+                                <td><%= outOrders.get(i).getResponsableName() %></td>
                                 <td>
-                                    <label class="badge badge-info label-width">En attente</label>
+                                    <%= outOrders.get(i).getStatusString(outOrders.get(i).getStatus()) %>
                                 </td>
                                 <td>
-                                    <a href="./dept-reception-order-insertion?idOutOrder=BDS0001"><i class="mdi mdi-clipboard-text action-icon"></i></a>
-                                </td>ù
-                            </tr>
-                            <tr>
-                                <td>12-12-2023</td>
-                                <td>BDS0002</td>
-                                <td>Christien RAKOTO</td>
-                                <td>
-                                    <label class="badge badge-warning label-width">En attente</label>
-                                </td>
-                                <td>
-                                    <a href="./dept-reception-order-insertion?idOutOrder=BDS0002"><i class="mdi mdi-clipboard-text action-icon"></i></a>
+                                    <a href="./dept-reception-order-insertion?idOutOrder=<%= outOrders.get(i).getIdOutgoingOrder() %>"><i class="mdi mdi-clipboard-text action-icon"></i></a>
                                 </td>
                             </tr>
+                            <% } %>
                         </tbody>
                     </table>
                 </div>

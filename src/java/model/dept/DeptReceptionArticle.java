@@ -24,7 +24,7 @@ public class DeptReceptionArticle {
     @DBField(name = "id_article", isForeignKey = true)
     Article article;
     
-    @DBField(name = "quant  ity")
+    @DBField(name = "quantity")
     double quantity;
 
     public DeptReceptionArticle(int dept_reception_article, DeptReception deptReception, Article article, double quantity) {

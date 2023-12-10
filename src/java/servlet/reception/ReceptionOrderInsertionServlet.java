@@ -27,7 +27,7 @@ import model.reception.SupplierDeliveryOrder;
 @WebServlet(name = "ReceptionOrderInsertionServlet", urlPatterns = {"/reception-order-insertion"})
 public class ReceptionOrderInsertionServlet extends HttpServlet {
 
-    List<String> anomalies;
+    List<String> anomalies = new ArrayList<>();
 
     public List<String> getAnomalies() {
         return anomalies;
@@ -58,10 +58,12 @@ public class ReceptionOrderInsertionServlet extends HttpServlet {
 
             List<String> js = new ArrayList<>();
             js.add("assets/js/bootstrap.bundle.min.js");
+            js.add("assets/js/delivery/delivery.js");
 
             request.setAttribute("css", css);
             request.setAttribute("js", js);
             request.setAttribute("delivery", delivery);
+            request.setAttribute("reception", reception);
 
             // Page definition
             request.setAttribute("title", "Insertion bon de livraison");
@@ -79,7 +81,6 @@ public class ReceptionOrderInsertionServlet extends HttpServlet {
         try {
             SupplierDeliveryOrder delivery = (SupplierDeliveryOrder) request.getSession().getAttribute("supplierDeliveryOrder");
 
-            String referenceReception = request.getParameter("reference");
             LocalDate date = LocalDate.parse(request.getParameter("date"));
             String nomResponsable = request.getParameter("responsable");
             String contactResponsable = request.getParameter("responsableContact");
@@ -87,7 +88,6 @@ public class ReceptionOrderInsertionServlet extends HttpServlet {
             ReceptionOrder reception = (ReceptionOrder) request.getSession().getAttribute("reception");
 
             reception.setReceptionDate(date);
-            reception.setReference(referenceReception);
             reception.setResponsableContact(contactResponsable);
             reception.setResponsableName(nomResponsable);
             reception.setStatus(1);
@@ -98,25 +98,16 @@ public class ReceptionOrderInsertionServlet extends HttpServlet {
             List<SupplierDeliveryOrder> lastDelivery = (List<SupplierDeliveryOrder>) GenericDAO.directQuery(SupplierDeliveryOrder.class, "select * from supplier_delivery_order order by id_supplier_delivery_order desc", null);
 
             reception.setDeliveryOrder(lastDelivery.get(0));
-            System.out.println("delivery size = "+delivery.getListeArticles().size());
+            System.out.println("delivery size = " + delivery.getListeArticles().size());
             for (int i = 0; i < delivery.getListeArticles().size(); i++) {
                 GenericDAO.directUpdate("insert into supplier_delivery_details values (default, " + lastDelivery.get(0).getIdSupplierDeliveryOrder() + ", " + delivery.getListeArticles().get(i).getArticle().getIdArticle() + ", " + delivery.getListeArticles().get(i).getQuantity() + ")", null);
             }
 
-/*prendre toutes les articles du bon de livraison*/
-
-            List<DeliveryArticleDetails> articlesDelivery = (List<DeliveryArticleDetails>) GenericDAO.directQuery(DeliveryArticleDetails.class, "select * from supplier_delivery_details where id_supplier_delivery_order = "+lastDelivery.get(0).getIdSupplierDeliveryOrder(), null);
-            for (int i = 0; i < articlesDelivery.size(); i++) {
-                ArticleDetails article = new ArticleDetails();
-                article.setArticle(articlesDelivery.get(i).getArticle());
-                article.setQuantity((int) articlesDelivery.get(i).getQuantity());
-                delivery.getListeArticles().add(article);
-            }
-            System.out.println("articlesDelivery size : "+articlesDelivery.size());
             List<String> annomalies = reception.checkAnomalie(delivery.getListeArticles(), reception.getListeArticles());
-            System.out.println("annomalies : "+annomalies.size());
             if (!annomalies.isEmpty()) {
                 this.setAnomalies(annomalies);
+                System.out.println("annomalies : " + annomalies.get(0));
+                System.out.println(" -- - - - - - - Size Anomaly : " + this.getAnomalies().size());
                 response.sendRedirect("./reception-order-insertion");
             } else {
                 GenericDAO.save(reception, null);

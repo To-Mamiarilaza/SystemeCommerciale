@@ -452,7 +452,8 @@ CREATE TABLE detail_anomalie (
     id_detail_anomalie INT default nextval('seq_detail_anomalie') primary key not null ,
     id_anomalie INT,
     detail TEXT,
-    FOREIGN KEY (id_anomalie) REFERENCES anomalie(id_anomalie) ON DELETE CASCADE
+    FOREIGN KEY (id_anomalie) REFERENCES anomalie(id_anomalie)
+);
 CREATE SEQUENCE seq_article_method_mapping;
 CREATE TABLE article_method_mapping (
     id_article_method_mapping INTEGER PRIMARY KEY DEFAULT(nextval('seq_article_method_mapping')),
@@ -688,3 +689,19 @@ CREATE TABLE outgoing_order_detail (
     FOREIGN KEY(id_article) REFERENCES article(id_article),
     FOREIGN KEY(id_outgoing_order) REFERENCES outgoing_order(id_outgoing_order)
 );
+
+--- REINITIALISATION DES DONNEES DU BON DE LIVRAISON JUSQU'A L'ACCUSE DE RECEPTION
+delete from dept_reception_article;
+delete from dept_reception;
+delete from outgoing_order_detail;
+delete from outgoing_order;
+delete from entry_order_articles;
+delete from entry_order;
+delete from reception_article_details;
+delete from reception_order;
+delete from supplier_delivery_details;
+delete from supplier_delivery_order;
+delete from detail_anomalie;
+delete from anomalie;
+
+alter sequence seq_supplier_delivery_order restart 1;

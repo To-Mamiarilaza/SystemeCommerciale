@@ -109,7 +109,8 @@ public class EntryOrderInsertionServlet extends HttpServlet {
                 article.setQuantity(entry.getListeArticle().get(i).getQuantity());
                 GenericDAO.save(article, null);
             }
-
+            
+            GenericDAO.directUpdate("update reception_order set status = 5 where id_reception_order = "+idReception, null);
             response.sendRedirect("./entry-request-list");
 
         } catch (Exception ex) {

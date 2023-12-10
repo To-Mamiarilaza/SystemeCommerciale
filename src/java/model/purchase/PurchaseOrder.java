@@ -61,6 +61,10 @@ public class PurchaseOrder {
         this.idPurchaseOrder = idPurchaseOrder;
     }
 
+    public String getReference() {
+        return DisplayUtil.prefix("BOC", 4, getIdPurchaseOrder());
+    }
+
     public LocalDate getDate() {
         return date;
     }
@@ -84,7 +88,7 @@ public class PurchaseOrder {
     public String getTotalTVAString() {
         return DisplayUtil.formatMoney(getTotalTVA(), "AR");
     }
-    
+
     public void setTotalTVA(double totalTVA) {
         this.totalTVA = totalTVA;
     }
@@ -92,19 +96,19 @@ public class PurchaseOrder {
     public double getTotalHT() {
         return totalHT;
     }
-    
+
     public String getTotalHTString() {
         return DisplayUtil.formatMoney(getTotalHT(), "AR");
     }
-    
+
     public double getTotalTTC() {
         return totalTTC;
     }
-    
+
     public String getTotalTTCString() {
         return DisplayUtil.formatMoney(getTotalTTC(), "AR");
     }
-    
+
     public String getTotalTTCLetter() {
         return DisplayUtil.toLetter((int) getTotalTTC()).toUpperCase();
     }
@@ -136,7 +140,7 @@ public class PurchaseOrder {
     public int getStatus() {
         return status;
     }
-    
+
     public String getStatusLabel() {
         if (getStatus() == 1) {
             return "Attente";
@@ -146,7 +150,7 @@ public class PurchaseOrder {
             return "Refuse";
         }
     }
-    
+
     public String getStatusClass() {
         if (getStatus() == 1) {
             return "warning";
@@ -156,7 +160,7 @@ public class PurchaseOrder {
             return "danger";
         }
     }
-    
+
     public void setStatus(int status) {
         this.status = status;
     }
@@ -227,14 +231,14 @@ public class PurchaseOrder {
 
     // methods
     //get the value of all purchase
-    public double montantTtc(List<PurchaseOrder> listPurchase){
+    public double montantTtc(List<PurchaseOrder> listPurchase) {
         double montant = 0;
         for (int i = 0; i < listPurchase.size(); i++) {
-            montant+=listPurchase.get(i).getTotalTTC();
+            montant += listPurchase.get(i).getTotalTTC();
         }
-         return montant;      
+        return montant;
     }
-    
+
     // remove a payment condition
     public void removePaymentCondition(String part, String jour) throws Exception {
         if (part == null || part.trim().equals("")) {

@@ -24,7 +24,7 @@
             <div class="card-body">
                 <h4 class="card-title">Bon de livraison et leur receptions</h4>
                 <div class="mt-4 d-flex align-items-center justify-content-between">
-                    <form action="./PurchaseRequestFilter" method="POST">
+                    <form action="./reception-list" method="GET">
                         <div class="input-groups d-flex align-items-center">
                             <div class="form-group me-4">
                                 <label for="">Date</label>
@@ -35,7 +35,7 @@
                                 <select name="status" id=""
                                         class="form-control form-control-sm px-5 mt-2">
                                     <option value="1">En attente</option>
-                                    <option value="2">Validé</option>
+                                    <option value="2">Confirmé</option>
                                     <option value="0">Refusé</option>
                                 </select>
                             </div>

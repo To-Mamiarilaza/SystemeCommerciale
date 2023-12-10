@@ -25,8 +25,6 @@
                     <li> <%= deliveryAnomalyDetails.get(i).getDetail() %> </li>
                         <% } %>
                 </ul>
-                <h5>Explication</h5>
-                <hr>
                 <% for(int i=0; i<deliveryAnomalie.size();i++) { %>
                 <p> <strong> Explication : <%= deliveryAnomalie.get(i).getExplication() %> </strong> </p>
                 <% } %>
@@ -57,8 +55,6 @@
                         <li> <%= receptionAnomalyDetails.get(i).getDetail() %> </li>
                             <% } %>
                     </ul>
-                    <h5>Explication</h5>
-                    <hr>
                     <% for(int i=0; i<receptionAnomalie.size();i++) { %>
                     <p> <strong> Explication : <%= receptionAnomalie.get(i).getExplication() %> </strong> </p>
                     <% } %>
@@ -130,20 +126,24 @@
                                         <%= reception.getDeliveryOrder().getDeliversContact() %>
                                     </dd>
                                 </dl>
+                                <% if(deliveryArticles.size() > 0) { %>
                                 <h6 class="text-primary">Detail du livraison</h6>
                                 <hr class="text-primary">
                                 <div class="col-md-5">
                                     <ul>
-                                        <% for(int i=0; i<receptionArticles.size(); i++) { %>
+                                        <% for(int i=0; i<deliveryArticles.size(); i++) { %>
                                         <li>
                                             <div class="d-flex justify-content-between">
-                                                <span><%= receptionArticles.get(i).getArticle().getDesignation() %></span>
-                                                <span><%= receptionArticles.get(i).getQuantity() %> Unite</span>
+                                                <span><%= deliveryArticles.get(i).getArticle().getDesignation() %></span>
+                                                <span><%= deliveryArticles.get(i).getQuantity() %> Unite</span>
                                             </div>
                                         </li>
                                         <% } %>
                                     </ul>
                                 </div>
+                                <% }  else {
+                                out.print("<p class='text-danger'> Pas d'article(s) livré(s) </p>");
+                                } %>
                             </div>
                         </div>
                     </div>
@@ -180,20 +180,24 @@
                                         <%= reception.getResponsableContact() %>
                                     </dd>
                                 </dl>
+                                <% if(receptionArticles.size() > 0) { %>
                                 <h6 class="text-primary">Detail du reception</h6>
                                 <hr class="text-primary">
                                 <div class="col-md-5">
                                     <ul>
-                                        <% for(int i=0; i<deliveryArticles.size(); i++) { %>
+                                        <% for(int i=0; i<receptionArticles.size(); i++) { %>
                                         <li>
                                             <div class="d-flex justify-content-between">
-                                                <span><%= deliveryArticles.get(i).getArticle().getDesignation() %></span>
-                                                <span><%= deliveryArticles.get(i).getQuantity() %> Unite</span>
+                                                <span><%= receptionArticles.get(i).getArticle().getDesignation() %></span>
+                                                <span><%= receptionArticles.get(i).getQuantity() %> Unite</span>
                                             </div>
                                         </li>
                                         <% } %>
                                     </ul>
                                 </div>
+                                <% } else {
+                                out.print("<p class='text-danger'> Pas d'article(s) livré(s) </p>");
+                                } %>
                             </div>
                         </div>
                     </div>

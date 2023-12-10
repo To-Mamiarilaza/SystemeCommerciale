@@ -4,8 +4,7 @@
  */
 package servlet.departement.reception;
 
-import servlet.store.*;
-import servlet.sale.*;
+import generalisation.GenericDAO.GenericDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -16,6 +15,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 import model.base.Utilisateur;
+import model.dept.DeptReception;
+import model.movement.out.OutgoingOrder;
 
 /**
  *
@@ -41,7 +42,7 @@ public class DeptRequestReceptionListServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet ReceptionListServlet</title>");            
+            out.println("<title>Servlet ReceptionListServlet</title>");
             out.println("</head>");
             out.println("<body>");
             out.println("<h1>Servlet ReceptionListServlet at " + request.getContextPath() + "</h1>");
@@ -68,21 +69,30 @@ public class DeptRequestReceptionListServlet extends HttpServlet {
                 response.sendRedirect("./login");
             }
             request.setAttribute("utilisateur", utilisateur);
+            List<OutgoingOrder> outOrders = new ArrayList<>();
+            if (request.getParameter("date") == null || request.getParameter("status") == null) {
+                outOrders = (List<OutgoingOrder>) GenericDAO.getAll(OutgoingOrder.class, " where status >= 10", null);
+            } else {
+                String date = request.getParameter("date");
+                int status = Integer.valueOf(request.getParameter("status"));
+                outOrders = (List<OutgoingOrder>) GenericDAO.getAll(OutgoingOrder.class, " where status >= 10 and status = "+status+" and date <= '"+ date +"'", null);
+            }
 
+            request.setAttribute("outOrders", outOrders);
             // All required assets
             List<String> css = new ArrayList<>();
             css.add("assets/css/supplier/supplier.css");
-            
+
             List<String> js = new ArrayList<>();
             js.add("assets/js/bootstrap.bundle.min.js");
-            
+
             request.setAttribute("css", css);
             request.setAttribute("js", js);
-            
+
             // Page definition
             request.setAttribute("title", "Insertion bon de livraison");
             request.setAttribute("contentPage", "./pages/reception/requestReceptionList.jsp");
-            
+
             request.getRequestDispatcher("./template.jsp").forward(request, response);
         } catch (Exception e) {
             e.printStackTrace();
