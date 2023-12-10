@@ -29,16 +29,6 @@ import model.reception.SupplierDeliveryOrder;
 @WebServlet(name = "DeliveryOrderInsertionServlet", urlPatterns = {"/delivery-order-insertion"})
 public class DeliveryOrderInsertionServlet extends HttpServlet {
 
-    SupplierDeliveryOrder supplierDeliveries = new SupplierDeliveryOrder();
-
-    public SupplierDeliveryOrder getSupplierDeliveries() {
-        return supplierDeliveries;
-    }
-
-    public void setSupplierDeliveries(SupplierDeliveryOrder supplierDeliveries) {
-        this.supplierDeliveries = supplierDeliveries;
-    }
-
     List<String> annomalies;
 
     public List<String> getAnnomalies() {
@@ -56,8 +46,11 @@ public class DeliveryOrderInsertionServlet extends HttpServlet {
             DeliveryArticleInsertionServlet dev = new DeliveryArticleInsertionServlet();
             dev.getArticleDetails().clear();
 
-            HttpSession session = request.getSession();
-            session.setAttribute("supplierDeliveryOrder", supplierDeliveries);
+            if (request.getSession().getAttribute("supplierDeliveryOrder") == null) {
+                SupplierDeliveryOrder supplierDeliveries = new SupplierDeliveryOrder();
+                HttpSession session = request.getSession();
+                session.setAttribute("supplierDeliveryOrder", supplierDeliveries);
+            }
 
             Utilisateur utilisateur = (Utilisateur) request.getSession().getAttribute("utilisateur");
             if (utilisateur == null) {
@@ -97,7 +90,6 @@ public class DeliveryOrderInsertionServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
-            String reference = request.getParameter("reference");
             LocalDate date = LocalDate.parse(request.getParameter("date"));
             int idBoc = Integer.parseInt(request.getParameter("boc"));
             String livreur = request.getParameter("livreur");
@@ -108,7 +100,6 @@ public class DeliveryOrderInsertionServlet extends HttpServlet {
             delivery.setDelivery_date(date);
             delivery.setDeliversContact(livreurContact);
             delivery.setDeliversName(livreur);
-            delivery.setReference(reference);
 
             if (delivery.getListeArticles() != null) {
                 List<ArticleDetails> deliveryArticle = delivery.getListeArticles();

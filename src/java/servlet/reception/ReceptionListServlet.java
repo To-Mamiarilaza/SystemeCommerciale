@@ -13,6 +13,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import model.base.Utilisateur;
 import model.reception.ReceptionOrder;
 
@@ -32,23 +34,29 @@ public class ReceptionListServlet extends HttpServlet {
                 response.sendRedirect("./login");
             }
             request.setAttribute("utilisateur", utilisateur);
-            List<ReceptionOrder> receptions = (List<ReceptionOrder>) GenericDAO.getAll(ReceptionOrder.class, "", null);
-           
+            List<ReceptionOrder> receptions = new ArrayList<>();
+            if (request.getParameter("date") == null || request.getParameter("status") == null) {
+                receptions = (List<ReceptionOrder>) GenericDAO.getAll(ReceptionOrder.class, "", null);
+            } else {
+                int status = Integer.valueOf(request.getParameter("status"));
+                String date = request.getParameter("date");
+                receptions = (List<ReceptionOrder>) GenericDAO.directQuery(ReceptionOrder.class, "select * from reception_order where status = " + status + " and reception_date <= '" + date + "'", null);
+            }
             request.setAttribute("receptions", receptions);
             // All required assets
             List<String> css = new ArrayList<>();
             css.add("assets/css/supplier/supplier.css");
-            
+
             List<String> js = new ArrayList<>();
             js.add("assets/js/bootstrap.bundle.min.js");
-            
+
             request.setAttribute("css", css);
             request.setAttribute("js", js);
-            
+
             // Page definition
             request.setAttribute("title", "Liste des receptions");
             request.setAttribute("contentPage", "./pages/delivery/receptionList.jsp");
-            
+
             request.getRequestDispatcher("./template.jsp").forward(request, response);
         } catch (Exception e) {
             e.printStackTrace();

@@ -23,7 +23,7 @@
             <div class="card-body">
                 <h4 class="card-title">Listes des bon d'entree</h4>
                 <div class="mt-4 d-flex align-items-center justify-content-between">
-                    <form action="../../PurchaseRequestFilter" method="POST">
+                    <form action="./entry-order-list" method="GET">
                         <div class="input-groups d-flex align-items-center">
                             <div class="form-group me-4">
                                 <label for="">Date</label>
@@ -33,8 +33,8 @@
                                 <label for="">Etat du demande</label>
                                 <select name="status" id="" class="form-control form-control-sm px-5 mt-2">
                                     <option value="1">En attente</option>
-                                    <option value="2">ValidÃ©</option>
-                                    <option value="0">RefusÃ©</option>
+                                    <option value="5">Confirmer</option>
+                                    <option value="0">Refuser</option>
                                 </select>
                             </div>
                             <div>

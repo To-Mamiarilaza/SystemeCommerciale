@@ -20,10 +20,6 @@
                         <h4 class="card-title">Insertion de bon de livraison</h4>
                         <form class="forms-sample" action="./delivery-order-insertion" method="post">
                             <div class="form-group">
-                                <label for="exampleInputUsername1">Reference</label>
-                                <input type="text" name="reference" class="form-control" id="exampleInputUsername1">
-                            </div>
-                            <div class="form-group">
                                 <label for="exampleInputEmail1">Date</label>
                                 <input type="date" name="date" class="form-control" id="exampleInputEmail1"
                                        placeholder="">
@@ -32,7 +28,7 @@
                                 <label for="article"> Bon de commande </label>
                                 <select class="form-select form-control-sm" name="boc">
                                     <% for (int i = 0; i < commandes.size(); i++) { %>
-                                    <option value="<%= commandes.get(i).getIdPurchaseOrder() %>">BOC000<%= commandes.get(i).getIdPurchaseOrder() %> </option>
+                                    <option value="<%= commandes.get(i).getIdPurchaseOrder() %>"><%= commandes.get(i).getReference() %> </option>
                                     <% } %>
                                 </select>
                             </div>

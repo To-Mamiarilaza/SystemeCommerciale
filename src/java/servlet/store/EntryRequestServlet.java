@@ -31,24 +31,31 @@ public class EntryRequestServlet extends HttpServlet {
             if (utilisateur == null) {
                 response.sendRedirect("./login");
             }
-            List<ReceptionOrder> receptions = (List<ReceptionOrder>) GenericDAO.getAll(ReceptionOrder.class, " where id_reception_order not in ( select id_reception_order from entry_order where status != 0) and status = 2", null);
+            List<ReceptionOrder> receptions = new ArrayList<>();
+            if (request.getParameter("date") == null || request.getParameter("status") == null) {
+                receptions = (List<ReceptionOrder>) GenericDAO.getAll(ReceptionOrder.class, " where status = 2", null);
+            } else {
+                String date = request.getParameter("date");
+                int status = Integer.valueOf(request.getParameter("status"));
+                receptions = (List<ReceptionOrder>) GenericDAO.getAll(ReceptionOrder.class, " where status = "+status+" and reception_date <= '"+date+"'", null);
+            }
             request.setAttribute("receptions", receptions);
             request.setAttribute("utilisateur", utilisateur);
 
             // All required assets
             List<String> css = new ArrayList<>();
             css.add("assets/css/supplier/supplier.css");
-            
+
             List<String> js = new ArrayList<>();
             js.add("assets/js/bootstrap.bundle.min.js");
-            
+
             request.setAttribute("css", css);
             request.setAttribute("js", js);
-            
+
             // Page definition
             request.setAttribute("title", "Insertion bon de livraison");
             request.setAttribute("contentPage", "./pages/store/entryRequestList.jsp");
-            
+
             request.getRequestDispatcher("./template.jsp").forward(request, response);
         } catch (Exception e) {
             e.printStackTrace();

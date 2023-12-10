@@ -4,6 +4,7 @@
  */
 package servlet.departement.reception;
 
+import generalisation.GenericDAO.GenericDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -14,6 +15,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 import model.base.Utilisateur;
+import model.dept.DeptReceptionArticle;
 
 /**
  *
@@ -65,6 +67,9 @@ public class DeptReceptionOrderDetailServlet extends HttpServlet {
             if (utilisateur == null) {
                 response.sendRedirect("./login");
             }
+            int idDeptReception = Integer.valueOf(request.getParameter("idDeptReception"));
+            List<DeptReceptionArticle> deptArticles = (List<DeptReceptionArticle>) GenericDAO.directQuery(DeptReceptionArticle.class, "select * from dept_reception_article where id_dept_reception = "+idDeptReception, null);
+            request.setAttribute("deptArticles", deptArticles);
             request.setAttribute("utilisateur", utilisateur);
 
             // All required assets
