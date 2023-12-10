@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import model.purchase.ArticleQuantity;
 import model.purchase.PurchaseOrder;
+import service.util.DisplayUtil;
 
 /**
  *
@@ -32,9 +33,6 @@ public class ReceptionOrder {
     @DBField(name = "status")
     int status;
 
-    @DBField(name = "reference")
-    String reference;
-
     @DBField(name = "id_supplier_delivery_order", isForeignKey = true)
     SupplierDeliveryOrder deliveryOrder;
 
@@ -47,7 +45,7 @@ public class ReceptionOrder {
 
         for (ArticleDetails deliveryDetail : articlesDetailsDelivery) {
             for (ArticleDetails receptionDetail : articlesDetailsReception) {
-                System.out.println("Id delivery details : "+deliveryDetail.getArticle().getIdArticle() + " Id reception article details : " + receptionDetail.getArticle().getIdArticle());
+                System.out.println("Id delivery details : " + deliveryDetail.getArticle().getIdArticle() + " Id reception article details : " + receptionDetail.getArticle().getIdArticle());
                 if (deliveryDetail.getArticle().getIdArticle() != receptionDetail.getArticle().getIdArticle()) {
                     String anomaly = "L'article " + deliveryDetail.getArticle().getDesignation()
                             + " doit être dans les articles commandés";
@@ -76,24 +74,22 @@ public class ReceptionOrder {
     }
 
     //constructors
-    public ReceptionOrder(int idReceptionOrder, LocalDate receptionDate, String responsableName, String responsableContact, int status, String reference, SupplierDeliveryOrder deliveryOrder, List<ArticleDetails> listeArticles) {
+    public ReceptionOrder(int idReceptionOrder, LocalDate receptionDate, String responsableName, String responsableContact, int status, SupplierDeliveryOrder deliveryOrder, List<ArticleDetails> listeArticles) {
         this.idReceptionOrder = idReceptionOrder;
         this.receptionDate = receptionDate;
         this.responsableName = responsableName;
         this.responsableContact = responsableContact;
         this.status = status;
-        this.reference = reference;
         this.deliveryOrder = deliveryOrder;
         this.listeArticles = listeArticles;
     }
 
-    public ReceptionOrder(int idReceptionOrder, LocalDate receptionDate, String responsableName, String responsableContact, int status, String reference, SupplierDeliveryOrder deliveryOrder) {
+    public ReceptionOrder(int idReceptionOrder, LocalDate receptionDate, String responsableName, String responsableContact, int status, SupplierDeliveryOrder deliveryOrder) {
         this.idReceptionOrder = idReceptionOrder;
         this.receptionDate = receptionDate;
         this.responsableName = responsableName;
         this.responsableContact = responsableContact;
         this.status = status;
-        this.reference = reference;
         this.deliveryOrder = deliveryOrder;
     }
 
@@ -124,12 +120,8 @@ public class ReceptionOrder {
         this.idReceptionOrder = idReceptionOrder;
     }
 
-    public String getReference() {
-        return reference;
-    }
-
-    public void setReference(String reference) {
-        this.reference = reference;
+        public String getReference() {
+        return DisplayUtil.prefix("BDR", 4, getIdReceptionOrder());
     }
 
     public String getResponsableName() {

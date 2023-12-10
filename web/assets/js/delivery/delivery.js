@@ -41,9 +41,8 @@ document.addEventListener("DOMContentLoaded", function () {
         xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
         xhr.onload = function () {
             if (xhr.readyState === 4 && xhr.status === 200) {
-            }
-            else {
-                alert("une erreur ses produites"+xhr.responseText);
+            } else {
+                alert("une erreur ses produites" + xhr.responseText);
             }
         };
         var data = "idArticle=" + encodeURIComponent(uniqueId);
@@ -51,6 +50,24 @@ document.addEventListener("DOMContentLoaded", function () {
         return false;
     };
 });
+
+function deleteArticles(idArticle) {
+    var row = document.getElementById("arti_" + idArticle);
+    row.remove();
+
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", "/SystemeCommerciale/reception-action", true);
+    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    xhr.onload = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+        } else {
+            alert("une erreur ses produites" + xhr.responseText);
+        }
+    };
+    var data = "idArticle=" + encodeURIComponent(idArticle);
+    xhr.send(data);
+    return false;
+}
 
 var addAnomalieDelivery = document.getElementById("addAnomalieDelivery");
 addAnomalieDelivery.addEventListener("click", function (event) {

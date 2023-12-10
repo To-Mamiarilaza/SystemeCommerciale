@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package servlet.store;
+package servlet.departement.reception;
 
 import generalisation.GenericDAO.GenericDAO;
 import java.io.IOException;
@@ -12,17 +12,15 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.List;
-import model.base.Utilisateur;
-import model.entry.EntryOrder;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
- * @author to
+ * @author Fy Botas
  */
-@WebServlet(name = "EntryOrderList", urlPatterns = {"/entry-order-list"})
-public class EntryOrderList extends HttpServlet {
+@WebServlet(name = "DeptReceptionActionServlet", urlPatterns = {"/dept-reception-servlet"})
+public class DeptReceptionActionServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -41,10 +39,10 @@ public class EntryOrderList extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet ReceptionListServlet</title>");
+            out.println("<title>Servlet DeptReceptionActionServlet</title>");            
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet ReceptionListServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet DeptReceptionActionServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -62,40 +60,23 @@ public class EntryOrderList extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        try {
-            Utilisateur utilisateur = (Utilisateur) request.getSession().getAttribute("utilisateur");
-            if (utilisateur == null) {
-                response.sendRedirect("./login");
+        int idDeptReception = Integer.valueOf(request.getParameter("idDeptReception"));
+        int action = Integer.valueOf(request.getParameter("action"));
+        if(action == 1){
+            try {
+                GenericDAO.directUpdate("update dept_reception set status = 5 where id_dept_reception = "+idDeptReception, null);
+            } catch (Exception ex) {
+                ex.printStackTrace();
             }
-            List<EntryOrder> entries = new ArrayList<>();
-            if (request.getParameter("date") == null || request.getParameter("status") == null) {
-                entries = (List<EntryOrder>) GenericDAO.getAll(EntryOrder.class, "", null);
-            } else {
-                String date = request.getParameter("date");
-                int status = Integer.valueOf(request.getParameter("status"));
-                entries = (List<EntryOrder>) GenericDAO.getAll(EntryOrder.class, " where status = "+status+" and date <= '"+date+"'", null);
-            }
-            request.setAttribute("entries", entries);
-            request.setAttribute("utilisateur", utilisateur);
-
-            // All required assets
-            List<String> css = new ArrayList<>();
-            css.add("assets/css/supplier/supplier.css");
-
-            List<String> js = new ArrayList<>();
-            js.add("assets/js/bootstrap.bundle.min.js");
-
-            request.setAttribute("css", css);
-            request.setAttribute("js", js);
-
-            // Page definition
-            request.setAttribute("title", "Liste des entrees");
-            request.setAttribute("contentPage", "./pages/store/entryOrderList.jsp");
-
-            request.getRequestDispatcher("./template.jsp").forward(request, response);
-        } catch (Exception e) {
-            e.printStackTrace();
         }
+        else{
+            try {
+                GenericDAO.directUpdate("update dept_reception set status = 0 where id_dept_reception = "+idDeptReception, null);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+        response.sendRedirect("./dept-reception-order-list");
     }
 
     /**
