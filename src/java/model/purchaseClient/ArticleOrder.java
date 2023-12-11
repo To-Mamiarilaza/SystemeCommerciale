@@ -20,7 +20,7 @@ public class ArticleOrder {
     Article article;
     @DBField(name = "quantity")
     Double quantity;
-    @DBField(name = "id_purchase_order_client", isForeignKey = true)
+    @DBField(name = "id_purchase_order", isForeignKey = true)
     PurchaseOrderClient purchaseOrderClient;
     @DBField(name = "status")
     int status;

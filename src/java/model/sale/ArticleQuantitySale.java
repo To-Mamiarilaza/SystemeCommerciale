@@ -20,6 +20,8 @@ public class ArticleQuantitySale {
     Article article;
     @DBField(name = "quantity")
     double quantity;
+    double availableQuantity;
+    double unitPrice;
     @DBField(name = "id_proforma_sending", isForeignKey = true)
     ProformaSending proformaSending; 
     @DBField(name = "status")
@@ -75,6 +77,25 @@ public class ArticleQuantitySale {
     public void setIsExist(boolean isExist) {
         this.isExist = isExist;
     }
+
+    public double getAvailableQuantity() {
+        return availableQuantity;
+    }
+
+    public void setAvailableQuantity(double availableQuantity) {
+        this.availableQuantity = availableQuantity;
+    }
+
+    public double getUnitPrice() {
+        return unitPrice;
+    }
+
+    public void setUnitPrice(double unitPrice) {
+        this.unitPrice = unitPrice;
+    }
+    
+    
+    
     
 ///Constructors
 

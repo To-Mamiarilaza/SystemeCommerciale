@@ -7,10 +7,11 @@ package model.purchase;
 import generalisation.GenericDAO.GenericDAO;
 import generalisation.annotations.DBField;
 import generalisation.annotations.DBTable;
+import java.sql.Connection;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import model.base.Service;
+import model.article.Article;
 import model.supplier.Supplier;
 import service.util.DisplayUtil;
 
@@ -51,6 +52,7 @@ public class PurchaseOrder {
 
     List<InvoiceLineItem> lineItems;
     List<PaymentCondition> paymentConditions;
+    List<PurchaseOrderLineItem> purchaseOrderLineItems;
 
     // Getter and setter
     public int getIdPurchaseOrder() {
@@ -140,7 +142,7 @@ public class PurchaseOrder {
     public int getStatus() {
         return status;
     }
-
+    
     public String getStatusLabel() {
         if (getStatus() == 1) {
             return "Attente";
@@ -181,6 +183,14 @@ public class PurchaseOrder {
         this.paymentConditions = paymentConditions;
     }
 
+    public List<PurchaseOrderLineItem> getPurchaseOrderLineItems() {
+        return purchaseOrderLineItems;
+    }
+
+    public void setPurchaseOrderLineItems(List<PurchaseOrderLineItem> purchaseOrderLineItems) {
+        this.purchaseOrderLineItems = purchaseOrderLineItems;
+    }
+    
     // Constructor
     public PurchaseOrder() {
         setPaymentConditions(new ArrayList<PaymentCondition>());
@@ -283,7 +293,24 @@ public class PurchaseOrder {
 
         displayAllPaymentCondition();
     }
+    
+    // Load all line items
+    public void setAllLineItems(Connection connection) throws Exception {
+        List<PurchaseOrderLineItem> lines = (List<PurchaseOrderLineItem>) GenericDAO.getAll(PurchaseOrderLineItem.class, "WHERE id_purchase_order = " + this.getIdPurchaseOrder(), connection);
+        setPurchaseOrderLineItems(lines);
+    }
 
+    // get unit price of an article
+    public double getUnitPrice(Article article) throws Exception {
+        for (PurchaseOrderLineItem purchaseOrderLineItem : purchaseOrderLineItems) {
+            if (purchaseOrderLineItem.getArticle().getIdArticle() == article.getIdArticle()) {
+                return purchaseOrderLineItem.getUnitPrice();
+            }
+        }
+        
+        throw new Exception("L'article que vous chercher n'est pas présent dans ce bon de commande !");
+    }
+    
     public void displayAllPaymentCondition() {
         System.out.println("Les conditions de payements :");
         for (PaymentCondition paymentCondition : getPaymentConditions()) {
