@@ -84,7 +84,7 @@ public class SaveProformaSendingServlet extends HttpServlet {
                 String contactResponsable = "+261 32 124 32";
                 String mailSupplier = "huileBongolava@gmail.com";
                 String underTitle2 = "Client";
-                String mailClient = "client@gmail.com ";
+                String mailClient = proformaSending.getEmail();
 
                 try (PDDocument document = new PDDocument()) {
                     PDPage page = new PDPage(PDRectangle.A4);
@@ -203,22 +203,22 @@ public class SaveProformaSendingServlet extends HttpServlet {
                     }
 
                     //Sauvegarder le proforma request
-                    //proformaSending.save();
+                    proformaSending.save();
 
                     // Pour le persistance de données
-                        //String persistanceDirectory = getServletContext().getRealPath("").replace("build\\web\\", "web\\");
+                    String persistanceDirectory = getServletContext().getRealPath("").replace("build\\web\\", "web\\");
 
                     // Exportation en pdf
-                        //document.save(getServletContext().getRealPath("/proformaSendingPdf/PROF00" + proformaSending.getIdProformaSending() + ".pdf"));
-                        //document.save(persistanceDirectory + "\\proformaSendingPdf\\PROF00" + proformaSending.getIdProformaSending() + ".pdf");
-                        //String path = persistanceDirectory + "\\proformaSendingPdf\\PROF00" + proformaSending.getIdProformaSending() + ".pdf";
+                    document.save(getServletContext().getRealPath("/proformaSendingPdf/PROF00" + proformaSending.getIdProformaSending() + ".pdf"));
+                    document.save(persistanceDirectory + "\\proformaSendingPdf\\PROF00" + proformaSending.getIdProformaSending() + ".pdf");
+                    String path = persistanceDirectory + "\\proformaSendingPdf\\PROF00" + proformaSending.getIdProformaSending() + ".pdf";
 
                     //Envoye par email
-                        //String[] recipients = {proformaSending.getEmail()};
-                        //EmailSender.sendEmail(recipients, "Demande de proforma", "Bonjour!Voici le proforma contenant les articles detailles que vous avez demande", path);
+                    String[] recipients = {proformaSending.getEmail()};
+                    EmailSender.sendEmail(recipients, "Demande de proforma", "Bonjour!Voici le proforma contenant les articles detailles que vous avez demande", path);
 
                     //Suppression des sessions
-                        session.removeAttribute("proformaSending");
+                    session.removeAttribute("proformaSending");
 
 
                     // Affichage a l'écran
