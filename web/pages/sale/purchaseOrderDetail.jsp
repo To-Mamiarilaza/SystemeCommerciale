@@ -128,15 +128,16 @@ PurchaseOrderClient purchaseOrderClient = (PurchaseOrderClient)request.getAttrib
                     <% } else if(purchaseOrderClient.getStatus() == 10) { %>
                         <a href="./client-purchase-order-list" class="btn btn-gradient-light mt-3">En attente validation magasin</a>
                     <% } else if(purchaseOrderClient.getStatus() == 15) { %>
-                        <a href="./client-trait-purchase-order?idPurchaseOrderClient=<%=purchaseOrderClient.getIdPurchaseOrderClient() %>&status=10" class="btn btn-gradient-info mt-3 me-3">Facturer</a>
+                        <a href="./client-trait-purchase-order?idPurchaseOrderClient=<%=purchaseOrderClient.getIdPurchaseOrderClient() %>&status=15&idHelp=1" class="btn btn-gradient-info mt-3 me-3">Facturer</a>
                         <a href="./client-purchase-order-list" class="btn btn-gradient-light mt-3">Cancel</a>
                     <% } else if(purchaseOrderClient.getStatus() == 20) { %>
-                        <a href="./client-trait-purchase-order?idPurchaseOrderClient=<%=purchaseOrderClient.getIdPurchaseOrderClient() %>&status=15" class="btn btn-gradient-info mt-3 me-3">Livrer</a>
+                        <a href="./client-trait-purchase-order?idPurchaseOrderClient=<%=purchaseOrderClient.getIdPurchaseOrderClient() %>&status=20&idHelp=1" class="btn btn-gradient-info mt-3 me-3">Livrer</a>
                         <a href="./client-purchase-order-list" class="btn btn-gradient-light mt-3">Cancel</a>
-                        <a href="./client-purchase-order-list" class="btn text-info mt-3 mx-5">Voir le facture</a>
+                        <a href="./client-trait-purchase-order?idPurchaseOrderClient=<%=purchaseOrderClient.getIdPurchaseOrderClient() %>&status=15&idHelp=0" class="btn text-info mt-3 mx-5">Voir le facture</a>
                     <% } else if(purchaseOrderClient.getStatus() == 25) { %>
-                        <a href="./client-purchase-order-list" class="btn text-info mt-3 mx-5">Voir le facture</a>
-                        <a href="./client-purchase-order-list" class="btn text-info mt-3 ">Voir le bon de livraison</a>
+                        <a href="./client-trait-purchase-order?idPurchaseOrderClient=<%=purchaseOrderClient.getIdPurchaseOrderClient() %>&status=15&idHelp=0" class="btn text-info mt-3 mx-5">Voir le facture</a>
+                        <a href="./client-trait-purchase-order?idPurchaseOrderClient=<%=purchaseOrderClient.getIdPurchaseOrderClient() %>&status=20&idHelp=0" class="btn text-info mt-3 ">Voir le bon de livraison</a>
+                        <a href="./client-purchase-order-list" class="btn btn-gradient-light mt-3">Cancel</a>
                     <% } %>
                 </div>
             </div>

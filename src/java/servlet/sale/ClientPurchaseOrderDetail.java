@@ -77,7 +77,7 @@ public class ClientPurchaseOrderDetail extends HttpServlet {
 
             String idPurchaseOrderClient = request.getParameter("idPurchaseOrderClient");
             PurchaseOrderClient purchaseOrderClient = GenericDAO.findById(PurchaseOrderClient.class, Integer.valueOf(idPurchaseOrderClient), null);
-            List<ArticleOrder> articleQuantityOrder = (List<ArticleOrder>) GenericDAO.directQuery(ArticleOrder.class, "SELECT * FROM article_quantity_order WHERE id_purchase_order="+idPurchaseOrderClient, null);
+            List<ArticleOrder> articleQuantityOrder = (List<ArticleOrder>) GenericDAO.directQuery(ArticleOrder.class, "SELECT * FROM article_quantity_order WHERE id_purchase_order_client="+idPurchaseOrderClient, null);
             purchaseOrderClient.setArticleOrder(articleQuantityOrder);
             
             Connection connection = DBConnection.getConnection();
