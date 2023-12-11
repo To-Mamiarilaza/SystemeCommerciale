@@ -92,9 +92,9 @@
                             <td></td>
                             <td></td>
                             <td class="text-right">TOTAL</td>
-                            <td class="text-right text-success"><%= proforma.getMontantTVATotalString() %></td>
-                            <td class="text-right text-success"><%= proforma.getMontantHTTotalString() %></td>
-                            <td class="text-right text-success"><%= proforma.getMontantTTCTotalString() %></td>
+                            <td class="text-right text-success"><%= proforma.getTotalTVAString() %></td>
+                            <td class="text-right text-success"><%= proforma.getTotalHTString() %></td>
+                            <td class="text-right text-success"><%= proforma.getTotalTTCString() %></td>
                         </tr>
                     </tbody>
                 </table>

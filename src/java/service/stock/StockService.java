@@ -22,12 +22,10 @@ public class StockService {
     // Service pour l'etat de stock
     
     // Get the remaining quantity of an article
-    public static double getRemainQuantity(Article article) throws Exception {
+    public static double getRemainQuantity(Article article, Connection connection) throws Exception {
         LocalDate now = LocalDate.now();
         String idArticle = String.valueOf(article.getIdArticle());
-        Connection connection = DBConnection.getConnection();
         EtatStock etatStock = getEtatStock(now.toString(), now.toString(), idArticle, connection);
-        connection.close();
         if (etatStock.getStockList().size() == 0) {
             return 0;
         }
@@ -35,8 +33,8 @@ public class StockService {
     }
     
     // Check if there is available quantity on the store
-    public static void checkStock(ArticleQuantity articleQuantity) throws Exception {
-        double remain = getRemainQuantity(articleQuantity.getArticle());
+    public static void checkStock(ArticleQuantity articleQuantity, Connection connection) throws Exception {
+        double remain = getRemainQuantity(articleQuantity.getArticle(), connection);
         if (remain < articleQuantity.getQuantity()) {
             throw new Exception("Il n'y a pas assez de stock pour l' article " + articleQuantity.getArticle().getDesignation());
         }

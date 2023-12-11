@@ -25,6 +25,9 @@ public class PurchaseOrderLineItem {
     @DBField(name = "id_article", isForeignKey = true)
     Article article;
     
+    @DBField(name = "quantity")
+    double quantity;
+    
     @DBField(name = "unit_price")
     double unitPrice;
     
@@ -62,6 +65,14 @@ public class PurchaseOrderLineItem {
         return article;
     }
 
+    public double getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(double quantity) {
+        this.quantity = quantity;
+    }
+   
     public void setArticle(Article article) {
         this.article = article;
     }
@@ -111,22 +122,24 @@ public class PurchaseOrderLineItem {
     public PurchaseOrderLineItem() {
     }
     
-    public PurchaseOrderLineItem(int idPurchaseOrder, Article article, double unitPrice, double tva, double tva_amount, double ht_amount, double ttc_amount) {
+    public PurchaseOrderLineItem(int idPurchaseOrder, Article article, double quantity, double unitPrice, double tva, double tva_amount, double ht_amount, double ttc_amount) {
         this.idPurchaseOrder = idPurchaseOrder;
         this.article = article;
         this.unitPrice = unitPrice;
         this.tva = tva;
+        this.quantity = quantity;
         this.tva_amount = tva_amount;
         this.ht_amount = ht_amount;
         this.ttc_amount = ttc_amount;
     }
     
-    public PurchaseOrderLineItem(int idPurchaseOrderLineItem, int idPurchaseOrder, Article article, double unitPrice, double tva, double tva_amount, double ht_amount, double ttc_amount) {
+    public PurchaseOrderLineItem(int idPurchaseOrderLineItem, int idPurchaseOrder, Article article, double quantity, double unitPrice, double tva, double tva_amount, double ht_amount, double ttc_amount) {
         this.idPurchaseOrderLineItem = idPurchaseOrderLineItem;
         this.idPurchaseOrder = idPurchaseOrder;
         this.article = article;
         this.unitPrice = unitPrice;
         this.tva = tva;
+        this.quantity = quantity;
         this.tva_amount = tva_amount;
         this.ht_amount = ht_amount;
         this.ttc_amount = ttc_amount;
@@ -135,6 +148,7 @@ public class PurchaseOrderLineItem {
     public PurchaseOrderLineItem(int idPurchaseOrder, InvoiceLineItem invoiceLineItem) {
         this.idPurchaseOrder = idPurchaseOrder;
         this.article = invoiceLineItem.getArticle();
+        this.quantity = invoiceLineItem.getQuantity();
         this.unitPrice = invoiceLineItem.getUnitPrice();
         this.tva = invoiceLineItem.getTva();
         this.tva_amount = invoiceLineItem.getTVAAmount();

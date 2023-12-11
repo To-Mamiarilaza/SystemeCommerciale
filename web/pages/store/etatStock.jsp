@@ -71,7 +71,7 @@
                             <td><%= stock.getOutgoing() %></td>
                             <td><%= stock.getRemain() %></td>
                             <td><%= stock.getUnitPriceDisplay() %></td>
-                            <td><%= stock.getAmountDisplay() %> AR</td>
+                            <td><%= stock.getAmountDisplay() %></td>
                         </tr>
                         <% } %>
 
