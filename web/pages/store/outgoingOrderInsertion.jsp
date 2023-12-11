@@ -53,16 +53,15 @@
                                        id="exampleInputUsername1" required>
                             </div>
                             
-                            <% if(outgoingOrder.getPurchaseOrder() != null) { %>
+                            <% if(outgoingOrder.getPurchaseOrderClient() != null) { %>
                             <div class="form-group">
                                 <label for="exampleInputPassword1">Bon de commande</label>
-                                <input type="text" value="BOR0001" name="date" class="form-control"
+                                <input type="text" value="<%= outgoingOrder.getPurchaseOrderClient().getIdPurchaseOrderClient() %>" name="date" class="form-control"
                                     id="exampleInputEmail1">
                             </div>
                             <% } %>
                             
                             
-                            <p class="text-error">Une erreur s'est produite</p>
                             <button type="submit" class="btn btn-gradient-primary me-2">Crée le bon
                                 de sortie</button>
                             <a href="./outgoing-request-list" class="btn btn-light">Cancel</a>

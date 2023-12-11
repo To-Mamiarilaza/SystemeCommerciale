@@ -1,6 +1,7 @@
-<%@page import="java.util.List, model.movement.out.ServiceRequest, model.purchase.ArticleQuantity" %>
+<%@page import="java.util.List, model.movement.out.ServiceRequest, model.purchase.ArticleQuantity, model.purchaseClient.*" %>
 <%
     List<ServiceRequest> serviceRequests = (List<ServiceRequest>) request.getAttribute("serviceRequests");
+    List<PurchaseOrderClient> purchases = (List<PurchaseOrderClient>) request.getAttribute("purchases");
 %>
 <div class="page-header">
     <h3 class="page-title">
@@ -52,56 +53,27 @@
                         <h5 class="text-primary">Besoins pour vente</h5>
                         <hr>
                         <div class="row">
+                            <% for(PurchaseOrderClient purchase : purchases) { %>
                             <div class="col-md-6">
-                                <a href="./outgoing-order-insertion" class="no-style-link">
+                                <a href="./outgoing-order-insertion?idPurchase=<%= purchase.getIdPurchaseOrderClient() %>" class="no-style-link">
                                     <div class="border p-4 border-1">
                                         <div class="d-flex justify-content-between">
-                                            <h6>BOC0001</h6>
-                                            <h6 class="m-0 text-black">10-12-2023</h6>
+                                            <h6><%= purchase.getIdString() %></h6>
+                                            <h6 class="m-0 text-black"><%= purchase.getDateInsertion() %></h6>
                                         </div>
                                         <ul class="text-black">
+                                            <% for(ArticleOrder order : purchase.getArticleOrder()) { %>
                                             <li>
                                                 <div class="d-flex justify-content-between">
-                                                    <span>Ordinateur</span><span>8</span>
+                                                    <span><%= order.getArticle().getDesignation() %></span><span><%= order.getQuantity() %></span>
                                                 </div>
                                             </li>
-                                            <li>
-                                                <div class="d-flex justify-content-between">
-                                                    <span>Cahier spirale</span><span>13</span>
-                                                </div>
-                                            </li>
+                                            <% } %>
                                         </ul>
                                     </div>
                                 </a>
                             </div>
-
-                            <div class="col-md-6">
-                                <a href="./outgoing-order-insertion" class="no-style-link">
-                                    <div class="border p-4 border-1">
-                                        <div class="d-flex justify-content-between">
-                                            <h6>BOC0001</h6>
-                                            <h6 class="m-0 text-black">10-12-2023</h6>
-                                        </div>
-                                        <ul class="text-black">
-                                            <li>
-                                                <div class="d-flex justify-content-between">
-                                                    <span>Ordinateur</span><span>8</span>
-                                                </div>
-                                            </li>
-                                            <li>
-                                                <div class="d-flex justify-content-between">
-                                                    <span>Cahier spirale</span><span>13</span>
-                                                </div>
-                                            </li>
-                                            <li>
-                                                <div class="d-flex justify-content-between">
-                                                    <span>Cahier spirale</span><span>13</span>
-                                                </div>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </a>
-                            </div>
+                            <% } %>
                         </div>
                     </div>
                 </div>

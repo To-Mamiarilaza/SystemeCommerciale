@@ -22,6 +22,10 @@ public class ArticleQuantitySale {
     double quantity;
     double availableQuantity;
     double unitPrice;
+    double tva;
+    double tvaAmount;
+    double htAmount;
+    double ttcAmount;
     @DBField(name = "id_proforma_sending", isForeignKey = true)
     ProformaSending proformaSending; 
     @DBField(name = "status")
@@ -93,6 +97,40 @@ public class ArticleQuantitySale {
     public void setUnitPrice(double unitPrice) {
         this.unitPrice = unitPrice;
     }
+
+    public double getTva() {
+        return tva;
+    }
+
+    public void setTva(double tva) {
+        this.tva = tva;
+    }
+
+    public double getTvaAmount() {
+        return tvaAmount;
+    }
+
+    public void setTvaAmount(double tvaAmount) {
+        this.tvaAmount = tvaAmount;
+    }
+
+    public double getHtAmount() {
+        return htAmount;
+    }
+
+    public void setHtAmount(double htAmount) {
+        this.htAmount = htAmount;
+    }
+
+    public double getTtcAmount() {
+        return ttcAmount;
+    }
+
+    public void setTtcAmount(double ttcAmount) {
+        this.ttcAmount = ttcAmount;
+    }
+    
+    
     
     
     

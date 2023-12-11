@@ -6,6 +6,7 @@ package servlet.store;
  */
 
 import connection.DBConnection;
+import generalisation.GenericDAO.GenericDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import model.base.Utilisateur;
 import model.movement.out.ServiceRequest;
+import model.purchaseClient.PurchaseOrderClient;
 import service.movement.out.ServiceRequestService;
 
 /**
@@ -77,6 +79,12 @@ public class OutgoingRequestListServlet extends HttpServlet {
             
             List<ServiceRequest> requests = ServiceRequestService.getAllServiceRequest(connection);
             request.setAttribute("serviceRequests", requests);
+            
+            List<PurchaseOrderClient> purchaseOrderClients = (List<PurchaseOrderClient>) GenericDAO.getAll(PurchaseOrderClient.class, " WHERE status = 10", connection);
+            for (PurchaseOrderClient purchaseOrderClient : purchaseOrderClients) {
+                purchaseOrderClient.loadArticleQuantityOrder(connection);
+            }
+            request.setAttribute("purchases", purchaseOrderClients);
 
             // All required assets
             List<String> css = new ArrayList<>();

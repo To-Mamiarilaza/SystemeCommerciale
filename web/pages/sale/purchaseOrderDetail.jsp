@@ -85,7 +85,6 @@ PurchaseOrderClient purchaseOrderClient = (PurchaseOrderClient)request.getAttrib
                             <th>Designation</th>
                             <th>Prix Unitaire</th>
                             <th>Quantite</th>
-                            <th>Disponible</th>
                             <th>TVA</th>
                             <th class="text-right px-4">Montant TVA</th>
                             <th class="text-right px-4">HT</th>
@@ -97,21 +96,30 @@ PurchaseOrderClient purchaseOrderClient = (PurchaseOrderClient)request.getAttrib
                         <% for(int i = 0; i < purchaseOrderClient.getArticleOrder().size(); i++) { %>
                         <tr>
                             <td><%=purchaseOrderClient.getArticleOrder().get(i).getArticle().getDesignation() %></td>
-                            <td>10 000 AR</td>
+                            <td><%= purchaseOrderClient.getArticleOrder().get(i).getUnitPrice() %> AR</td>
                             <td><%=purchaseOrderClient.getArticleOrder().get(i).getQuantity() %></td>
-                            <td>20</td>
-                            <td>20 %</td>
-                            <td class="text-right">2 000 AR</td>
-                            <td class="text-right">60 000 AR</td>
-                            <td class="text-right">72 000 AR</td>
+                            <td><%= purchaseOrderClient.getArticleOrder().get(i).getArticle().getTva() %> %</td>
+                            <td class="text-right"><%= purchaseOrderClient.getArticleOrder().get(i).getTvaAmount() %>AR</td>
+                            <td class="text-right"><%= purchaseOrderClient.getArticleOrder().get(i).getHtAmount() %> AR</td>
+                            <td class="text-right"><%= purchaseOrderClient.getArticleOrder().get(i).getTtcAmount() %> AR</td>
                         </tr>
                         <% } %>
 
                         <!-- TOTAL ROW -->
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td class="text-right">TOTAL</td>
+                            <td class="text-right text-success"><%= purchaseOrderClient.getTvaTotal() %> AR</td>
+                            <td class="text-right text-success"><%= purchaseOrderClient.getHtTotal() %> AR</td>
+                            <td class="text-right text-success"><%= purchaseOrderClient.getTtcTotal() %> AR</td>
+                            <td></td>
+                        </tr>
                     </tbody>
                 </table>
                 <div class="mt-4">
-                    <p><strong>Arrete le present proforma a la somme de :</strong> <br> <span> SOIXANTE DOUZE MILLE ARIARY</span></p>
+                    <p><strong>Arrete le present proforma a la somme de :</strong> <br> <span> <%= purchaseOrderClient.getTtcTotalLetter() %> ARIARY</span></p>
                 </div>
                 <div class="mt-3 d-flex">
                     <% if(purchaseOrderClient.getStatus() == 5) { %>

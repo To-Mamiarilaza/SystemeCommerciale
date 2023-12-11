@@ -76,13 +76,13 @@ ProformaSending proformaSending = (ProformaSending)request.getAttribute("proform
                         <% for(int i = 0; i < proformaSending.getArticles().size(); i++) { %>
                         <tr>
                             <td><%=proformaSending.getArticles().get(i).getArticle().getDesignation() %></td>
-                            <td>10 000 AR</td>
+                            <td><%= proformaSending.getArticles().get(i).getUnitPrice()  %> AR</td>
                             <td><%=proformaSending.getArticles().get(i).getQuantity() %></td>
-                            <td>20</td>
-                            <td>20 %</td>
-                            <td class="text-right">2 000 AR</td>
-                            <td class="text-right">60 000 AR</td>
-                            <td class="text-right">72 000 AR</td>
+                            <td><%=proformaSending.getArticles().get(i).getAvailableQuantity() %></td>
+                            <td><%=proformaSending.getArticles().get(i).getTva() %> %</td>
+                            <td class="text-right"><%=proformaSending.getArticles().get(i).getTvaAmount() %> AR</td>
+                            <td class="text-right"><%=proformaSending.getArticles().get(i).getHtAmount() %> AR</td>
+                            <td class="text-right"><%=proformaSending.getArticles().get(i).getTtcAmount() %> AR</td>
                         </tr>
                         <% } %>
                         <!-- TOTAL ROW -->
@@ -93,9 +93,9 @@ ProformaSending proformaSending = (ProformaSending)request.getAttribute("proform
                             <td></td>
                             <td></td>
                             <td class="text-right">TOTAL</td>
-                            <td class="text-right text-success">2 000 AR</td>
-                            <td class="text-right text-success">60 000 AR</td>
-                            <td class="text-right text-success">72 000 AR</td>
+                            <td class="text-right text-success"><%= proformaSending.getTvaTotal() %> AR</td>
+                            <td class="text-right text-success"><%= proformaSending.getHtTotal() %> AR</td>
+                            <td class="text-right text-success"><%= proformaSending.getTtcTotal() %> AR</td>
                             <td></td>
                         </tr>
                     </tbody>

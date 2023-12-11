@@ -14,6 +14,8 @@ import model.article.Article;
 import model.base.Service;
 import model.purchase.ArticleQuantity;
 import model.purchase.PurchaseOrder;
+import model.purchaseClient.ArticleOrder;
+import model.purchaseClient.PurchaseOrderClient;
 import service.util.DisplayUtil;
 
 /**
@@ -40,7 +42,7 @@ public class OutgoingOrder {
     String motif;
 
     @DBField(name = "id_purchase_order", isForeignKey = true)
-    PurchaseOrder purchaseOrder;
+    PurchaseOrderClient purchaseOrderClient;
 
     @DBField(name = "id_service", isForeignKey = true)
     Service service;
@@ -99,16 +101,16 @@ public class OutgoingOrder {
         return getService() == null ? "Vente" : "Besoin interne";
     }
 
-    public PurchaseOrder getPurchaseOrder() {
-        return purchaseOrder;
+    public PurchaseOrderClient getPurchaseOrderClient () {
+        return purchaseOrderClient;
     }
 
     public String getPurchaseOrderDisplay() {
-        return purchaseOrder == null ? "" : DisplayUtil.prefix("BDC", 4, purchaseOrder.getIdPurchaseOrder());
+        return purchaseOrderClient == null ? "" : DisplayUtil.prefix("BDC", 4, purchaseOrderClient.getIdPurchaseOrderClient());
     }
 
-    public void setPurchaseOrder(PurchaseOrder purchaseOrder) {
-        this.purchaseOrder = purchaseOrder;
+    public void setPurchaseOrderClient(PurchaseOrderClient purchaseOrderClient) {
+        this.purchaseOrderClient = purchaseOrderClient;
     }
 
     public Service getService() {
@@ -175,23 +177,23 @@ public class OutgoingOrder {
     public OutgoingOrder() {
     }
 
-    public OutgoingOrder(Integer idOutgoingOrder, LocalDate date, String responsableName, String responsableContact, String motif, PurchaseOrder purchaseOrder, Service service, Integer status) {
+    public OutgoingOrder(Integer idOutgoingOrder, LocalDate date, String responsableName, String responsableContact, String motif, PurchaseOrderClient purchaseOrderClient, Service service, Integer status) {
         this.idOutgoingOrder = idOutgoingOrder;
         this.date = date;
         this.responsableName = responsableName;
         this.responsableContact = responsableContact;
         this.motif = motif;
-        this.purchaseOrder = purchaseOrder;
+        this.purchaseOrderClient = purchaseOrderClient;
         this.service = service;
         this.status = status;
     }
 
-    public OutgoingOrder(LocalDate date, String responsableName, String responsableContact, String motif, PurchaseOrder purchaseOrder, Service service, Integer status) {
+    public OutgoingOrder(LocalDate date, String responsableName, String responsableContact, String motif, PurchaseOrderClient purchaseOrderClient, Service service, Integer status) {
         this.date = date;
         this.responsableName = responsableName;
         this.responsableContact = responsableContact;
         this.motif = motif;
-        this.purchaseOrder = purchaseOrder;
+        this.purchaseOrderClient = purchaseOrderClient;
         this.service = service;
         this.status = status;
     }
@@ -201,6 +203,15 @@ public class OutgoingOrder {
         List<OutgoingOrderDetail> details = new ArrayList<>();
         for (ArticleQuantity articleQuantity : serviceRequest.getArticleQuantities()) {
             details.add(new OutgoingOrderDetail(0, articleQuantity.getArticle(), articleQuantity.getQuantity()));
+        }
+        setDetails(details);
+    }
+    
+    public OutgoingOrder(PurchaseOrderClient purchaseOrderClient) {
+        setPurchaseOrderClient(purchaseOrderClient);
+        List<OutgoingOrderDetail> details = new ArrayList<>();
+        for (ArticleOrder article : purchaseOrderClient.getArticleOrder()) {
+            details.add(new OutgoingOrderDetail(0, article.getArticle(), article.getQuantity()));
         }
         setDetails(details);
     }
@@ -241,7 +252,12 @@ public class OutgoingOrder {
 
     public void showDetails() {
         System.out.println("BON DE SORTIE :");
-        System.out.println("Service : " + getService().getService());
+        if (getService() != null) {
+            System.out.println("Service : " + getService().getService());
+        }
+        if (getPurchaseOrderClient() != null) {
+            System.out.println("Purchase Order : " + getPurchaseOrderClient().getIdString());
+        }
         for (OutgoingOrderDetail detail : details) {
             System.out.println("- " + detail.getArticle().getDesignation() + " : " + detail.getQuantity());
         }

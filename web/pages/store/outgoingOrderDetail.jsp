@@ -38,7 +38,7 @@
                                 <%= outgoingOrder.getReference() %>
                             </dd>
 
-                            <% if(outgoingOrder.getPurchaseOrder() != null) { %>
+                            <% if(outgoingOrder.getPurchaseOrderClient() != null) { %>
                             <dt class="col-sm-6 px-0 mb-3">Reference commande</dt>
                             <dd class="col-sm-6 px-0 mb-3">
                                 <%= outgoingOrder.getPurchaseOrderDisplay() %>

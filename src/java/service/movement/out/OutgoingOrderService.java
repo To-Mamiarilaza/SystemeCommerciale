@@ -6,21 +6,21 @@ package service.movement.out;
 
 import connection.DBConnection;
 import generalisation.GenericDAO.GenericDAO;
-import generalisation.utils.GenericUtil;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import model.article.Article;
 import model.base.Service;
 import model.movement.out.OutgoingOrder;
 import model.movement.out.OutgoingOrderDetail;
 import model.purchase.PurchaseOrder;
+import model.purchaseClient.PurchaseOrderClient;
+import service.stock.MovementService;
+import service.stock.StockService;
 
 /**
  *
@@ -45,12 +45,12 @@ public class OutgoingOrderService {
                 String responsableContact = resultSet.getString("responsable_contact");
                 String motif = resultSet.getString("motif");
                 String idPurchaseOrder = resultSet.getString("id_purchase_order");
-                PurchaseOrder purchaseOrder = (PurchaseOrder) (idPurchaseOrder == null ? null : GenericDAO.findById(PurchaseOrder.class, idPurchaseOrder, connection));
+                PurchaseOrderClient purchaseOrderClient = (PurchaseOrderClient) (idPurchaseOrder == null ? null : GenericDAO.findById(PurchaseOrderClient.class, idPurchaseOrder, connection));
                 String idService = resultSet.getString("id_service");
                 Service service = (Service) (idService == null ? null : GenericDAO.findById(Service.class, idService, connection));
                 Integer status = resultSet.getInt("status");
 
-                OutgoingOrder newOrder = new OutgoingOrder(idOutgoingOrder, date, responsableName, responsableContact, motif, purchaseOrder, service, status);
+                OutgoingOrder newOrder = new OutgoingOrder(idOutgoingOrder, date, responsableName, responsableContact, motif, purchaseOrderClient, service, status);
                 orders.add(newOrder);
             }
 
@@ -85,12 +85,12 @@ public class OutgoingOrderService {
                 String responsableContact = resultSet.getString("responsable_contact");
                 String motif = resultSet.getString("motif");
                 String idPurchaseOrder = resultSet.getString("id_purchase_order");
-                PurchaseOrder purchaseOrder = (PurchaseOrder) (idPurchaseOrder == null ? null : GenericDAO.findById(PurchaseOrder.class, idPurchaseOrder, connection));
+                PurchaseOrderClient purchaseOrderClient = (PurchaseOrderClient) (idPurchaseOrder == null ? null : GenericDAO.findById(PurchaseOrderClient.class, idPurchaseOrder, connection));
                 String idService = resultSet.getString("id_service");
                 Service service = (Service) (idService == null ? null : GenericDAO.findById(Service.class, idService, connection));
                 Integer status = resultSet.getInt("status");
 
-                OutgoingOrder newOrder = new OutgoingOrder(idOutgoingOrder, date, responsableName, responsableContact, motif, purchaseOrder, service, status);
+                OutgoingOrder newOrder = new OutgoingOrder(idOutgoingOrder, date, responsableName, responsableContact, motif, purchaseOrderClient, service, status);
                 orders.add(newOrder);
             }
 
@@ -143,12 +143,12 @@ public class OutgoingOrderService {
                 String responsableContact = resultSet.getString("responsable_contact");
                 String motif = resultSet.getString("motif");
                 String idPurchaseOrder = resultSet.getString("id_purchase_order");
-                PurchaseOrder purchaseOrder = (PurchaseOrder) (idPurchaseOrder == null ? null : GenericDAO.findById(PurchaseOrder.class, idPurchaseOrder, connection));
+                PurchaseOrderClient purchaseOrderClient = (PurchaseOrderClient) (idPurchaseOrder == null ? null : GenericDAO.findById(PurchaseOrderClient.class, idPurchaseOrder, connection));
                 String idService = resultSet.getString("id_service");
                 Service service = (Service) (idService == null ? null : GenericDAO.findById(Service.class, idService, connection));
                 Integer status = resultSet.getInt("status");
 
-                order = new OutgoingOrder(id, date, responsableName, responsableContact, motif, purchaseOrder, service, status);
+                order = new OutgoingOrder(id, date, responsableName, responsableContact, motif, purchaseOrderClient, service, status);
                 
                 // get all outgoing order detail
                 order.setDetails(GenericDAO.getAll(OutgoingOrderDetail.class, "WHERE id_outgoing_order = " + id, connection));
@@ -179,8 +179,24 @@ public class OutgoingOrderService {
     
     // accept an outgoing order
     public static void acceptOutgoingOrder(String idOutgoingOrder) throws Exception {
+        Connection connection = DBConnection.getConnection();
+        OutgoingOrder order = getOutgoingOrder(idOutgoingOrder, connection);
+        
+        // Update the purchase order client status to 15
+        PurchaseOrderClient clientOrder = order.getPurchaseOrderClient();
+        clientOrder.setStatus(15);
+        GenericDAO.updateById(clientOrder, clientOrder.getIdPurchaseOrderClient(), connection);
+        
+        // Sortir du magasin
+        for (OutgoingOrderDetail detail : order.getDetails()) {
+            MovementService.sortir(LocalDate.now().toString(), String.valueOf(order.getIdOutgoingOrder()), String.valueOf(detail.getArticle().getIdArticle()), String.valueOf(detail.getQuantity()), connection);
+        }
+        
         String query = "UPDATE outgoing_order SET status = 10 WHERE id_outgoing_order = " + idOutgoingOrder;
-        GenericDAO.directUpdate(query, null);
+        GenericDAO.directUpdate(query, connection);
+        
+        connection.commit();
+        connection.close();
     }
     
     // get all id in a outgoing order to in sql format
@@ -209,7 +225,7 @@ public class OutgoingOrderService {
             String query = "INSERT INTO outgoing_order VALUES (DEFAULT, ?, ?, ?, ?, ?, ?, 1)";
             connection = DBConnection.getConnection();
 
-            Integer idPurchaseOrder = outgoingOrder.getPurchaseOrder() == null ? null : outgoingOrder.getPurchaseOrder().getIdPurchaseOrder();
+            Integer idPurchaseOrder = outgoingOrder.getPurchaseOrderClient()== null ? null : outgoingOrder.getPurchaseOrderClient().getIdPurchaseOrderClient();
             Integer idService = outgoingOrder.getService() == null ? null : outgoingOrder.getService().getIdService();
             statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
             statement.setDate(1, Date.valueOf(outgoingOrder.getDate()));
@@ -232,7 +248,16 @@ public class OutgoingOrderService {
             }
             
             // Disable service request
-            disableServiceRequest(outgoingOrder, connection);
+            if (outgoingOrder.getService() != null) {
+                disableServiceRequest(outgoingOrder, connection);
+            }
+            
+            
+            // Update the status of the purchase_order_client
+//            if (outgoingOrder.getPurchaseOrderClient() != null) {
+//                outgoingOrder.getPurchaseOrderClient().setStatus(15);
+//                GenericDAO.save(outgoingOrder.getPurchaseOrderClient(), connection);
+//            }
 
             connection.commit();
             connection.close();

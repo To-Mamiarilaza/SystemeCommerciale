@@ -61,7 +61,7 @@ public class MovementService {
     }
     
     // The minimum possible unit price will be given by ajax ( Think about OutRequest Object )
-    public static void sortir(String date, String idBDS, String idArticle, String quantity) throws Exception {
+    public static void sortir(String date, String idBDS, String idArticle, String quantity, Connection connection) throws Exception {
         checkAllParameter(date, idArticle, idBDS, quantity);
 
         // Get all needed value
@@ -70,7 +70,6 @@ public class MovementService {
         double unitPriceValue = 0;    // We will think about how to get unit price after
         int idBDSValue = Integer.valueOf(idBDS);
 
-        Connection connection = DBConnection.getConnection();
         Article article = GenericDAO.findById(Article.class, idArticle, connection);
         if (article == null) {
             throw new Exception("Il n'y aucun article portant cette id !");
@@ -99,8 +98,6 @@ public class MovementService {
         if (quantityValue != 0) {
             connection.rollback();
             throw new Exception("La quantité dans le stock est insuffisant !");
-        } else {
-            connection.commit();
         }
     }
     
@@ -124,8 +121,6 @@ public class MovementService {
     
     public static void insertTestOutgoing() throws Exception {
         Connection connection = DBConnection.getConnection();
-        
-        sortir("2023-12-08", "0", "3", "8");
         
         connection.commit();
         connection.close();

@@ -526,7 +526,7 @@ CREATE TABLE article_quantity_order (
     quantity DOUBLE PRECISION,
     id_purchase_order int,
     status int,
-    FOREIGN KEY (id_purchase_order) REFERENCES purchase_order(id_purchase_order),
+    FOREIGN KEY (id_purchase_order) REFERENCES purchase_order_client(id_purchase_order),
     FOREIGN KEY (id_article) REFERENCES article(id_article)
 );
 

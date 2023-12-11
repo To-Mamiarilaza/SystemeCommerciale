@@ -20,6 +20,12 @@ public class ArticleOrder {
     Article article;
     @DBField(name = "quantity")
     Double quantity;
+    double availableQuantity;
+    double unitPrice;
+    double tva;
+    double tvaAmount;
+    double htAmount;
+    double ttcAmount;
     @DBField(name = "id_purchase_order", isForeignKey = true)
     PurchaseOrderClient purchaseOrderClient;
     @DBField(name = "status")
@@ -68,6 +74,56 @@ public class ArticleOrder {
     public void setIsExist(boolean isExist) {
         this.isExist = isExist;
     }
+
+    public double getAvailableQuantity() {
+        return availableQuantity;
+    }
+
+    public void setAvailableQuantity(double availableQuantity) {
+        this.availableQuantity = availableQuantity;
+    }
+
+    public double getUnitPrice() {
+        return unitPrice;
+    }
+
+    public void setUnitPrice(double unitPrice) {
+        this.unitPrice = unitPrice;
+    }
+
+    public double getTva() {
+        return tva;
+    }
+
+    public void setTva(double tva) {
+        this.tva = tva;
+    }
+
+    public double getTvaAmount() {
+        return tvaAmount;
+    }
+
+    public void setTvaAmount(double tvaAmount) {
+        this.tvaAmount = tvaAmount;
+    }
+
+    public double getHtAmount() {
+        return htAmount;
+    }
+
+    public void setHtAmount(double htAmount) {
+        this.htAmount = htAmount;
+    }
+
+    public double getTtcAmount() {
+        return ttcAmount;
+    }
+
+    public void setTtcAmount(double ttcAmount) {
+        this.ttcAmount = ttcAmount;
+    }
+    
+    
     
 ///Constructors
     public ArticleOrder() {
@@ -93,6 +149,7 @@ public class ArticleOrder {
         this.quantity = quantity;
         this.status = status;
     }
+    
 ///Fonctions
-
+    
 }

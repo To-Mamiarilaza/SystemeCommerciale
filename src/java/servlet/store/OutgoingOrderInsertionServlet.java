@@ -22,6 +22,7 @@ import model.article.Article;
 import model.base.Utilisateur;
 import model.movement.out.OutgoingOrder;
 import model.movement.out.ServiceRequest;
+import model.purchaseClient.PurchaseOrderClient;
 import service.movement.out.OutgoingOrderService;
 import service.movement.out.ServiceRequestService;
 
@@ -79,10 +80,20 @@ public class OutgoingOrderInsertionServlet extends HttpServlet {
             
             // All required informations
             String idService = request.getParameter("idService");
+            String idPurchase = request.getParameter("idPurchase");
             
             Connection connection = DBConnection.getConnection();
-            ServiceRequest serviceRequest = ServiceRequestService.getServiceRequest(idService, connection);
-            OutgoingOrder order = new OutgoingOrder(serviceRequest);
+            
+            OutgoingOrder order = null;
+            if(idService != null) {
+                ServiceRequest serviceRequest = ServiceRequestService.getServiceRequest(idService, connection);
+                order = new OutgoingOrder(serviceRequest);
+            } else {
+                PurchaseOrderClient purchase = GenericDAO.findById(PurchaseOrderClient.class, idPurchase, connection);
+                purchase.loadArticleQuantityOrder(connection);
+                order = new OutgoingOrder(purchase);
+            }
+            
             order.showDetails();
             request.getSession().setAttribute("outgoingOrder", order);
             request.setAttribute("outgoingOrder", order);

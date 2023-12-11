@@ -83,8 +83,14 @@ public class ProformaSendingDetailServlet extends HttpServlet {
             Connection connection = DBConnection.getConnection();
             
             for (ArticleQuantitySale article : proformaSending.getArticles()) {
-                article.setQuantity(StockService.getRemainQuantity(article.getArticle(), connection));
+                article.setAvailableQuantity(StockService.getRemainQuantity(article.getArticle(), connection));
                 price = SaleService.getSalePrice(article.getArticle(), connection);
+                article.setUnitPrice(price - (price * (article.getArticle().getTva() / 100)));
+                article.setTva(article.getArticle().getTva());
+                article.setTvaAmount((article.getUnitPrice() * article.getQuantity()) * (article.getArticle().getTva() / 100));
+                article.setHtAmount(article.getUnitPrice() * article.getQuantity());
+                article.setTtcAmount(price * article.getQuantity());
+                System.out.println("Current price : " + price);
             }
             
             connection.close();

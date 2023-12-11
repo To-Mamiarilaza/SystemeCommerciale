@@ -4,6 +4,7 @@
  */
 package servlet.sale;
 
+import connection.DBConnection;
 import generalisation.GenericDAO.GenericDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -13,12 +14,16 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 import model.article.Article;
 import model.base.Utilisateur;
+import model.purchase.ArticleQuantity;
 import model.purchase.PaymentMethod;
+import model.purchaseClient.ArticleOrder;
 import model.purchaseClient.PurchaseOrderClient;
+import service.stock.StockService;
 
 /**
  *
@@ -133,8 +138,25 @@ public class ClientPurchaseOrderInsertionServlet extends HttpServlet {
             purchaseOrderClient.setPaymentMethod(methodPayment);
             purchaseOrderClient.setStatus(5);
             
+            // Vérification des stock
+            Connection connection = DBConnection.getConnection();
+            for (ArticleOrder articleOrder : purchaseOrderClient.getArticleOrder()) {
+                ArticleQuantity articleQuantity = new ArticleQuantity();
+                articleQuantity.setArticle(articleOrder.getArticle());
+                articleQuantity.setQuantity(articleOrder.getQuantity());
+                System.out.println("VERIFICATION QUANTITE : ");
+                System.out.println("- " + articleOrder.getArticle());
+                System.out.println("- " + articleOrder.getQuantity());
+                
+                StockService.checkStock(articleQuantity, connection);
+            }
+            
             //Sauvegarder
-            purchaseOrderClient.save(purchaseOrderClient);
+            purchaseOrderClient.save(purchaseOrderClient, connection);
+            
+            connection.commit();
+            connection.close();
+            
             response.sendRedirect("./client-purchase-order-list");
         } catch(Exception e) {
             request.setAttribute("error", e.getMessage());

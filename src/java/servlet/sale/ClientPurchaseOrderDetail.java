@@ -4,6 +4,7 @@
  */
 package servlet.sale;
 
+import connection.DBConnection;
 import generalisation.GenericDAO.GenericDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -12,11 +13,15 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 import model.base.Utilisateur;
 import model.purchaseClient.ArticleOrder;
 import model.purchaseClient.PurchaseOrderClient;
+import model.sale.ArticleQuantitySale;
+import service.sale.SaleService;
+import service.stock.StockService;
 
 /**
  *
@@ -74,6 +79,22 @@ public class ClientPurchaseOrderDetail extends HttpServlet {
             PurchaseOrderClient purchaseOrderClient = GenericDAO.findById(PurchaseOrderClient.class, Integer.valueOf(idPurchaseOrderClient), null);
             List<ArticleOrder> articleQuantityOrder = (List<ArticleOrder>) GenericDAO.directQuery(ArticleOrder.class, "SELECT * FROM article_quantity_order WHERE id_purchase_order="+idPurchaseOrderClient, null);
             purchaseOrderClient.setArticleOrder(articleQuantityOrder);
+            
+            Connection connection = DBConnection.getConnection();
+            double price = 0;
+            
+            for (ArticleOrder article : articleQuantityOrder) {
+                article.setAvailableQuantity(StockService.getRemainQuantity(article.getArticle(), connection));
+                price = SaleService.getSalePrice(article.getArticle(), connection);
+                article.setUnitPrice(price - (price * (article.getArticle().getTva() / 100)));
+                article.setTva(article.getArticle().getTva());
+                article.setTvaAmount((article.getUnitPrice() * article.getQuantity()) * (article.getArticle().getTva() / 100));
+                article.setHtAmount(article.getUnitPrice() * article.getQuantity());
+                article.setTtcAmount(price * article.getQuantity());
+            }
+            
+            connection.close();
+
             
             request.setAttribute("purchaseOrderClient", purchaseOrderClient);
             

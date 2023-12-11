@@ -92,6 +92,31 @@ public class ProformaSending {
     
     
 ///Fonctions
+    // get the total of tva
+    public double getTvaTotal() {
+        double sum = 0;
+        for (ArticleQuantitySale article : articles) {
+            sum += article.getTvaAmount();
+        }
+        return sum;
+    }
+    
+    public double getHtTotal() {
+        double sum = 0;
+        for (ArticleQuantitySale article : articles) {
+            sum += article.getHtAmount();
+        }
+        return sum;
+    }
+    
+    public double getTtcTotal() {
+        double sum = 0;
+        for (ArticleQuantitySale article : articles) {
+            sum += article.getTtcAmount();
+        }
+        return sum;
+    }
+    
      // ajouter un article dans une demande
     public ArticleQuantitySale addArticleQuantity(String article, String quantity) throws Exception {
         if (article.trim().equals("")) {
