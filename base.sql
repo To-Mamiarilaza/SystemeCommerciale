@@ -705,3 +705,81 @@ delete from detail_anomalie;
 delete from anomalie;
 
 alter sequence seq_supplier_delivery_order restart 1;
+
+CREATE  TABLE "public".dept_reception ( 
+	id_dept_reception    integer DEFAULT nextval('seq_dept_reception'::regclass) NOT NULL  ,
+	responsable_name     varchar(100)    ,
+	responsable_contact  varchar(20)    ,
+	"date"               date    ,
+	status               integer    ,
+	id_outgoing_order    integer    ,
+	CONSTRAINT pk_dept_reception PRIMARY KEY ( id_dept_reception )
+ );
+
+CREATE  TABLE "public".dept_reception_article ( 
+	id_dept_reception_article integer DEFAULT nextval('seq_dept_reception_article'::regclass) NOT NULL  ,
+	id_dept_reception    integer    ,
+	id_article           integer    ,
+	quantity             double precision    ,
+	CONSTRAINT pk_dept_reception_article PRIMARY KEY ( id_dept_reception_article ),
+	CONSTRAINT fk_dept_reception_article_dept_reception FOREIGN KEY ( id_dept_reception ) REFERENCES "public".dept_reception( id_dept_reception )   
+ );
+
+CREATE  TABLE "public".supplier_delivery_order ( 
+	id_supplier_delivery_order integer DEFAULT nextval('seq_supplier_delivery_order'::regclass) NOT NULL  ,
+	delivery_date        date    ,
+	id_purchase_order    integer    ,
+	delivers_name        varchar(100)    ,
+	delivers_contact     varchar(30)    ,
+	status               integer    ,
+	CONSTRAINT pk_supplier_delivery_order PRIMARY KEY ( id_supplier_delivery_order )
+ );
+
+CREATE  TABLE "public".reception_order ( 
+	id_reception_order   integer DEFAULT nextval('seq_reception_order'::regclass) NOT NULL  ,
+	reception_date       date    ,
+	responsable_name     varchar(100)    ,
+	responsable_contact  varchar(20)    ,
+	status               integer    ,
+	id_supplier_delivery_order integer    ,
+	CONSTRAINT pk_reception_order PRIMARY KEY ( id_reception_order ),
+	CONSTRAINT fk_reception_order_supplier_delivery_order FOREIGN KEY ( id_supplier_delivery_order ) REFERENCES "public".supplier_delivery_order( id_supplier_delivery_order )   
+ );
+
+CREATE  TABLE "public".supplier_delivery_details ( 
+	id_supplier_delivery_details integer DEFAULT nextval('seq_supplier_delivery_details'::regclass) NOT NULL  ,
+	id_supplier_delivery_order integer    ,
+	id_article           integer    ,
+	quantity             double precision    ,
+	CONSTRAINT pk_supplier_delivery_details PRIMARY KEY ( id_supplier_delivery_details ),
+	CONSTRAINT fk_supplier_delivery_details_supplier_delivery_order FOREIGN KEY ( id_supplier_delivery_order ) REFERENCES "public".supplier_delivery_order( id_supplier_delivery_order )   
+ );
+
+CREATE  TABLE "public".entry_order ( 
+	id_entry_order       integer DEFAULT nextval('seq_entry_order'::regclass) NOT NULL  ,
+	id_reception_order   integer    ,
+	"date"               date    ,
+	responsable_name     varchar(50)    ,
+	responsable_contact  varchar(20)    ,
+	status               integer    ,
+	CONSTRAINT pk_entry_order PRIMARY KEY ( id_entry_order ),
+	CONSTRAINT fk_entry_order_reception_order FOREIGN KEY ( id_reception_order ) REFERENCES "public".reception_order( id_reception_order )   
+ );
+
+CREATE  TABLE "public".entry_order_articles ( 
+	id_entry_order_article integer DEFAULT nextval('seq_entry_order_article'::regclass) NOT NULL  ,
+	id_entry_order       integer    ,
+	id_article           integer    ,
+	quantity             double precision    ,
+	CONSTRAINT pk_entry_order_articles PRIMARY KEY ( id_entry_order_article ),
+	CONSTRAINT fk_entry_order_articles_entry_order FOREIGN KEY ( id_entry_order ) REFERENCES "public".entry_order( id_entry_order )   
+ );
+
+CREATE  TABLE "public".reception_article_details ( 
+	id_reception_article_details integer DEFAULT nextval('seq_reception_article_details'::regclass) NOT NULL  ,
+	id_reception_order   integer    ,
+	id_article           integer    ,
+	quantity             double precision    ,
+	CONSTRAINT pk_reception_article_details PRIMARY KEY ( id_reception_article_details ),
+	CONSTRAINT fk_reception_article_details_reception_order FOREIGN KEY ( id_reception_order ) REFERENCES "public".reception_order( id_reception_order )   
+ );
