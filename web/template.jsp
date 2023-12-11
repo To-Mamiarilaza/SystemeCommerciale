@@ -228,9 +228,11 @@
                                 <ul class="nav flex-column sub-menu">
                                     <li class="nav-item"> <a class="nav-link" href="./proforma-sending">Envoie proforma</a></li>
                                     <li class="nav-item"> <a class="nav-link" href="./client-purchase-order-list">Bon de commande</a></li>
+                                    <li class="nav-item"> <a class="nav-link" href="./sale-statistics">Statistique de vente</a></li>
                                 </ul>
                             </div>
                         </li>
+                        
                         <% } %>
                         <% if(utilisateur.inMagasinService()) { %>
                         <li class="nav-item">
